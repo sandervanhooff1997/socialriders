@@ -44,6 +44,11 @@
                 }]
             }
         },
+        computed: {
+          user () {
+              return this.$store.getters.user
+          }
+        },
         methods: {
             getLocation: function() {
                 if (navigator.geolocation) {
@@ -59,6 +64,7 @@
         },
         created: function() {
             this.getLocation();
+            console.log(this.user)
         }
     }
 

@@ -1,67 +1,55 @@
 <template>
-
     <div style="width: 100%;">
 
-        <v-bottom-sheet v-model="sheet">
-            <!--<v-btn slot="activator" color="purple" dark>Click me</v-btn>-->
+        <v-jumbotron>
+            <v-container fill-height>
+                <v-layout align-center>
+                    <v-flex>
+                        <h3 class="display-3">Welcome to SocialRiders!</h3>
+                        <span class="subheading">The social media where riders ride together.</span>
+                        <v-divider class="my-3"></v-divider>
+                        <v-btn @click="googleSignin" large class="red darken-1" dark >Continue with Google</v-btn> or
+                        <v-btn @click="facebookSignin" large class="primary darken-2">Continue with Facebook</v-btn>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-jumbotron>
 
-            <v-list  slot="activator" class="pt-0 signinButton" dense >
-                <v-list-tile >
-                    <v-list-tile-action>
-                        <v-icon>lock_open</v-icon>
-                    </v-list-tile-action>
-                    <v-list-tile-content>
-                        <v-list-tile-title>Sign in</v-list-tile-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-            </v-list>
-
-
-            <v-list>
-                <v-subheader>Sign in with</v-subheader>
-                <v-list-tile
-                        v-for="tile in tiles"
-                        :key="tile.title"
-                        @click="sheet = false"
-                >
-                    <v-list-tile-action>
-                            <facebook-signin id="fbLoginBtn" v-if="tile.provider == 'facebook'"></facebook-signin>
-                            <google-signin v-if="tile.provider == 'google'"></google-signin>
-                    </v-list-tile-action>
-                </v-list-tile>
-            </v-list>
-        </v-bottom-sheet>
     </div>
 </template>
 
 <script>
-    import FacebookSignin from './FacebookSignin'
-    import GoogleSignin from './GoogleSignin'
+    import firebase from 'firebase'
 
     export default {
         name: 'signin',
-        components: {
-            FacebookSignin,
-            GoogleSignin
-        },
-        data () {
-            return {
-                sheet: false,
-                tiles: [
-                    { title: 'Continue with Facebook', provider: 'facebook' },
-//                    { title: 'Continue with Google', provider: 'google' },
-                ]
+        methods: {
+            googleSignin: function () {
+                this.$store.dispatch('signIn', { provider:'google' })
+            },
+            facebookSignin: function () {
+                this.$store.dispatch('signIn', { provider:'facebook' })
             }
         },
-        mounted () {
-//            console.log(this.$session.getAll())
-//            console.log(this.$logged)
+        computed: {
+            user () {
+                return this.$store.getters.user
+            },
+            userIsAuthenticated () {
+                return this.$store.getters.userIsAuthenticated
+            }
+        },
+        watch: {
+            user (value) {
+                if (this.userIsAuthenticated) {
+                    this.$router.push('/')
+                }
+            }
+        },
+        created () {
+            if (this.userIsAuthenticated) {
+                this.$router.push('/')
+            }
         }
     }
 </script>
-
-<style scoped>
-    .signinButton {
-        cursor: pointer;
-    }
-</style>

@@ -1,5 +1,6 @@
 <template>
   <v-app>
+
       <v-navigation-drawer
               fixed
               :clipped="$vuetify.breakpoint.mdAndUp"
@@ -7,17 +8,17 @@
               v-model="drawer"
       >
         <v-list class="pt-0" dense>
-          <v-list-tile v-for="item in items" :to="item.link" :key="item.text" @click="">
-            <v-list-tile-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>{{ item.text }}</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
+            <!--Website links-->
+              <v-list-tile v-for="item in menuItems" :to="item.link" :key="item.text">
+                <v-list-tile-action>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-tile-action>
+                <v-list-tile-content>
+                  <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+            <v-divider></v-divider>
         </v-list>
-          <v-divider></v-divider>
-          <!--<signin></signin>-->
       </v-navigation-drawer>
 
       <v-toolbar
@@ -40,11 +41,57 @@
                 v-if="['Explore'].indexOf($route.name) > -1"
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn icon>
-          <v-icon>apps</v-icon>
-        </v-btn>
-        <v-btn icon>
-          <v-icon>notifications</v-icon>
+        <v-btn icon v-if="userIsAuthenticated">
+            <v-menu
+                    transition="slide-y-transition"
+                    bottom
+            >
+                <v-avatar size="36px" slot="activator">
+                    <img :src="user.photoUrl" alt="user.name">
+                </v-avatar>
+                <v-list>
+                    <v-list-tile avatar>
+                        <v-list-tile-avatar>
+                            <img :src="user.photoUrl" alt="user.name">
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{user.name}}</v-list-tile-title>
+                            <v-list-tile-sub-title>{{user.email}}</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile @click="onLogout">
+                        <v-list-tile-content>
+                            <v-list-tile-title>Logout</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
+
+            <!--<v-menu-->
+                    <!--offset-x-->
+                    <!--:close-on-content-click="false"-->
+                    <!--:nudge-width="200"-->
+                    <!--v-model="profileMenu"-->
+            <!--&gt;-->
+                <!--<v-card>-->
+                    <!--<v-list>-->
+                        <!--<v-list-tile avatar>-->
+                            <!--<v-list-tile-avatar>-->
+                                <!--<img src="https://vuetifyjs.com/static/doc-images/john.jpg" alt="John">-->
+                            <!--</v-list-tile-avatar>-->
+                            <!--<v-list-tile-content>-->
+                                <!--<v-list-tile-title>Sander van Hooff</v-list-tile-title>-->
+                                <!--<v-list-tile-sub-title>s.vanhooff@hotmail.com</v-list-tile-sub-title>-->
+                            <!--</v-list-tile-content>-->
+                        <!--</v-list-tile>-->
+                    <!--</v-list>-->
+                    <!--<v-card-actions>-->
+                        <!--<v-spacer></v-spacer>-->
+                        <!--<v-btn flat @click="profileMenu = false">Cancel</v-btn>-->
+                    <!--</v-card-actions>-->
+                <!--</v-card>-->
+            <!--</v-menu>-->
+
         </v-btn>
       </v-toolbar>
 
@@ -54,34 +101,49 @@
           </v-layout>
       </v-content>
 
-
   </v-app>
 </template>
 
 <script>
-    import Signin from './components/signin/Signin'
+    import * as firebase from 'firebase'
 
     export default {
         name: 'App',
-        components: {
-            Signin
-        },
         data: () => ({
             dialog: false,
             drawer: null,
             title: 'SocialRiders',
-            items: [
-                { icon: 'explore', text: 'Explore', link: '/explore' },
-                { icon: 'language', text: 'Experience', link: '/experience' },
-                { icon: 'alarm_on', text: 'Organize', link: '/organize' },
-                { icon: 'face', text: 'Profile', link: '/profile' },
-            ],
+            profileMenu: false
         }),
-        props: {
-            source: String
+        methods: {
+            onLogout () {
+                this.$store.dispatch('logout')
+                this.$router.push('/signin')
+            }
         },
-        mounted () {
+        computed: {
+            menuItems () {
+                let menuItems = [
+                    {icon: 'lock_open', text: 'Sign in', link: '/signin'}
+                ]
 
+                if (this.userIsAuthenticated) {
+                    menuItems = [
+                        {icon: 'explore', text: 'Explore', link: '/explore'},
+                        {icon: 'language', text: 'Experience', link: '/experience'},
+                        {icon: 'alarm_on', text: 'Organize', link: '/organize'},
+                        {icon: 'face', text: 'Profile', link: '/profile'}
+                    ]
+                }
+
+                return menuItems
+            },
+            userIsAuthenticated () {
+                return this.$store.getters.userIsAuthenticated
+            },
+            user () {
+                return this.$store.getters.user
+            }
         }
     }
 </script>

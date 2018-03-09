@@ -3,7 +3,9 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import * as firebase from 'firebase'
 import VueSession from 'vue-session'
+import { store } from './store'
 import '../node_modules/vuetify/src/stylus/app.styl'
 import {
   Vuetify,
@@ -22,6 +24,7 @@ import {
     VBottomSheet,
     VSubHeader,
     VAvatar,
+    VMenu,
   transitions
 } from 'vuetify'
 
@@ -43,6 +46,7 @@ Vue.use(Vuetify, {
       VBottomSheet,
       VSubHeader,
       VAvatar,
+      VMenu,
     transitions
   }
 })
@@ -54,6 +58,16 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+    store,
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+    created () {
+        firebase.initializeApp({
+            apiKey: 'AIzaSyBdOYlNz9Rdk1lDfbluFvIe-HostsmgyfU',
+            authDomain: 'socialriders-2ad62.firebaseapp.com',
+            databaseURL: 'https://socialriders-2ad62.firebaseio.com',
+            projectId: 'socialriders-2ad62',
+            storageBucket: 'socialriders-2ad62.appspot.com',
+        })
+    }
 })
