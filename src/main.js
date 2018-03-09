@@ -3,6 +3,8 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueSession from 'vue-session'
+import '../node_modules/vuetify/src/stylus/app.styl'
 import {
   Vuetify,
   VApp,
@@ -13,10 +15,17 @@ import {
   VIcon,
   VGrid,
   VToolbar,
+  VTextField,
+  VDivider,
+  VJumbotron,
+  VCard,
+    VBottomSheet,
+    VSubHeader,
+    VAvatar,
   transitions
 } from 'vuetify'
-import '../node_modules/vuetify/src/stylus/app.styl'
 
+Vue.use(VueSession, {persist:true})
 Vue.use(Vuetify, {
   components: {
     VApp,
@@ -27,10 +36,18 @@ Vue.use(Vuetify, {
     VIcon,
     VGrid,
     VToolbar,
+    VTextField,
+    VDivider,
+    VJumbotron,
+    VCard,
+      VBottomSheet,
+      VSubHeader,
+      VAvatar,
     transitions
   }
 })
 
+Vue.prototype.$logged = false
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
