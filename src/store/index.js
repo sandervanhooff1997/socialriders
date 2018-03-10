@@ -1,71 +1,47 @@
 import Vue from 'vue'
 import Vuex from 'Vuex'
-import firebase from 'firebase'
+
+import state from './state'
+import getters from './getters'
+import mutations from './mutations'
+import actions from './actions'
 
 Vue.use(Vuex)
 
+/**
+ * Vuex Store tutorial
+ *
+ * Payload:
+ * The payload often gets passed as a second argument to the mutation/action.
+ * You can define 1 object by executing commit('mutation/action name', payload)
+ * Or you can define multiple objects by executing commit({
+ *  type: 'mutation/action name',
+ *  object1: {},
+ *  object2: {}
+ * })
+ */
+
 export const store = new Vuex.Store({
-    state: {
-        user: null
-    },
-    mutations: {
-        setUser (state, payload) {
-            state.user = payload
-        }
-    },
-    actions: {
-        signIn ({commit}, payload) {
-            var provider;
+    /**
+     * state manages a central state of your application. No direct changes to the state should be made, only via mutations.
+     */
+    state,
 
-            if (payload.provider === 'google') {
-                provider = new firebase.auth.GoogleAuthProvider();
-            } else if (payload.provider === 'facebook') {
-                provider = new firebase.auth.FacebookAuthProvider();
-            } else {
-                return
-            }
+    /**
+     * getters return the state to the component asking. You should always get the state via getters.
+     */
+    getters,
 
-            firebase.auth().signInWithPopup(provider).then(function (result) {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                var token = result.credential.accessToken
+    /**
+     * mutations mutate the state in a fashionable way (the safe way). State changes should always happen via mutations.
+     * mutations ALWAYS mutate the state in a synchronous manor, if asynchronous operations are required, use actions instead.
+     */
+    mutations,
 
-               var user = {
-                   email: result.user.email,
-                   name: result.user.displayName,
-                   photoUrl: result.user.photoURL
-               }
+    /**
+     * actions are methods centralized in the store, and can be executed from every component.
+     * actions can run asynchronously in comparison to mutations
+     */
+    actions,
 
-               commit('setUser', user)
-            }).catch(function (error) {
-                // Handle Errors here.
-                var errorCode = error.code
-                var errorMessage = error.message
-                // The email of the user's account used.
-                var email = error.email
-                // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential
-
-                console.log(errorMessage)
-            });
-        },
-        autoSignIn ({commit}, payload) {
-            commit('setUser', {
-                email: payload.email,
-                name: payload.displayName,
-                photoUrl: payload.photoURL
-            })
-        },
-        logout ({commit}) {
-            firebase.auth().signOut()
-            commit('setUser', null)
-        },
-    },
-    getters: {
-        user (state) {
-            return state.user
-        },
-        userIsAuthenticated (state) {
-            return state.user !== null && state.user !== undefined
-        }
-    }
 })

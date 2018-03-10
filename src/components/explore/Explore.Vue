@@ -3,15 +3,21 @@
         <gmap-map
                 :center="{lat: center.lat, lng: center.lng}"
                 :zoom="zoom"
-                style="width: 100%; height: 100%;"
-        >
+                :options="{styles: styles}"
+                class="map">
             <gmap-marker
+                    v-if="explores"
                     :key="index"
-                    v-for="(m, index) in markers"
-                    :position="m.position"
+                    v-for="(explore, index) in explores"
+                    :position="explore.location"
                     :clickable="true"
-                    :draggable="true"
-                    @click="center=m.position"
+                    @click="center=explore.location"
+            ></gmap-marker>
+            <gmap-marker
+                    v-if="currentLocationFetched"
+                    :position="center"
+                    :clickable="true"
+                    @click="center=center"
             ></gmap-marker>
         </gmap-map>
     </div>
@@ -28,7 +34,8 @@
             // OR: libraries: 'places,drawing'
             // OR: libraries: 'places,drawing,visualization'
             // (as you require)
-        }
+        },
+
     })
 
     export default {
@@ -36,30 +43,122 @@
             return {
                 center: {lat: 52.38, lng: 4.90}, // default location is Amsterdam
                 zoom: 8,
-                markers: [{
-                    position: {lat: 52.51, lng: 4.73}
-                }, {
-                    position: {lat: 52.58, lng: 4.42}
-                }]
+                currentLocationFetched: false,
+                styles: [
+                    {
+                        "featureType": "administrative.land_parcel",
+                        "elementType": "labels",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "labels.text",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi.business",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "labels.icon",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.arterial",
+                        "elementType": "labels",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "labels",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.local",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.local",
+                        "elementType": "labels",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        computed: {
+            explores () {
+                return this.$store.getters.explores
             }
         },
         methods: {
             getLocation: function() {
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(this.changeLocation, this.error)
+                    var options = {
+                        enableHighAccuracy: true,
+                        timeout: 5000
+                    };
+                    navigator.geolocation.getCurrentPosition(this.changeLocation, this.error, options)
                 } else {
                     return false
                 }
             },
-            changeLocation: function (position) {
-                this.center.lat = position.coords.latitude;
-                this.center.lng = position.coords.longitude;
+            changeLocation: function (pos) {
+                this.center.lat = pos.coords.latitude;
+                this.center.lng = pos.coords.longitude;
+                this.currentLocationFetched = true;
             }
         },
         created: function() {
             this.getLocation()
+            this.$store.dispatch('fetchExplores')
         }
     }
-
-
 </script>
+
+<style scoped>
+    .map {
+        width: 100%;
+        height: 100%;
+    }
+</style>

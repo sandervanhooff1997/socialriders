@@ -22,7 +22,7 @@
     export default {
         methods: {
             signin: function (provider) {
-                this.$store.dispatch('signIn', { provider:provider })
+                this.$store.dispatch('signIn', provider)
             }
         },
         computed: {
