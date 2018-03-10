@@ -52,7 +52,7 @@
                 <v-list>
                     <v-list-tile avatar>
                         <v-list-tile-avatar>
-                            <img :src="user.photoUrl" alt="user.name">
+                            <img :src="user.photoUrl" :alt="user.name">
                         </v-list-tile-avatar>
                         <v-list-tile-content>
                             <v-list-tile-title>{{user.name}}</v-list-tile-title>
@@ -61,42 +61,16 @@
                     </v-list-tile>
                     <v-list-tile @click="onLogout">
                         <v-list-tile-content>
-                            <v-list-tile-title>Logout</v-list-tile-title>
+                            <v-list-tile-title class="text-xs-center">Logout</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                 </v-list>
             </v-menu>
-
-            <!--<v-menu-->
-                    <!--offset-x-->
-                    <!--:close-on-content-click="false"-->
-                    <!--:nudge-width="200"-->
-                    <!--v-model="profileMenu"-->
-            <!--&gt;-->
-                <!--<v-card>-->
-                    <!--<v-list>-->
-                        <!--<v-list-tile avatar>-->
-                            <!--<v-list-tile-avatar>-->
-                                <!--<img src="https://vuetifyjs.com/static/doc-images/john.jpg" alt="John">-->
-                            <!--</v-list-tile-avatar>-->
-                            <!--<v-list-tile-content>-->
-                                <!--<v-list-tile-title>Sander van Hooff</v-list-tile-title>-->
-                                <!--<v-list-tile-sub-title>s.vanhooff@hotmail.com</v-list-tile-sub-title>-->
-                            <!--</v-list-tile-content>-->
-                        <!--</v-list-tile>-->
-                    <!--</v-list>-->
-                    <!--<v-card-actions>-->
-                        <!--<v-spacer></v-spacer>-->
-                        <!--<v-btn flat @click="profileMenu = false">Cancel</v-btn>-->
-                    <!--</v-card-actions>-->
-                <!--</v-card>-->
-            <!--</v-menu>-->
-
         </v-btn>
       </v-toolbar>
 
       <v-content>
-          <v-layout style="height: 100%;">
+          <v-layout style="width: 100%; height: 100%;">
             <router-view></router-view>
           </v-layout>
       </v-content>
@@ -144,6 +118,9 @@
             user () {
                 return this.$store.getters.user
             }
+        },
+        created () {
+
         }
     }
 </script>

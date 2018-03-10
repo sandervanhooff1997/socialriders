@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import * as firebase from 'firebase'
 import VueSession from 'vue-session'
+import localForage from 'localforage'
 import { store } from './store'
 import '../node_modules/vuetify/src/stylus/app.styl'
 import {
@@ -25,9 +26,11 @@ import {
     VSubHeader,
     VAvatar,
     VMenu,
+    VSnackbar,
   transitions
 } from 'vuetify'
 
+Vue.use(localForage)
 Vue.use(VueSession, {persist:true})
 Vue.use(Vuetify, {
   components: {
@@ -47,6 +50,7 @@ Vue.use(Vuetify, {
       VSubHeader,
       VAvatar,
       VMenu,
+      VSnackbar,
     transitions
   }
 })
@@ -69,5 +73,11 @@ new Vue({
             projectId: 'socialriders-2ad62',
             storageBucket: 'socialriders-2ad62.appspot.com',
         })
+
+        firebase.auth().onAuthStateChanged(user => {
+          if (user) {
+            this.$store.dispatch('autoSignIn', user)
+          }
+        });
     }
 })

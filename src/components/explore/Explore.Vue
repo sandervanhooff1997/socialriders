@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%;">
         <gmap-map
-                :center="{lat:center.lat, lng:center.lng}"
+                :center="{lat: center.lat, lng: center.lng}"
                 :zoom="zoom"
                 style="width: 100%; height: 100%;"
         >
@@ -32,29 +32,23 @@
     })
 
     export default {
-        name: 'Explore',
         data () {
             return {
                 center: {lat: 52.38, lng: 4.90}, // default location is Amsterdam
                 zoom: 8,
                 markers: [{
-                    position: {lat: 48.51, lng: 6.73}
+                    position: {lat: 52.51, lng: 4.73}
                 }, {
-                    position: {lat: 49.58, lng: 5.42}
+                    position: {lat: 52.58, lng: 4.42}
                 }]
             }
-        },
-        computed: {
-          user () {
-              return this.$store.getters.user
-          }
         },
         methods: {
             getLocation: function() {
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(this.changeLocation, this.error);
+                    navigator.geolocation.getCurrentPosition(this.changeLocation, this.error)
                 } else {
-                    return false;
+                    return false
                 }
             },
             changeLocation: function (position) {
@@ -63,8 +57,7 @@
             }
         },
         created: function() {
-            this.getLocation();
-            console.log(this.user)
+            this.getLocation()
         }
     }
 
