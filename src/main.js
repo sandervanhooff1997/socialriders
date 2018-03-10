@@ -6,7 +6,8 @@ import router from './router'
 import * as firebase from 'firebase'
 import VueSession from 'vue-session'
 import localForage from 'localforage'
-import { store } from './store'
+import { store } from './store/store'
+import AlertCmp from './components/shared/Alert'
 import '../node_modules/vuetify/src/stylus/app.styl'
 import {
   Vuetify,
@@ -27,6 +28,8 @@ import {
     VAvatar,
     VMenu,
     VSnackbar,
+    VAlert,
+    VProgressCircular,
   transitions
 } from 'vuetify'
 
@@ -51,9 +54,13 @@ Vue.use(Vuetify, {
       VAvatar,
       VMenu,
       VSnackbar,
+      VAlert,
+      VProgressCircular,
     transitions
   }
 })
+
+Vue.component('app-alert', AlertCmp)
 
 Vue.prototype.$logged = false
 Vue.config.productionTip = false
@@ -62,22 +69,22 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
-    store,
+  store,
   components: { App },
   template: '<App/>',
-    created () {
-        firebase.initializeApp({
-            apiKey: 'AIzaSyBdOYlNz9Rdk1lDfbluFvIe-HostsmgyfU',
-            authDomain: 'socialriders-2ad62.firebaseapp.com',
-            databaseURL: 'https://socialriders-2ad62.firebaseio.com',
-            projectId: 'socialriders-2ad62',
-            storageBucket: 'socialriders-2ad62.appspot.com',
-        })
+  created () {
+      firebase.initializeApp({
+          apiKey: 'AIzaSyBdOYlNz9Rdk1lDfbluFvIe-HostsmgyfU',
+          authDomain: 'socialriders-2ad62.firebaseapp.com',
+          databaseURL: 'https://socialriders-2ad62.firebaseio.com',
+          projectId: 'socialriders-2ad62',
+          storageBucket: 'socialriders-2ad62.appspot.com',
+      })
 
-        firebase.auth().onAuthStateChanged(user => {
-          if (user) {
-            this.$store.dispatch('autoSignIn', user)
-          }
-        });
-    }
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          this.$store.dispatch('autoSignIn', user)
+        }
+      });
+  }
 })

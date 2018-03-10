@@ -132,7 +132,7 @@
             }
         },
         methods: {
-            getLocation: function() {
+            getLocation () {
                 if (navigator.geolocation) {
                     var options = {
                         enableHighAccuracy: true,
@@ -143,13 +143,13 @@
                     return false
                 }
             },
-            changeLocation: function (pos) {
+            changeLocation (pos) {
                 this.center.lat = pos.coords.latitude;
                 this.center.lng = pos.coords.longitude;
                 this.currentLocationFetched = true;
             }
         },
-        created: function() {
+        created () {
             this.getLocation()
             this.$store.dispatch('fetchExplores')
         }

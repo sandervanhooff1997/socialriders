@@ -7,5 +7,11 @@ export default {
     },
     explores (state) {
         return state.explores
+    },
+    loading (state) {
+        return state.loading
+    },
+    error (state) {
+        return state.error
     }
 }

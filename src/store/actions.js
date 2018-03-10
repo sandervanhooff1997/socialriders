@@ -3,6 +3,8 @@ import firestore from 'firebase/firestore'
 
 export default {
     signIn ({commit}, providedProvider) {
+        commit('setLoading', true)
+
         var provider;
 
         if (providedProvider === 'google') {
@@ -14,6 +16,9 @@ export default {
         }
 
         firebase.auth().signInWithPopup(provider).then(function (result) {
+            commit('setLoading', false)
+            commit('clearError')
+
             // This gives you a Google Access Token. You can use it to access the Google API.
             var token = result.credential.accessToken
 
@@ -25,15 +30,13 @@ export default {
 
             commit('setUser', user)
         }).catch(function (error) {
-            // Handle Errors here.
             var errorCode = error.code
             var errorMessage = error.message
-            // The email of the user's account used.
             var email = error.email
-            // The firebase.auth.AuthCredential type that was used.
-            var credential = error.credential
+            var credential = error.credential // firebase.auth.AuthCredential type that was used.
 
-            // TODO: display error in dialog
+            commit('setLoading', false)
+            commit('setError', error)
             console.log(errorMessage)
         });
     },
@@ -60,5 +63,8 @@ export default {
         }).catch(err => {
             console.log("Error fetching explores: " + err.message)
         })
+    },
+    clearError ({commit}) {
+        commit('clearError')
     }
 }

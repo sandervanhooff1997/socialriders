@@ -1,6 +1,5 @@
 <template>
   <v-app>
-
       <v-navigation-drawer
               fixed
               :clipped="$vuetify.breakpoint.mdAndUp"
@@ -17,7 +16,6 @@
                   <v-list-tile-title>{{ item.text }}</v-list-tile-title>
                 </v-list-tile-content>
               </v-list-tile>
-            <v-divider></v-divider>
         </v-list>
       </v-navigation-drawer>
 
@@ -118,9 +116,6 @@
             user () {
                 return this.$store.getters.user
             }
-        },
-        created () {
-
         }
     }
 </script>

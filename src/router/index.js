@@ -8,7 +8,7 @@ import Explore from '@/components/explore/Explore'
 import Organize from '@/components/organize/Organize'
 import Profile from '@/components/profile/Profile'
 import Signin from '@/components/signin/Signin'
-import NotFound from '@/components/notfound/NotFound'
+import NotFound from '@/components/shared/NotFound'
 
 Vue.use(Router)
 

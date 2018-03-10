@@ -1,5 +1,10 @@
 <template>
     <div style="width: 100%;">
+        <v-layout row v-if="error">
+            <v-flex xs12 offset-sm3 sm6>
+                <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
+            </v-flex>
+        </v-layout>
         <v-jumbotron>
             <v-container fill-height>
                 <v-layout align-center>
@@ -7,8 +12,24 @@
                         <h3 class="display-3">Welcome to SocialRiders!</h3>
                         <span class="subheading">The social media where riders ride together.</span>
                         <v-divider class="my-3"></v-divider>
-                        <v-btn @click="signin('google')" large class="red darken-1" dark >Continue with Google</v-btn> or
-                        <v-btn @click="signin('facebook')" large class="primary darken-2">Continue with Facebook</v-btn>
+
+                        <!--<v-progress-circular v-if="loading" indeterminate :size="50" color="primary"></v-progress-circular>-->
+                        <v-btn
+                                @click="signin('google')"
+                                class="red darken-1 white--text"
+                                large
+                                :disabled="loading"
+                                :loading="loading">
+                            Continue with Google
+                        </v-btn>
+                        or
+                        <v-btn
+                                @click="signin('facebook')"
+                                class="primary darken-2"
+                                large
+                                :disabled="loading"
+                                :loading="loading">
+                            Continue with Facebook</v-btn>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -21,13 +42,22 @@
 
     export default {
         methods: {
-            signin: function (provider) {
+            signin (provider) {
                 this.$store.dispatch('signIn', provider)
+            },
+            onDismissed () {
+                this.$store.dispatch('clearError')
             }
         },
         computed: {
-            user (){
+            user () {
                 return this.$store.getters.user
+            },
+            error () {
+                return this.$store.getters.error
+            },
+            loading () {
+                return this.$store.getters.loading
             }
         },
         watch: {
