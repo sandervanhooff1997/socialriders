@@ -1,7 +1,7 @@
 {
   "name": "socialrider",
   "version": "1.0.0",
-  "description": "A social media platform where riders can share their riding experiences & organize rides together.",
+  "description": "A social media platform where riders ride together.",
   "author": "Sander van Hooff <s.vanhooff@hotmail.com>",
   "private": true,
   "scripts": {
@@ -16,10 +16,8 @@
     "jquery": "^3.3.1",
     "localforage": "^1.6.0",
     "vue": "^2.5.2",
-    "vue-facebook-signin-button": "^1.0.1",
     "vue-google-signin-button": "^1.0.2",
     "vue-router": "^3.0.1",
-    "vue-session": "^1.0.0",
     "vue2-google-maps": "^0.8.11",
     "vuetify": "^1.0.0",
     "vuex": "^3.0.1"
