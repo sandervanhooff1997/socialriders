@@ -17,48 +17,48 @@ let router = new Router({
     routes: [
         {
             path: '/',
-            name: 'Home',
-            component: Explore,
-            beforeEnter: AuthGuard
+            redirect: {
+                name: 'explore'
+            }
         },
         {
             path: '/explore',
-            name: 'Explore',
+            name: 'explore',
             component: Explore,
             beforeEnter: AuthGuard
         },
         {
             path: '/experiences',
-            name: 'Experiences',
+            name: 'experiences',
             component: Experiences,
             beforeEnter: AuthGuard
         },
         {
             path: '/experience',
-            name: 'Experience',
+            name: 'experience',
             component: Experience,
             beforeEnter: AuthGuard
         },
         {
             path: '/profile',
-            name: 'Profile',
+            name: 'profile',
             component: Profile,
             beforeEnter: AuthGuard
         },
         {
             path: '/organize',
-            name: 'Organize',
+            name: 'organize',
             component: Organize,
             beforeEnter: AuthGuard
         },
         {
             path: '/signin',
-            name: 'Signin',
+            name: 'signin',
             component: Signin,
         },
         {
             path: '*',
-            name: 'NotFound',
+            name: 'notfound',
             component: NotFound
         }
     ]

@@ -23,6 +23,7 @@ export default {
             var token = result.credential.accessToken
 
             var user = {
+                uid: result.user.uid,
                 email: result.user.email,
                 name: result.user.displayName,
                 photoUrl: result.user.photoURL
@@ -40,11 +41,12 @@ export default {
             console.log(errorMessage)
         });
     },
-    autoSignIn ({commit}, payload) {
+    autoSignIn ({commit}, user) {
         commit('setUser', {
-            email: payload.email,
-            name: payload.displayName,
-            photoUrl: payload.photoURL
+            uid: user.uid,
+            email: user.email,
+            name: user.displayName,
+            photoUrl: user.photoURL
         })
     },
     logout ({commit}) {

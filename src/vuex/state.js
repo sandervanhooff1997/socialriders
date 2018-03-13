@@ -1,6 +1,6 @@
 export default {
     user: null,
-    explores: [],
+    explores: null,
     loading: false,
     error: false
 }

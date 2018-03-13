@@ -1,115 +1,68 @@
 <template>
     <div style="width: 100%;">
-        <!--<v-jumbotron color="primary" dark>-->
-            <!--<v-container fill-height>-->
-                <!--<v-layout align-center>-->
-                    <!--<v-flex text-xs-center>-->
-                        <!--<h3 class="display-3">{{user.name}}</h3>-->
-                    <!--</v-flex>-->
-                <!--</v-layout>-->
-            <!--</v-container>-->
-        <!--</v-jumbotron>-->
-
-        <v-layout row>
-            <v-flex xs12 >
-                <v-card>
-                    <v-card-media src=https://i.pinimg.com/originals/52/96/7e/52967e9aee1c617cb0668d3ef1704eba.jpg height="300px">
-                        <v-layout column class="media">
-                            <!--<v-card-title>-->
-                                <!--<v-btn dark icon>-->
-                                    <!--<v-icon>chevron_left</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--<v-spacer></v-spacer>-->
-                                <!--<v-btn dark icon class="mr-3">-->
-                                    <!--<v-icon>edit</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--<v-btn dark icon>-->
-                                    <!--<v-icon>more_vert</v-icon>-->
-                                <!--</v-btn>-->
-                            <!--</v-card-title>-->
-                            <v-spacer></v-spacer>
-                            <v-card-title class="white--text" style="padding:0">
-                                <div class="nameBackground pl-3 pt-4 pb-2">
-                                    <div class="display-2">{{user.name}}</div>
-                                </div>
-                            </v-card-title>
-                        </v-layout>
-                    </v-card-media>
-
-                    <v-list two-line>
-                    <v-list-tile @click="">
-                        <v-list-tile-action>
-                            <v-icon color="indigo">phone</v-icon>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>(650) 555-1234</v-list-tile-title>
-                            <v-list-tile-sub-title>Mobile</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                        <v-list-tile-action>
-                            <v-icon>chat</v-icon>
-                        </v-list-tile-action>
-                    </v-list-tile>
-                    <v-list-tile @click="">
-                        <v-list-tile-action></v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>(323) 555-6789</v-list-tile-title>
-                            <v-list-tile-sub-title>Work</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                        <v-list-tile-action>
-                            <v-icon>chat</v-icon>
-                        </v-list-tile-action>
-                    </v-list-tile>
-                    <v-divider inset></v-divider>
-                    <v-list-tile @click="">
-                        <v-list-tile-action>
-                            <v-icon color="indigo">mail</v-icon>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{user.email}}</v-list-tile-title>
-                            <!--<v-list-tile-sub-title>Personal</v-list-tile-sub-title>-->
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <!--<v-list-tile @click="">-->
-                        <!--<v-list-tile-action></v-list-tile-action>-->
-                        <!--<v-list-tile-content>-->
-                            <!--<v-list-tile-title>ali_connors@example.com</v-list-tile-title>-->
-                            <!--<v-list-tile-sub-title>Work</v-list-tile-sub-title>-->
-                        <!--</v-list-tile-content>-->
-                    <!--</v-list-tile>-->
-                    <v-divider inset></v-divider>
-                    <v-list-tile @click="">
-                        <v-list-tile-action>
-                            <v-icon color="indigo">location_on</v-icon>
-                        </v-list-tile-action>
-                        <v-list-tile-content>
-                            <v-list-tile-title>1400 Main Street</v-list-tile-title>
-                            <v-list-tile-sub-title>Orlando, FL 79938</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    </v-list>
-                </v-card>
-            </v-flex>
-        </v-layout>
+        <v-jumbotron color="primary" dark>
+            <v-container fill-height>
+                <v-layout align-center>
+                    <v-flex text-xs-center>
+                        <h3 class="display-3">{{user.name}}</h3>
+                    </v-flex>
+                </v-layout>
+            </v-container>
+        </v-jumbotron>
+        <v-footer height="auto" v-if="socialNetworks">
+            <v-card flat tile width="100%" >
+                <v-card-title class="teal white--text">
+                    <strong class="subheading">Get connected with {{user.name}} on social networks!</strong>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                            v-for="(socialNetwork, index) in socialNetworks"
+                            v-if="socialNetwork != ''"
+                            :key="index"
+                            icon
+                            dark
+                            class="mx-3"
+                    >
+                        <v-icon size="24px" color="white">lock_open</v-icon>
+                    </v-btn>
+                </v-card-title>
+            </v-card>
+        </v-footer>
     </div>
 </template>
 
 <script>
+    import firebase from 'firebase'
+    import firestore from 'firebase/firestore'
+
     export default {
+        data () {
+            return {
+                socialNetworks: null
+            }
+        },
         computed: {
             user () {
                 return this.$store.getters.user
             }
+        },
+        created () {
+            var self = this;
+            firebase.firestore()
+                .collection("social-networks")
+                .where("UID", "==", this.user.uid)
+                .get()
+                .then(function(querySnapshot) {
+                    if (querySnapshot.docs[0] !== undefined) {
+                        var data = querySnapshot.docs[0].data()
+                        self.socialNetworks = [];
+                        self.socialNetworks.push(data.facebook, data.google, data.twitter, data.instagram, data.linkedin)
+                    }
+                })
+                .catch(function(error) {
+                    console.log("Error getting documents: ", error);
+                });
+
+
         }
     }
 </script>
-
-<style scoped>
-    .media {
-        height: 100%;
-        margin: 0;
-    }
-    .nameBackground {
-        width: 100%;
-        background: rgba(0,0,0,0.3);
-    }
-</style>

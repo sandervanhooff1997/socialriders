@@ -38,7 +38,7 @@ export const store = new Vuex.Store({
     mutations,
 
     /**
-     * actions are methods centralized in the store, and can be executed from every component.
+     * actions are methods centralized in the vuex, and can be executed from every component.
      * actions can run asynchronously in comparison to mutations
      */
     actions,

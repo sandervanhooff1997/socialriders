@@ -28,15 +28,15 @@
       >
         <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
           <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+          <v-toolbar-side-icon></v-toolbar-side-icon>
           <span class="hidden-sm-and-down">{{ title }}</span>
         </v-toolbar-title>
         <v-text-field
                 flat
                 solo-inverted
                 prepend-icon="search"
-                label="Explore"
-                class="hidden-sm-and-down"
-                v-if="['Explore'].indexOf($route.name) > -1"
+                v-if="['explore'].indexOf($route.name) > -1"
+                id="search-input"
         ></v-text-field>
         <v-spacer></v-spacer>
         <v-btn icon v-if="userIsAuthenticated">
@@ -67,10 +67,8 @@
         </v-btn>
       </v-toolbar>
 
-      <v-content>
-          <v-layout style="width: 100%; height: 100%;">
-            <router-view></router-view>
-          </v-layout>
+      <v-content id="appContent">
+          <router-view></router-view>
       </v-content>
 
   </v-app>
@@ -119,3 +117,9 @@
         }
     }
 </script>
+
+<style>
+    #appContent > div > div {
+        height: 100%;
+    }
+</style>
