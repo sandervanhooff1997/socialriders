@@ -1,13 +1,10 @@
 <template>
   <v-app>
-      <v-navigation-drawer
-              fixed
-              :clipped="$vuetify.breakpoint.mdAndUp"
-              app
-              v-model="drawer"
-      >
-        <v-list class="pt-0" dense>
-            <!--Website links-->
+      <!--Mobile Menu-->
+      <v-navigation-drawer  app v-model="drawer">
+        <v-list class="pt-0">
+
+            <!--Menu links-->
               <v-list-tile v-for="item in menuItems" :to="item.link" :key="item.text">
                 <v-list-tile-action>
                   <v-icon>{{ item.icon }}</v-icon>
@@ -19,31 +16,32 @@
         </v-list>
       </v-navigation-drawer>
 
-      <v-toolbar
-              color="blue darken-3"
-              dark
-              app
-              :clipped-left="$vuetify.breakpoint.mdAndUp"
-              fixed
-      >
-        <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-          <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-          <v-toolbar-side-icon></v-toolbar-side-icon>
+      <!--Desktop menu-->
+      <v-toolbar class="primary" dark app>
+        <v-toolbar-side-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
+        <v-toolbar-title>
           <span class="hidden-sm-and-down">{{ title }}</span>
         </v-toolbar-title>
         <v-text-field
                 flat
                 solo-inverted
-                prepend-icon="search"
+                prepend-icon="explore"
                 v-if="['explore'].indexOf($route.name) > -1"
                 id="search-input"
+                class="mx-3"
         ></v-text-field>
-        <v-spacer></v-spacer>
+        <v-spacer v-if="['explore'].indexOf($route.name) < 0"></v-spacer>
+
+        <!--Menu Links-->
+        <v-toolbar-items class="hidden-sm-and-down">
+          <v-btn v-for="menuItem in menuItems" flat :to="menuItem.link">
+              <v-icon left dark>{{menuItem.icon}}</v-icon>
+              {{menuItem.text}}
+          </v-btn>
+        </v-toolbar-items>
         <v-btn icon v-if="userIsAuthenticated">
-            <v-menu
-                    transition="slide-y-transition"
-                    bottom
-            >
+            <!--Profile Icon Menu-->
+            <v-menu transition="slide-y-transition" bottom>
                 <v-avatar size="36px" slot="activator">
                     <img :src="user.photoUrl" alt="user.name">
                 </v-avatar>
@@ -81,7 +79,7 @@
         name: 'App',
         data: () => ({
             dialog: false,
-            drawer: null,
+            drawer: false,
             title: 'SocialRiders',
             profileMenu: false
         }),

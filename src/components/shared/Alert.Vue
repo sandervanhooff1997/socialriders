@@ -2,13 +2,12 @@
     <!--<v-alert type="error" dismissible @input="onClose" :value="true" transition="scale-transition">-->
         <!--{{ text }}-->
     <!--</v-alert>-->
-
     <v-snackbar
             :timeout="timeout"
             :bottom="true"
             :right="true"
             :value="true"
-            :color="'error'"
+            :color="'info'"
             :multi-line="true"
     >
         {{ text }}

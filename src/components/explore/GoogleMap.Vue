@@ -28,7 +28,7 @@
                 mapOptions: {
                     center: {lat: 	52.379189, lng: 4.899431},
                     zoom: 7,
-                    styles: mapStyles.default
+                    styles: mapStyles.retro
                 },
                 markers: [], // all map markers
                 infoWindows: [],
@@ -216,6 +216,7 @@
         background: rgba(255,255,255,0.9);
         padding: 10px;
         margin: 10px;
+        text-align: left;
     }
     #legend .legendDevider {
         margin: 5px 0;
