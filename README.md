@@ -1,6 +1,6 @@
-# socialrider
+# SocialRiders
 
-> A social media platform where riders can share their riding experiences & organize rides together.
+> A social media platform where riders ride together.
 
 ## Build Setup
 
