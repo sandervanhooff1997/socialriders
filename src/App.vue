@@ -23,18 +23,18 @@
           <span class="hidden-sm-and-down">{{ title }}</span>
         </v-toolbar-title>
         <v-text-field
-                flat
-                solo-inverted
+                color="white"
+                clearable
                 prepend-icon="explore"
-                v-if="['explore'].indexOf($route.name) > -1"
+                v-if="['explore', 'organize'].indexOf($route.name) > -1"
                 id="search-input"
                 class="mx-3"
         ></v-text-field>
-        <v-spacer v-if="['explore'].indexOf($route.name) < 0"></v-spacer>
+        <v-spacer v-if="['explore', 'organize'].indexOf($route.name) < 0"></v-spacer>
 
         <!--Menu Links-->
         <v-toolbar-items class="hidden-sm-and-down">
-          <v-btn v-for="menuItem in menuItems" flat :to="menuItem.link">
+          <v-btn v-for="menuItem in menuItems" :key="menuItem.text" flat :to="menuItem.link">
               <v-icon left dark>{{menuItem.icon}}</v-icon>
               {{menuItem.text}}
           </v-btn>

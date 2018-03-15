@@ -11,7 +11,7 @@
 <script>
     import Vue from 'vue'
     import DateDiff from 'date-diff'
-    import mapStyles from './map-styles'
+    import mapStyles from './../shared/map-styles'
 
     // Custom Marker Icons
     import greenMarker from './../../assets/markers/green-marker.png'

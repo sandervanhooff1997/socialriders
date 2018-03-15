@@ -6,7 +6,7 @@
             </v-flex>
         </v-layout>
         <div class="text-xs-center">
-            <v-avatar :tile="tile" :size="400">
+            <v-avatar :size="400">
                 <img src="./../../assets/logo512x512.png" align="Logo">
             </v-avatar>
             <br>

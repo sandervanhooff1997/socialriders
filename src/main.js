@@ -7,8 +7,6 @@ import router from './router/router'
 import Vuetify from 'vuetify'
 import * as firebase from 'firebase'
 import { store } from './vuex/store'
-import VueLocalForage from 'vue-localforage'
-import VueSession from 'vue-session'
 import AlertCmp from './components/shared/Alert'
 import 'vuetify/dist/vuetify.min.css'
 import './styles/overrides.css'
@@ -21,14 +19,12 @@ Vue.use(Vuetify, {
         primary: '#ff7200',
         secondary: '#424242',
         accent: '#82B1FF',
-        error: '#FF5252',
+        error: '#FF0000',
         info: '#2196F3',
         success: '#4CAF50',
         warning: '#FFC107'
     }
 })
-Vue.use(VueLocalForage)
-Vue.use(VueSession)
 
 /**
  * Global components
