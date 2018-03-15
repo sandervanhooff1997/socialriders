@@ -2,94 +2,73 @@
     <div>
         <v-stepper v-model="step" style="height: 100%;">
             <v-stepper-header>
-                <v-stepper-step step="1" color="info" :complete="step > 1">Vehicle</v-stepper-step>
-                <v-divider></v-divider>
-                <v-stepper-step step="2" :complete="step > 2">Starting location</v-stepper-step>
-                <v-divider></v-divider>
-                <v-stepper-step step="3" :complete="step > 3">When</v-stepper-step>
-                <v-divider></v-divider>
-                <v-stepper-step step="4" :complete="completed">Additional Info</v-stepper-step>
+                <div v-for="(header, index) in headers" :key="header.text">
+                    <v-stepper-step :step="index+1" :complete="step > header.step">{{header.text}}{{header.complete}}</v-stepper-step>
+                    <v-divider v-if="index+1 < headers.length"></v-divider>
+                </div>
             </v-stepper-header>
             <v-stepper-items>
-                <v-stepper-content step="1">
+                <v-stepper-content v-for="(content, index) in contents" :key="content.step" :step="content.step">
                     <v-card class="mb-3">
                         <v-card-text class="text-xs-center">
                             <div>
-                                <p class="display-1">Vehicle</p>
-                                <div>Please choose the type of vehicle</div>
+                                <p class="display-1">{{content.title}}</p>
+                                <div>{{content.subtitle}}</div>
                             </div>
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
-                            <v-layout row wrap>
-                                <!--Motorcycle-->
-                                <v-flex xs12 sm4>
-                                    <div @click="setVehicle('motorcycle')" :class="{active: isVehicle('motorcycle')}" class="iconWrapper">
-                                        <v-tooltip bottom>
-                                            <i class="faIcon fas fa-motorcycle" slot="activator"></i>
-                                            <span>Motorcycle</span>
-                                        </v-tooltip>
-                                    </div>
-                                </v-flex>
-                                <!--Car-->
-                                <v-flex xs12 sm4>
-                                    <div @click="setVehicle('car')" :class="{active: isVehicle('car')}" class="iconWrapper">
-                                        <v-tooltip bottom>
-                                            <i class="faIcon fas fa-car" slot="activator"
-                                               @click="setVehicle('car')"
-                                               :class="{active: isVehicle('car')}"></i>
-                                            <span>Car</span>
-                                        </v-tooltip>
-                                    </div>
-                                </v-flex>
-                                <!--Bicycle-->
-                                <v-flex xs12 sm4>
-                                    <div @click="setVehicle('bicycle')" :class="{active: isVehicle('bicycle')}" class="iconWrapper">
-                                        <v-tooltip bottom>
-                                            <i class="faIcon fas fa-bicycle" slot="activator"
-                                               @click="setVehicle('bycicle')"
-                                               :class="{active: isVehicle('bycicle')}"></i>
-                                            <span>Bicycle</span>
-                                        </v-tooltip>
-                                    </div>
-                                </v-flex>
+                            <!--STEP 1-->
+                            <v-layout row wrap v-if="content.step == 1">
+                                    <!--Motorcycle-->
+                                    <v-flex xs12 sm4>
+                                        <div @click="setVehicle('motorcycle')" :class="{active: isVehicle('motorcycle')}" class="iconWrapper">
+                                            <v-tooltip bottom>
+                                                <i class="faIcon fas fa-motorcycle" slot="activator"></i>
+                                                <span>Motorcycle</span>
+                                            </v-tooltip>
+                                        </div>
+                                    </v-flex>
+                                    <!--Car-->
+                                    <v-flex xs12 sm4>
+                                        <div @click="setVehicle('car')" :class="{active: isVehicle('car')}" class="iconWrapper">
+                                            <v-tooltip bottom>
+                                                <i class="faIcon fas fa-car" slot="activator"
+                                                   @click="setVehicle('car')"
+                                                   :class="{active: isVehicle('car')}"></i>
+                                                <span>Car</span>
+                                            </v-tooltip>
+                                        </div>
+                                    </v-flex>
+                                    <!--Bicycle-->
+                                    <v-flex xs12 sm4>
+                                        <div @click="setVehicle('bicycle')" :class="{active: isVehicle('bicycle')}" class="iconWrapper">
+                                            <v-tooltip bottom>
+                                                <i class="faIcon fas fa-bicycle" slot="activator"
+                                                   @click="setVehicle('bycicle')"
+                                                   :class="{active: isVehicle('bycicle')}"></i>
+                                                <span>Bicycle</span>
+                                            </v-tooltip>
+                                        </div>
+                                    </v-flex>
                             </v-layout>
-                        </v-container>
-                    </v-card>
-                    <v-btn color="info" @click="step = 2" v-if="vehicle">Continue</v-btn>
-                </v-stepper-content>
-                <v-stepper-content step="2" >
-                    <v-card class="mb-3">
-                        <!--Content Title-->
-                        <v-card-text class="text-xs-center">
-                            <p class="display-1">
-                                Starting location
-                                <v-tooltip bottom>
-                                    <v-icon slot="activator" color="info">info</v-icon>
-                                    <span>Use above's search input to search for places</span>
-                                </v-tooltip>
-                            </p>
-                            <p>Click on the map below to set the starting location of your trip!</p>
-                        </v-card-text>
 
-                        <!--Selected starting location-->
-                        <span class="subtitle" v-if="startingAddress">Selected address: <b>{{startingAddress}}</b></span>
+                            <!--STEP 2-->
+                            <v-layout row wrap v-if="content.step == 2">
+                                    <!--<v-tooltip bottom>-->
+                                        <!--<v-icon slot="activator" color="info">info</v-icon>-->
+                                        <!--<span>Use above's search input to search for places</span>-->
+                                    <!--</v-tooltip>-->
 
-                        <!--Google Maps element-->
-                        <div class="google-map mb-3" :id="mapId">Google Maps</div>
-                    </v-card>
-                    <v-btn class="info" @click="step = 3" v-if="startingLocation && startingAddress">Continue</v-btn>
-                    <v-btn flat @click="step = 1">Back</v-btn>
-                </v-stepper-content>
-                <v-stepper-content step="3">
-                    <v-card class="mb-3" >
-                        <!--Content Title-->
-                        <v-card-text class="text-xs-center">
-                            <p class="display-1">When</p>
-                            <p>Choose when the trip is planned</p>
-                        </v-card-text>
-                        <v-container grid-list-md text-xs-center>
-                            <v-layout row wrap>
+                                    <!--Selected starting location-->
+                                <span class="subtitle" v-if="startingAddress">Selected address: <b>{{startingAddress}}</b></span>
 
+                                <!--Google Maps element-->
+                                <div class="google-map" :id="mapId">Google Maps</div>
+                            </v-layout>
+                            </v-layout>
+
+                            <!--STEP 3-->
+                            <v-layout row wrap v-if="content.step == 3">
                                 <!--Date Picker-->
                                 <v-flex xs12 sm4 offset-sm1>
                                     <p class="title mt-0 pt-0">Pick a Date</p>
@@ -101,7 +80,7 @@
                                     ></v-date-picker>
                                 </v-flex>
                                 <!--Time Picker-->
-                                <v-flex xs12 sm4 offset-sm2>
+                                <v-flex xs12 sm4 offset-sm2 class="mb-3">
                                     <p class="title">Pick a Time</p>
                                     <v-time-picker
                                             v-model="time"
@@ -110,20 +89,9 @@
                                     ></v-time-picker>
                                 </v-flex>
                             </v-layout>
-                        </v-container>
-                    </v-card>
-                    <v-btn class="info" v-if="date && time" @click="step = 4">Continue</v-btn>
-                    <v-btn flat @click="step = 2">Back</v-btn>
-                </v-stepper-content>
-            <v-stepper-content step="4">
-                    <v-card class="mb-3" >
-                        <!--Content Title-->
-                        <v-card-text class="text-xs-center">
-                            <p class="display-1">Additional Info</p>
-                            <p>Enter any additional information about the trip</p>
-                        </v-card-text>
-                        <v-container grid-list-md text-xs-center>
-                            <v-layout row wrap>
+
+                            <!--STEP 4-->
+                            <v-layout row wrap v-if="content.step == 4">
                                 <v-flex xs12 offset-sm3 sm6>
                                     <v-text-field
                                             label="Title"
@@ -140,8 +108,9 @@
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn class="success" v-if="completed">Save</v-btn>
-                    <v-btn flat @click="step = 3">Back</v-btn>
+                    <v-btn v-if="!content.save" class="info" @click="step = content.next">Continue</v-btn>
+                    <v-btn v-if="content.save && completed" class="success">Save</v-btn>
+                    <v-btn v-if="content.previous" @click="step = content.previous" flat>Back</v-btn>
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
@@ -175,7 +144,48 @@
                 time: null,
                 /** Step4 */
                 title: null,
-                description: null
+                description: null,
+
+                headers: [
+                    {step: 1, text: 'Vehicle'},
+                    {step: 2, text: 'Location'},
+                    {step: 3, text: 'When'},
+                    {step: 4, text: 'Additionals'},
+                ],
+                contents: [
+                    {
+                        step: 1,
+                        title: 'Vehicle',
+                        subtitle: 'Please choose the type of vehicle',
+                        save: false,
+                        previous: null,
+                        next: 2,
+                    },
+                    {
+                        step: 2,
+                        title: 'Location',
+                        subtitle: 'Click on the map below to set the starting location of your trip',
+                        save: false,
+                        previous: 1,
+                        next: 3,
+                    },
+                    {
+                        step: 3,
+                        title: 'When',
+                        subtitle: 'Choose when you plan on taking this trip',
+                        save: false,
+                        previous: 2,
+                        next: 4,
+                    },
+                    {
+                        step: 4,
+                        title: 'Additionals',
+                        subtitle: 'Enter any additional information about the trip',
+                        save: true,
+                        previous: 3,
+                        next: null,
+                    }
+                ]
             }
         },
         computed: {
@@ -193,14 +203,14 @@
             },
             completed () {
                 // a set of rules to make sure all data is set
-                return  this.vehicle !== undefined &&
-                        this.startingAddress !== undefined &&
-                        this.date !== undefined &&
-                        this.time !== undefined &&
-                        this.title !== undefined &&
+                return  this.vehicle !== null &&
+                        this.startingAddress !== null &&
+                        this.date !== null &&
+                        this.time !== null &&
+                        this.title !== null &&
                         this.title !== null &&
                         this.title !== ''
-            }
+            },
         },
         methods: {
             /**
