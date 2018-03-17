@@ -1,5 +1,8 @@
 <template>
   <v-app>
+      <!--Show app messages-->
+      <app-alert v-if="message" @dismissed="onDismissed" :text="message.text" :type="message.type"></app-alert>
+
       <!--Mobile Menu-->
       <v-navigation-drawer  app v-model="drawer">
         <v-list class="pt-0">
@@ -23,14 +26,14 @@
           <span class="hidden-sm-and-down">{{ title }}</span>
         </v-toolbar-title>
         <v-text-field
-                color="white"
                 clearable
+                solo-inverted
                 prepend-icon="explore"
-                v-if="['explore', 'organize'].indexOf($route.name) > -1"
+                v-if="['explore'].indexOf($route.name) > -1"
                 id="search-input"
                 class="mx-3"
         ></v-text-field>
-        <v-spacer v-if="['explore', 'organize'].indexOf($route.name) < 0"></v-spacer>
+        <v-spacer v-if="['explore'].indexOf($route.name) < 0"></v-spacer>
 
         <!--Menu Links-->
         <v-toolbar-items class="hidden-sm-and-down">
@@ -87,6 +90,9 @@
             onLogout () {
                 this.$store.dispatch('logout')
                 this.$router.push('/signin')
+            },
+            onDismissed () {
+                this.$store.dispatch('clearMessage')
             }
         },
         computed: {
@@ -111,7 +117,10 @@
             },
             user () {
                 return this.$store.getters.user
-            }
+            },
+            message () {
+                return this.$store.getters.message
+            },
         }
     }
 </script>

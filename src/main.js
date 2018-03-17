@@ -26,6 +26,8 @@ Vue.use(Vuetify, {
     }
 })
 
+window.Event = new Vue();
+
 /**
  * Global components
  */

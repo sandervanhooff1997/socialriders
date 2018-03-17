@@ -8,10 +8,10 @@ export default {
     setLoading (state, loading) {
         state.loading = loading
     },
-    setError (state, error) {
-        state.error = error
+    setMessage (state, message) {
+        state.message = message
     },
-    clearError (state) {
-        state.error = null
+    clearMessage (state) {
+        state.message = null
     }
 }

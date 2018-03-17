@@ -17,12 +17,12 @@ export default {
 
         firebase.auth().signInWithPopup(provider).then(function (result) {
             commit('setLoading', false)
-            commit('clearError')
+            commit('clearMessage')
 
             // This gives you a Google Access Token. You can use it to access the Google API.
-            var token = result.credential.accessToken
+            const token = result.credential.accessToken
 
-            var user = {
+            const user = {
                 uid: result.user.uid,
                 email: result.user.email,
                 name: result.user.displayName,
@@ -31,14 +31,8 @@ export default {
 
             commit('setUser', user)
         }).catch(function (error) {
-            var errorCode = error.code
-            var errorMessage = error.message
-            var email = error.email
-            var credential = error.credential // firebase.auth.AuthCredential type that was used.
-
             commit('setLoading', false)
-            commit('setError', error)
-            console.log(errorMessage)
+            commit('setMessage', {text:error.message, type: 'error'})
         });
     },
     autoSignIn ({commit}, user) {
@@ -55,18 +49,30 @@ export default {
     },
     fetchExplores ({commit}) {
         firebase.firestore().collection('/explores').get().then(querySnapshot => {
-            let explores = []
+            commit('clearMessage')
+            const explores = []
 
             querySnapshot.forEach(function(doc) {
                 explores.push(doc.data())
             });
 
             commit('setExplores', explores)
-        }).catch(err => {
-            console.log("Error fetching explores: " + err.message)
+        }).catch(error => {
+            commit('setMessage', {text:error.message, type: 'error'})
         })
     },
-    clearError ({commit}) {
-        commit('clearError')
+    organizeExplore({commit}, explore) {
+        commit('setLoading', true)
+        firebase.firestore().collection('/explores').add(explore).then((docRef) => {
+            commit('setLoading', false)
+            commit('clearMessage')
+            commit('setMessage', {text:'Explore Organized!', type: 'success'})
+            return true
+        }).catch((error) => {
+            commit('setMessage', {text:error.message, type: 'error'})
+        })
+    },
+    clearMessage ({commit}) {
+        commit('clearMessage')
     }
 }

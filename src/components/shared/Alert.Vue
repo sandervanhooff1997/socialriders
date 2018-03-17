@@ -7,7 +7,8 @@
             :bottom="true"
             :right="true"
             :value="true"
-            :color="'info'"
+            :color="type"
+            fixed
             :multi-line="true"
     >
         {{ text }}
@@ -27,7 +28,7 @@
                 this.$emit('dismissed')
             }
         },
-        props: ['text'],
+        props: ['text', 'type'],
         created () {
             let self = this;
             setTimeout(function() {

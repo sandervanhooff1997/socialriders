@@ -11,7 +11,7 @@ export default {
     loading (state) {
         return state.loading
     },
-    error (state) {
-        return state.error
+    message (state) {
+        return state.message
     }
 }

@@ -11,7 +11,7 @@
 <script>
     import Vue from 'vue'
     import DateDiff from 'date-diff'
-    import mapStyles from './../shared/map-styles'
+    import mapStyles from '../shared/maps/map-styles'
 
     // Custom Marker Icons
     import greenMarker from './../../assets/markers/green-marker.png'
@@ -77,12 +77,20 @@
                 const content =
                     "<h1>" + explore.title + "</h1>" +
                     "<p>" + explore.description + "</p>";
-                const infowindow = new google.maps.InfoWindow({
+
+                const infoWindow = new google.maps.InfoWindow({
                     content: content
                 });
 
+                this.infoWindows.push(infoWindow)
+
+                const self = this;
                 marker.addListener('click', function() {
-                    infowindow.open(map, marker);
+                    self.infoWindows.forEach((tmpInfoWindow) => {
+                        tmpInfoWindow.setMap(null)
+                    })
+                    document.getElementById('search-input').value = explore.address
+                    infoWindow.open(map, marker);
                 });
             },
             /**
@@ -91,7 +99,7 @@
             getMarkerIcon (date) {
                 const today = new Date()
                 const exploreDate = new Date(date)
-                const diffInDays = new DateDiff(today, exploreDate).days()
+                const diffInDays = new DateDiff(exploreDate, today).days()
 
                 if (diffInDays < 30) {
                     return greenMarker
@@ -122,7 +130,7 @@
             searchBox.addListener('places_changed', function() {
                 var places = searchBox.getPlaces();
 
-                if (places.length == 0) {
+                if (places.length === 0) {
                     return;
                 }
 
