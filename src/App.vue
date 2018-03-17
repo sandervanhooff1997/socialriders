@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :class="{onSignInPage : onSignInPage}">
       <!--Show app messages-->
       <app-alert v-if="message" @dismissed="onDismissed" :text="message.text" :type="message.type"></app-alert>
 
@@ -20,10 +20,11 @@
       </v-navigation-drawer>
 
       <!--Desktop menu-->
-      <v-toolbar class="primary" dark app>
+      <v-toolbar v-if="$route.name !== 'signin'" class="toolbar" dark app>
         <v-toolbar-side-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
+
         <v-toolbar-title>
-          <span class="hidden-sm-and-down">{{ title }}</span>
+            <span class="hidden-sm-and-down white--text">{{ title }}</span>
         </v-toolbar-title>
         <v-text-field
                 clearable
@@ -46,7 +47,7 @@
             <!--Profile Icon Menu-->
             <v-menu transition="slide-y-transition" bottom>
                 <v-avatar size="36px" slot="activator">
-                    <img :src="user.photoUrl" alt="user.name">
+                    <img :src="user.photoUrl" :alt="user.name">
                 </v-avatar>
                 <v-list>
                     <v-list-tile avatar>
@@ -84,7 +85,7 @@
             dialog: false,
             drawer: false,
             title: 'SocialRiders',
-            profileMenu: false
+            profileMenu: false,
         }),
         methods: {
             onLogout () {
@@ -121,6 +122,9 @@
             message () {
                 return this.$store.getters.message
             },
+            onSignInPage () {
+                return this.$route.name === 'signin'
+            }
         }
     }
 </script>
@@ -128,5 +132,14 @@
 <style>
     #appContent > div > div {
         height: 100%;
+    }
+    .toolbar {
+        background: #6C0CE8;
+        background: -webkit-linear-gradient(45deg, #6C0CE8 0%, #0288d1 100%);
+        background: linear-gradient(45deg, #6C0CE8 0%, #0288d1 100%);
+    }
+    .application.onSignInPage {
+        background-image: url('./assets/bg1.jpg');
+        background-size: cover;
     }
 </style>

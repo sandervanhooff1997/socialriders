@@ -1,6 +1,41 @@
 <template>
     <div style="width: 100%; height: 100%;">
+        <!--InfoWindow-->
+        <v-navigation-drawer app right mobile-break-point="100000" v-model="selectedExplore" v-if="selectedExplore">
+            <v-card flat>
+                <v-card-media src="https://vuetifyjs.com/static/doc-images/parallax/material2.jpg" height="200px">
+                    <v-layout wrap align-center>
+                        <v-flex class="text-xs-center">
+
+                                <v-avatar>
+                                    <router-link :to="{ name: 'profile', params: { uid: selectedExplore.user.uid }}">
+                                    <img  :src="selectedExplore.user.photoUrl" :alt="selectedExplore.user.name">
+                                    </router-link>
+                                </v-avatar>
+                                <div class="title white--text">{{selectedExplore.user.name}}</div>
+                        </v-flex>
+                    </v-layout>
+                </v-card-media>
+                <v-card-title primary-title>
+                    <div>
+                        <div class="headline">{{selectedExplore.title}}</div>
+                        <span class="grey--text">{{selectedExplore.date | date-format}} - {{selectedExplore.time}}</span>
+                    </div>
+                </v-card-title>
+                <v-slide-y-transition>
+                    <v-card-text>
+                        <p class="text-xs-left">{{selectedExplore.description}}</p>
+                    </v-card-text>
+                </v-slide-y-transition>
+                <v-card-actions>
+                    <v-btn color="secondary">Join</v-btn>
+                    <v-btn flat @click="selectedExplore = null">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-navigation-drawer>
+
         <div class="google-map" :id="mapId">Google Maps</div>
+
         <div id="legend">
             <h3>Legend</h3>
             <v-divider class="legendDevider"></v-divider>
@@ -31,7 +66,7 @@
                     styles: mapStyles.retro
                 },
                 markers: [], // all map markers
-                infoWindows: [],
+                selectedExplore: null,
                 icons: {
                     green: {
                         name: 'Less than 30 days',
@@ -73,24 +108,10 @@
              * Generates an Google Maps InfoWindow with the given explore data
              * Adds a click listener to the InfoWindow
              */
-            addInfoWindow (marker, explore) {
-                const content =
-                    "<h1>" + explore.title + "</h1>" +
-                    "<p>" + explore.description + "</p>";
-
-                const infoWindow = new google.maps.InfoWindow({
-                    content: content
-                });
-
-                this.infoWindows.push(infoWindow)
-
+            addInfoWindowClickListener (marker, explore) {
                 const self = this;
                 marker.addListener('click', function() {
-                    self.infoWindows.forEach((tmpInfoWindow) => {
-                        tmpInfoWindow.setMap(null)
-                    })
-                    document.getElementById('search-input').value = explore.address
-                    infoWindow.open(map, marker);
+                    self.showInfoWindow(explore)
                 });
             },
             /**
@@ -108,6 +129,12 @@
                 } else {
                     return redMarker
                 }
+            },
+            showInfoWindow (explore) {
+                this.selectedExplore = explore
+            },
+            hideInfoWindow() {
+                this.selectedExplore = null
             }
         },
         mounted () {
@@ -190,7 +217,7 @@
             this.explores.forEach((explore) => {
                 const icon = this.getMarkerIcon(explore.date)
                 const marker = this.addMarker(explore.location, icon)
-                this.addInfoWindow(marker, explore)
+                this.addInfoWindowClickListener(marker, explore)
             })
 
             // Async load current position and create marker on success

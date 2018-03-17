@@ -1,7 +1,4 @@
 <template>
-    <!--<v-alert type="error" dismissible @input="onClose" :value="true" transition="scale-transition">-->
-        <!--{{ text }}-->
-    <!--</v-alert>-->
     <v-snackbar
             :timeout="timeout"
             :bottom="true"

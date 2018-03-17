@@ -23,7 +23,7 @@
         methods: {
             onDismissed () {
                 this.$store.dispatch('clearError')
-            }
+            },
         },
         computed: {
             error () {
@@ -35,6 +35,6 @@
         },
         mounted () {
             this.$store.dispatch('fetchExplores')
-        }
+        },
     }
 </script>

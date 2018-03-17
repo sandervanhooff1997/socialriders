@@ -1,8 +1,8 @@
 <template>
     <div id="wrapper">
         <div class="text-xs-center">
-            <v-avatar :size="400">
-                <img src="./../../assets/logo512x512.png" align="Logo">
+            <v-avatar :size="400" class="mt-4">
+                <img src="./../../assets/logo512x512-white.png" align="Logo">
             </v-avatar>
             <br>
             <v-btn  @click="signin('google')"

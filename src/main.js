@@ -10,19 +10,20 @@ import { store } from './vuex/store'
 import AlertCmp from './components/shared/Alert'
 import 'vuetify/dist/vuetify.min.css'
 import './styles/overrides.css'
+import Moment from 'moment'
 
 /**
  * Global usages
  */
 Vue.use(Vuetify, {
     theme: {
-        primary: '#ff7200',
-        secondary: '#424242',
+        primary: '#6C0CE8',
+        secondary: '#0288D1',
         accent: '#82B1FF',
         error: '#FF0000',
-        info: '#2196F3',
+        info: '#0288D1',
         success: '#4CAF50',
-        warning: '#FFC107'
+        warning: '#FFFF0D'
     }
 })
 
@@ -37,6 +38,10 @@ Vue.component('app-alert', AlertCmp)
  * Production tips in console turned off
  */
 Vue.config.productionTip = false
+
+Vue.filter('date-format', function (date) {
+    return Moment(date).format('MMMM Do YYYY')
+})
 
 /**
  * The global Vue instance

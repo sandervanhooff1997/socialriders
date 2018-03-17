@@ -334,7 +334,8 @@
                     date: this.date,
                     time: this.time,
                     title: this.title,
-                    description: this.description
+                    description: this.description,
+                    user: this.$store.getters.user
                 }
                 if (this.$store.dispatch('organizeExplore', explore)){
                     this.$router.push('/')
