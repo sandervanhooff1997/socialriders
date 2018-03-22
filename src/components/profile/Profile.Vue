@@ -1,14 +1,42 @@
 <template>
     <div>
-        <v-jumbotron color="primary" dark>
+        <v-jumbotron dark class="banner">
             <v-container fill-height>
                 <v-layout align-center>
                     <v-flex text-xs-center>
-                        <h3 class="display-3">{{user.name}}</h3>
+                        <v-avatar size="120" class="grey lighten-4">
+                            <img :src="user.photoUrl" :alt="user.name">
+                        </v-avatar>
+                        <h3 class="display-3 thinText">{{user.name}}</h3>
                     </v-flex>
                 </v-layout>
             </v-container>
         </v-jumbotron>
+
+        <v-tabs
+                slot="extension"
+                v-model="tab"
+                grow
+        >
+            <v-tabs-slider color="primary"></v-tabs-slider>
+            <v-tab v-for="item in items" :key="item">
+                {{ item }}
+            </v-tab>
+        </v-tabs>
+        <v-tabs-items v-model="tab" style="height: 100%;">
+            <v-tab-item v-for="item in items" :key="item" style="height: 100%;">
+                <v-card flat style="height: 100%;">
+                    <v-container fill-height>
+                        <v-layout>
+                            <v-flex>
+                                <v-card-text>{{ text }}</v-card-text>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                </v-card>
+            </v-tab-item>
+        </v-tabs-items>
+
         <v-footer height="auto" v-if="socialNetworks">
             <v-card flat tile width="100%" >
                 <v-card-title class="teal white--text">
@@ -42,7 +70,12 @@
                     name: '',
                     email: '',
                     photoUrl: ''
-                }
+                },
+                tab: null,
+                items: [
+                    'experiences', 'explores', 'social media'
+                ],
+                text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
             }
         },
         computed: {
@@ -93,3 +126,25 @@
         }
     }
 </script>
+
+<style scoped>
+    .banner {
+        -webkit-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);
+        -moz-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);
+        box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);
+        background: #8e24aa;
+        background: -webkit-linear-gradient(100deg, #8e24aa 0%, #ff6e40 100%);
+        background: linear-gradient(100deg, #8e24aa 0%, #ff6e40 100%);
+    }
+    .avatar {
+        -webkit-box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+        -moz-box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+        box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
+    }
+    nav {
+        box-shadow: none!important;
+    }
+    .thinText {
+        font-weight: lighter;
+    }
+</style>

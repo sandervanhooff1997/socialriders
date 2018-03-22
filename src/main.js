@@ -8,26 +8,28 @@ import Vuetify from 'vuetify'
 import * as firebase from 'firebase'
 import { store } from './vuex/store'
 import AlertCmp from './components/shared/Alert'
-import 'vuetify/dist/vuetify.min.css'
-import './styles/overrides.css'
 import Moment from 'moment'
+import jQuery from 'jquery'
+import 'vuetify/dist/vuetify.min.css'
+import './styles/custom.css'
 
 /**
  * Global usages
  */
 Vue.use(Vuetify, {
     theme: {
-        primary: '#6C0CE8',
-        secondary: '#0288D1',
-        accent: '#82B1FF',
-        error: '#FF0000',
-        info: '#0288D1',
-        success: '#4CAF50',
-        warning: '#FFFF0D'
+        primary: '#8e24aa',
+        secondary: '#0288d1',
+        accent: '#1de9b6',
+        error: '#FF5252',
+        info: '#0288d1',
+        success: '#43A047',
+        warning: '#ff6e40'
     }
 })
 
 window.Event = new Vue();
+window.$ = jQuery
 
 /**
  * Global components

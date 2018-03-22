@@ -76,17 +76,20 @@ export default {
         commit('setUser', null)
     },
     fetchExplores ({commit}) {
-        firebase.firestore().collection('/explores').get().then(querySnapshot => {
-            commit('clearMessage')
-            const explores = []
+        firebase.firestore()
+            .collection('/explores')
+            .onSnapshot((querySnapshot) => {
+                commit('clearMessage')
+                const explores = []
 
-            querySnapshot.forEach(function(doc) {
-                explores.push(doc.data())
-            });
+                querySnapshot.forEach(function(doc) {
+                    explores.push(doc.data())
+                });
 
-            commit('setExplores', explores)
-        }).catch(error => {
-            commit('setMessage', {text:error.message, type: 'error'})
+                commit('setExplores', explores)
+            }, (error) => {
+                commit('setMessage', {text:error.message, type: 'error'
+            })
         })
     },
     organizeExplore({commit}, explore) {
@@ -99,6 +102,14 @@ export default {
         }).catch((error) => {
             commit('setMessage', {text:error.message, type: 'error'})
         })
+    },
+    errorMessage ({commit}, text) {
+        commit('clearMessage')
+        commit('setMessage', {type: 'error', text: text})
+    },
+    successMessage ({commit}, text) {
+        commit('clearMessage')
+        commit('setMessage', {type: 'success', text: text})
     },
     clearMessage ({commit}) {
         commit('clearMessage')

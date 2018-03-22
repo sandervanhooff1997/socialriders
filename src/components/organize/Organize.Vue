@@ -68,11 +68,37 @@
                         <v-container grid-list-md text-xs-center>
                             <v-layout row wrap v-if="step == 2">
                                 <v-flex xs12 sm10 offset-sm1>
+                                    <!--startpoint-->
                                     <v-text-field
+                                            :id="startPoint.id"
+                                            :placeholder="startPoint.placeholder"
+                                            prepend-icon="flight_takeoff"
+                                            :value="startPoint.address"
                                             clearable
+                                    ></v-text-field>
+
+                                    <!--waypoints-->
+                                    <v-text-field
+                                            v-for="(waypoint, index) in waypoints"
+                                            :key="index"
+                                            :id="waypoint.id"
+                                            :placeholder="waypoint.placeholder"
                                             prepend-icon="explore"
-                                            id="search-input"
-                                            class="mx-3"
+                                            :value="waypoint.address"
+                                            clearable
+                                    ></v-text-field>
+
+                                    <v-btn @click="addWaypoint(getWaypointId(), 'Waypoint ' + (waypoints.length + 1))" fab dark color="accent">
+                                        <v-icon dark>add</v-icon>
+                                    </v-btn>
+
+                                    <!--endpoint-->
+                                    <v-text-field
+                                            :id="endPoint.id"
+                                            :placeholder="endPoint.placeholder"
+                                            prepend-icon="flight_land"
+                                            :value="endPoint.address"
+                                            clearable
                                     ></v-text-field>
 
                                     <!--Selected starting location-->
@@ -162,7 +188,7 @@
     export default {
         data () {
             return {
-                step: 1,
+                step: 2,
                 headers: {
                     step1:  'Vehicle',
                     step2:  'Location',
@@ -184,6 +210,10 @@
                 /** Step 1 */
                 vehicle: null,
                 /** Step 2 */
+                startPoint: {id: 'startPoint', placeholder: 'Starting location'},
+                endPoint: {id: 'endPoint', placeholder: 'Target destination'},
+                waypoints: [],
+                displayedWaypoints: [],
                 showInfoText: false,
                 map: null,
                 mapId: "map",
@@ -214,120 +244,181 @@
 
             /** Step 2 */
             initMap () {
-                var self = this;
+                const self = this;
 
                 // Google maps
                 this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
+                this.addSearchBox(this.startPoint.id, 'Starting location')
+                this.addSearchBox(this.endPoint.id, 'Target destination')
+            },
+            getWaypointId () {
+               return 'waypoint' + this.waypoints.length;
+            },
+            addWaypoint (id, placeholder) {
+                this.waypoints.push({location: null, address: null, id: id, placeholder: placeholder})
+                this.addSearchBox(id)
+            },
+            addSearchBox (inputId) {
+                const self = this;
 
-                // Create the search box
-                var input = document.getElementById('search-input');
-                var searchBox = new google.maps.places.SearchBox(input);
+                // selecting element by ID must be in $(document).ready()
+                $(document).ready(function(){
+                    // Create the search box and link it to the UI element.
+                    const input = document.getElementById(inputId);
 
-                this.map.addListener('bounds_changed', function() {
-                    searchBox.setBounds(self.map.getBounds());
-                });
+                    const searchBox = new google.maps.places.SearchBox(input);
 
-                var markers = [];
-                // Listen for the event fired when the user selects a prediction and retrieve
-                // more details for that place.
-                searchBox.addListener('places_changed', function() {
-                    var places = searchBox.getPlaces();
+                    // Bias the SearchBox results towards current map's viewport.
+                    self.map.addListener('bounds_changed', function() {
+                        searchBox.setBounds(self.map.getBounds());
+                    });
 
-                    if (places.length == 0) {
-                        return;
-                    }
+                    let markers = [];
+                    // Listen for the event fired when the user selects a prediction and retrieve
+                    // more details for that place.
+                    searchBox.addListener('places_changed', function() {
+                        let places = searchBox.getPlaces();
 
-                    self.clearMarkers()
-
-                    // For each place, get the icon, name and location.
-                    var bounds = new google.maps.LatLngBounds();
-                    places.forEach(function(place) {
-                        if (!place.geometry) {
-                            console.log("Returned place contains no geometry");
+                        if (places.length === 0) {
                             return;
                         }
-                        var icon = {
-                            url: place.icon,
-                            size: new google.maps.Size(71, 71),
-                            origin: new google.maps.Point(0, 0),
-                            anchor: new google.maps.Point(17, 34),
-                            scaledSize: new google.maps.Size(25, 25)
-                        };
 
-                        // Create a marker for each place.
-                        markers.push(new google.maps.Marker({
-                            map: self.map,
-                            icon: icon,
-                            title: place.name,
-                            position: place.geometry.location
-                        }));
+                        // Clear out the old markers.
+                        markers.forEach(function(marker) {
+                            marker.setMap(null);
+                        });
+                        markers = [];
 
-                        if (place.geometry.viewport) {
-                            // Only geocodes have viewport.
-                            bounds.union(place.geometry.viewport);
-                        } else {
-                            bounds.extend(place.geometry.location);
-                        }
+                        // For each place, get the icon, name and location.
+                        let bounds = new google.maps.LatLngBounds();
+                        places.forEach(function(place) {
+                            if (!place.geometry) {
+                                console.log("Returned place contains no geometry");
+                                return;
+                            }
+                            const icon = {
+                                url: place.icon,
+                                size: new google.maps.Size(71, 71),
+                                origin: new google.maps.Point(0, 0),
+                                anchor: new google.maps.Point(17, 34),
+                                scaledSize: new google.maps.Size(25, 25)
+                            };
+
+                            // Create a marker for each place.
+                            markers.push(new google.maps.Marker({
+                                map: self.map,
+                                icon: icon,
+                                title: place.name,
+                                position: place.geometry.location
+                            }));
+
+                            if (input.id === self.startPoint.id) {
+                                self.startPlaceFound(place)
+                            } else if (input.id === self.endPoint.id) {
+                                self.endPlaceFound(place)
+                            } else {
+                                self.waypointPlaceFound(input, place)
+                            }
+
+                            if (place.geometry.viewport) {
+                                // Only geocodes have viewport.
+                                bounds.union(place.geometry.viewport);
+                            } else {
+                                bounds.extend(place.geometry.location);
+                            }
+                        });
+                        self.map.fitBounds(bounds);
                     });
-                    self.map.fitBounds(bounds);
-                });
+                })
+            },
+            startPlaceFound(place) {
+                this.startPoint.address = place.formatted_address
+                this.startPoint.location = place.geometry.location
+                this.calculateAndDisplayRoute();
+            },
+            endPlaceFound(place) {
+                this.endPoint.address = place.formatted_address
+                this.endPoint.location = place.geometry.location
+                this.calculateAndDisplayRoute();
+            },
+            waypointPlaceFound(input, place) {
+                let waypoint = this.waypoints.find((current) => {
+                    return current.id === input.id
+                })
 
-                this.map.addListener('click', (data) => {
-                    self.clearMarkers()
-                    self.addMarker({
-                        lat: data.latLng.lat(),
-                        lng: data.latLng.lng()
+                if (waypoint !== undefined) {
+                    waypoint.address = place.formatted_address
+                    waypoint.location = place.geometry.location
+                    this.calculateAndDisplayRoute();
+                }
+            },
+            calculateAndDisplayRoute() {
+                if (this.startPoint.address !== undefined
+                    && this.endPoint.address !== undefined
+                    && this.startPoint.location !== undefined
+                    && this.endPoint.location !== undefined)
+                {
+                    const self = this;
+                    const directionsService = new google.maps.DirectionsService;
+                    const directionsDisplay = new google.maps.DirectionsRenderer;
+
+                    directionsDisplay.setMap(this.map);
+
+                    // start point as first point
+                    this.displayedWaypoints.push({
+                        location: this.startPoint.location,
+                        stopover: true
                     })
-                    this.startingLocation = {
-                        lat: data.latLng.lat(),
-                        lng: data.latLng.lng()
+
+                    // waypoints inbetween
+                    this.displayedWaypoints = []
+                    for (let i = 0; i < this.waypoints.length; i++) {
+                        this.displayedWaypoints.push({
+                            location: this.waypoints[i].location,
+                            stopover: true
+                        });
                     }
 
-                    this.writeAddressName(this.startingLocation);
-                });
-            },
-            addMarker (pos) {
-                const marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(pos.lat, pos.lng),
-                    map: this.map
-                })
-                this.markers.push(marker)
+                    // end point as last point
+                    this.displayedWaypoints.push({
+                        location: this.endPoint.location,
+                        stopover: true
+                    })
 
-                return marker
-            },
-            writeAddressName (latLng) {
-                var self = this;
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({
-                        "location": latLng,
-                    },
-                    function(results, status) {
-                        if (status === google.maps.GeocoderStatus.OK) {
-                            var result = results.filter(function( result ) {
-                                return result.types.indexOf('street_address') >= 0;
-                            })[0];
-
-                            if (result) {
-                                self.startingAddress = result.formatted_address
-                            }
-                        }
-                        else{
-                            console.log("No address found")
+                    directionsService.route({
+                        origin: self.startPoint.location,
+                        destination: self.endPoint.location,
+                        waypoints: self.displayedWaypoints,
+                        optimizeWaypoints: true,
+                        travelMode: 'DRIVING' //todo: multiple driving modes support
+                    }, function(response, status) {
+                        if (status === 'OK') {
+                            directionsDisplay.setDirections(response);
+                            var route = response.routes[0];
+//                        var summaryPanel = document.getElementById('directions-panel');
+//                        summaryPanel.innerHTML = '';
+                            // For each route, display summary information.
+//                        for (var i = 0; i < route.legs.length; i++) {
+//                            var routeSegment = i + 1;
+//                            summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
+//                                '</b><br>';
+//                            summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
+//                            summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+//                            summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+//                        }
+                        } else {
+                            window.alert('Directions request failed due to ' + status);
                         }
                     });
-            },
-            clearMarkers () {
-                // Clear out the old markers.
-                this.markers.forEach(function(marker) {
-                    marker.setMap(null);
-                });
-                this.markers = []
+                } else {
+                    console.log('invalid start/end points')
+                }
             },
             /** Step 3 */
 
             /** Step 4 */
             saveExplore () {
-                var explore = {
+                const explore = {
                     vehicle: this.vehicle,
                     location: this.startingLocation,
                     address: this.startingAddress,
@@ -340,7 +431,7 @@
                 if (this.$store.dispatch('organizeExplore', explore)){
                     this.$router.push('/')
                 }
-            }
+            },
         },
         computed: {
             step1Completed () {
@@ -391,11 +482,8 @@
                 return this.$store.getters.loading
             }
         },
-        updated () {
-            // Eror fix: only load the map after step 2 is active and updated
-            if (this.step === 2) {
-                this.initMap()
-            }
+        mounted () {
+            this.initMap()
         }
     }
 </script>

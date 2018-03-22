@@ -20,7 +20,7 @@
       </v-navigation-drawer>
 
       <!--Desktop menu-->
-      <v-toolbar v-if="$route.name !== 'signin'" class="toolbar" dark app>
+      <v-toolbar v-if="$route.name !== 'signin'" class="toolbar purple-to-orange" :class="{toolbarProfile: $route.name === 'profile'}" dark app>
         <v-toolbar-side-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
 
         <v-toolbar-title>
@@ -59,6 +59,11 @@
                             <v-list-tile-sub-title>{{user.email}}</v-list-tile-sub-title>
                         </v-list-tile-content>
                     </v-list-tile>
+                    <v-list-tile to="/profile">
+                        <v-list-tile-content>
+                            <v-list-tile-title class="text-xs-center">Profile</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
                     <v-list-tile @click="onLogout">
                         <v-list-tile-content>
                             <v-list-tile-title class="text-xs-center">Logout</v-list-tile-title>
@@ -86,6 +91,11 @@
             drawer: false,
             title: 'SocialRiders',
             profileMenu: false,
+            menuItems: [
+                {icon: 'explore', text: 'Explore', link: '/explore'},
+                {icon: 'language', text: 'Experience', link: '/experience'},
+                {icon: 'alarm_on', text: 'Organize', link: '/organize'},
+            ]
         }),
         methods: {
             onLogout () {
@@ -97,22 +107,6 @@
             }
         },
         computed: {
-            menuItems () {
-                let menuItems = [
-                    {icon: 'lock_open', text: 'Sign in', link: '/signin'}
-                ]
-
-                if (this.userIsAuthenticated) {
-                    menuItems = [
-                        {icon: 'explore', text: 'Explore', link: '/explore'},
-                        {icon: 'language', text: 'Experience', link: '/experience'},
-                        {icon: 'alarm_on', text: 'Organize', link: '/organize'},
-                        {icon: 'face', text: 'Profile', link: '/profile'}
-                    ]
-                }
-
-                return menuItems
-            },
             userIsAuthenticated () {
                 return this.$store.getters.userIsAuthenticated
             },
@@ -130,16 +124,5 @@
 </script>
 
 <style>
-    #appContent > div > div {
-        height: 100%;
-    }
-    .toolbar {
-        background: #6C0CE8;
-        background: -webkit-linear-gradient(45deg, #6C0CE8 0%, #0288d1 100%);
-        background: linear-gradient(45deg, #6C0CE8 0%, #0288d1 100%);
-    }
-    .application.onSignInPage {
-        background-image: url('./assets/bg1.jpg');
-        background-size: cover;
-    }
+
 </style>
