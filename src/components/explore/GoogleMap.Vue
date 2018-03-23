@@ -61,6 +61,12 @@
                 map: null,
                 mapId: "map",
                 mapOptions: {
+                    zoomControl: true,
+                    mapTypeControl: false,
+                    scaleControl: false,
+                    streetViewControl: false,
+                    rotateControl: false,
+                    fullscreenControl: false,
                     center: {lat: 	52.379189, lng: 4.899431},
                     zoom: 7,
                     styles: mapStyles.retro

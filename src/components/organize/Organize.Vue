@@ -15,7 +15,10 @@
                     <v-card class="mb-3">
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p class="display-1 stepTitle">{{titles.step1}}</p>
+                                <p v-if="!step1Completed" class="display-1 stepTitle">{{titles.step1}}</p>
+                                <v-btn fab dark color="accent" v-if="step1Completed" @click="step = 2">
+                                    <v-icon dark>forward</v-icon>
+                                </v-btn>
                                 <div>{{subtitles.step1}}</div>
                             </div>
                         </v-card-text>
@@ -55,69 +58,92 @@
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn v-if="step1Completed" class="info" @click="step = 2">Continue</v-btn>
                 </v-stepper-content>
                 <v-stepper-content step="2">
                     <v-card class="mb-3">
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p class="display-1 stepTitle">{{titles.step2}}</p>
-                                <div>{{subtitles.step2}}</div>
+                                <p v-if="!step2Completed" class="display-1 stepTitle">{{titles.step2}}</p>
+                                <v-btn fab dark color="accent" v-if="step2Completed" @click="step = 3">
+                                    <v-icon dark>forward</v-icon>
+                                </v-btn>
+                                <div></div>
                             </div>
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
                             <v-layout row wrap v-if="step == 2">
-                                <v-flex xs12 sm10 offset-sm1>
-                                    <!--startpoint-->
-                                    <v-text-field
-                                            :id="startPoint.id"
-                                            :placeholder="startPoint.placeholder"
-                                            prepend-icon="flight_takeoff"
-                                            :value="startPoint.address"
-                                            clearable
-                                    ></v-text-field>
+                                <v-flex xs12 sm6>
+                                    <v-container fluid>
+                                        <!--startpoint-->
+                                        <v-text-field
+                                                :id="startPoint.id"
+                                                :placeholder="startPoint.placeholder"
+                                                prepend-icon="flight_takeoff"
+                                                :value="startPoint.address"
+                                                clearable
+                                        ></v-text-field>
 
-                                    <!--waypoints-->
-                                    <v-text-field
-                                            v-for="(waypoint, index) in waypoints"
-                                            :key="index"
-                                            :id="waypoint.id"
-                                            :placeholder="waypoint.placeholder"
-                                            prepend-icon="explore"
-                                            :value="waypoint.address"
-                                            clearable
-                                    ></v-text-field>
+                                        <!--wayPoints-->
+                                        <div v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
+                                            <v-text-field
+                                                    :id="wayPoint.id"
+                                                    :placeholder="wayPoint.placeholder"
+                                                    prepend-icon="explore"
+                                                    :value="wayPoint.address"
+                                                    clearable
+                                            ></v-text-field>
+                                            <v-btn
+                                                    style="z-index: 1"
+                                                    v-if="index !== (wayPoints.length -1)"
+                                                    @click="swapWayPoints(index)"
+                                                    absolute
+                                                    dark
+                                                    fab
+                                                    bottom
+                                                    small
+                                                    left
+                                                    color="warning"
+                                            >
+                                                <v-icon>swap_vert</v-icon>
+                                            </v-btn>
+                                        </div>
 
-                                    <v-btn @click="addWaypoint(getWaypointId(), 'Waypoint ' + (waypoints.length + 1))" fab dark color="accent">
-                                        <v-icon dark>add</v-icon>
-                                    </v-btn>
+                                        <v-btn @click="addWayPoint(getWayPointId(), 'waypoint ' + (wayPoints.length + 1))" fab dark color="accent">
+                                            <v-icon dark>add</v-icon>
+                                        </v-btn>
 
-                                    <!--endpoint-->
-                                    <v-text-field
-                                            :id="endPoint.id"
-                                            :placeholder="endPoint.placeholder"
-                                            prepend-icon="flight_land"
-                                            :value="endPoint.address"
-                                            clearable
-                                    ></v-text-field>
+                                        <!--endpoint-->
+                                        <v-text-field
+                                                :id="endPoint.id"
+                                                :placeholder="endPoint.placeholder"
+                                                prepend-icon="flight_land"
+                                                :value="endPoint.address"
+                                                clearable
+                                        ></v-text-field>
 
-                                    <!--Selected starting location-->
-                                    <span class="subtitle" v-if="startingAddress">Selected address: <b>{{startingAddress}}</b></span>
-
-                                    <!--Google Maps element-->
-                                    <div class="google-map" id="map">Google Maps</div>
+                                        <!--Selected starting location-->
+                                        <span class="subtitle" v-if="startingAddress">Selected address: <b>{{startingAddress}}</b></span>
+                                    </v-container>
+                                </v-flex>
+                                <v-flex xs12 sm6>
+                                    <v-container fluid>
+                                        <!--Google Maps element-->
+                                        <div class="google-map" id="map">Google Maps</div>
+                                    </v-container>
                                 </v-flex>
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn v-if="step1Completed && step2Completed" class="info" @click="step = 3">Continue</v-btn>
                     <v-btn @click="step = 1" flat>Back</v-btn>
                 </v-stepper-content>
                 <v-stepper-content  step="3">
                     <v-card class="mb-3">
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p class="display-1 stepTitle">{{titles.step3}}</p>
+                                <p v-if="!step3Completed" class="display-1 stepTitle">{{titles.step3}}</p>
+                                <v-btn fab dark color="accent" v-if="step3Completed" @click="step = 4">
+                                    <v-icon dark>forward</v-icon>
+                                </v-btn>
                                 <div>{{subtitles.step3}}</div>
                             </div>
                         </v-card-text>
@@ -145,14 +171,16 @@
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn v-if="step1Completed && step2Completed && step3Completed" class="info" @click="step = 4">Continue</v-btn>
                     <v-btn @click="step = 2" flat>Back</v-btn>
                 </v-stepper-content>
                 <v-stepper-content  step="4">
                     <v-card class="mb-3">
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p class="display-1 stepTitle">{{titles.step4}}</p>
+                                <p v-if="!allStepsCompleted" class="display-1 stepTitle">{{titles.step4}}</p>
+                                <v-btn fab dark color="success" v-if="allStepsCompleted" @click="saveExplore()">
+                                    <v-icon dark>send</v-icon>
+                                </v-btn>
                                 <div>{{subtitles.step4}}</div>
                             </div>
                         </v-card-text>
@@ -174,7 +202,6 @@
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn v-if="allStepsCompleted" class="success" :loading="loading" @click="saveExplore()">Save</v-btn>
                     <v-btn @click="step = 3" flat>Back</v-btn>
                 </v-stepper-content>
             </v-stepper-items>
@@ -189,6 +216,7 @@
         data () {
             return {
                 step: 2,
+                initialized: false,
                 headers: {
                     step1:  'Vehicle',
                     step2:  'Location',
@@ -210,14 +238,20 @@
                 /** Step 1 */
                 vehicle: null,
                 /** Step 2 */
-                startPoint: {id: 'startPoint', placeholder: 'Starting location'},
-                endPoint: {id: 'endPoint', placeholder: 'Target destination'},
-                waypoints: [],
-                displayedWaypoints: [],
+                startPoint: {id: 'startPoint', placeholder: 'Starting location', location: null, address: null},
+                endPoint: {id: 'endPoint', placeholder: 'Target destination', location: null, address: null},
+                wayPoints: [],
+                displayedWayPoints: [],
                 showInfoText: false,
                 map: null,
                 mapId: "map",
                 mapOptions: {
+                    zoomControl: true,
+                    mapTypeControl: false,
+                    scaleControl: false,
+                    streetViewControl: false,
+                    rotateControl: false,
+                    fullscreenControl: false,
                     center: {lat: 52.379189, lng: 4.899431},
                     zoom: 7,
                     styles: mapStyles.retro
@@ -225,6 +259,8 @@
                 markers: [],
                 startingLocation: null,
                 startingAddress: null,
+                directionsService: new google.maps.DirectionsService,
+                directionsDisplay: new google.maps.DirectionsRenderer,
                 /** Step 3 */
                 date: null,
                 time: null,
@@ -248,14 +284,14 @@
 
                 // Google maps
                 this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
-                this.addSearchBox(this.startPoint.id, 'Starting location')
-                this.addSearchBox(this.endPoint.id, 'Target destination')
+                this.addSearchBox(this.startPoint.id, this.startPoint.placeholder)
+                this.addSearchBox(this.endPoint.id, this.endPoint.placeholder)
             },
-            getWaypointId () {
-               return 'waypoint' + this.waypoints.length;
+            getWayPointId () {
+               return 'waypoint' + this.wayPoints.length;
             },
-            addWaypoint (id, placeholder) {
-                this.waypoints.push({location: null, address: null, id: id, placeholder: placeholder})
+            addWayPoint (id, placeholder) {
+                this.wayPoints.push({location: null, address: null, id: id, placeholder: placeholder})
                 this.addSearchBox(id)
             },
             addSearchBox (inputId) {
@@ -317,7 +353,7 @@
                             } else if (input.id === self.endPoint.id) {
                                 self.endPlaceFound(place)
                             } else {
-                                self.waypointPlaceFound(input, place)
+                                self.wayPointPlaceFound(input, place)
                             }
 
                             if (place.geometry.viewport) {
@@ -341,59 +377,46 @@
                 this.endPoint.location = place.geometry.location
                 this.calculateAndDisplayRoute();
             },
-            waypointPlaceFound(input, place) {
-                let waypoint = this.waypoints.find((current) => {
+            wayPointPlaceFound(input, place) {
+                let wayPoint = this.wayPoints.find((current) => {
                     return current.id === input.id
                 })
 
-                if (waypoint !== undefined) {
-                    waypoint.address = place.formatted_address
-                    waypoint.location = place.geometry.location
+                if (wayPoint !== undefined) {
+                    wayPoint.address = place.formatted_address
+                    wayPoint.location = place.geometry.location
                     this.calculateAndDisplayRoute();
                 }
             },
             calculateAndDisplayRoute() {
-                if (this.startPoint.address !== undefined
-                    && this.endPoint.address !== undefined
-                    && this.startPoint.location !== undefined
-                    && this.endPoint.location !== undefined)
+                if (this.startPoint.location !== null
+                    && this.endPoint.location !== null)
                 {
                     const self = this;
-                    const directionsService = new google.maps.DirectionsService;
-                    const directionsDisplay = new google.maps.DirectionsRenderer;
 
-                    directionsDisplay.setMap(this.map);
+                    this.directionsDisplay.setMap(null)
+                    this.directionsDisplay.setMap(this.map);
 
-                    // start point as first point
-                    this.displayedWaypoints.push({
-                        location: this.startPoint.location,
-                        stopover: true
-                    })
-
-                    // waypoints inbetween
-                    this.displayedWaypoints = []
-                    for (let i = 0; i < this.waypoints.length; i++) {
-                        this.displayedWaypoints.push({
-                            location: this.waypoints[i].location,
-                            stopover: true
-                        });
+                    // wayPoints
+                    self.displayedWayPoints = []
+                    for (let i = 0; i < this.wayPoints.length; i++) {
+                        if (this.wayPoints[i].location) {
+                            self.displayedWayPoints.push({
+                                location: this.wayPoints[i].location,
+                                stopover: true
+                            });
+                        }
                     }
 
-                    // end point as last point
-                    this.displayedWaypoints.push({
-                        location: this.endPoint.location,
-                        stopover: true
-                    })
-
-                    directionsService.route({
+                    this.directionsService.route({
                         origin: self.startPoint.location,
                         destination: self.endPoint.location,
-                        waypoints: self.displayedWaypoints,
-                        optimizeWaypoints: true,
+                        waypoints: self.displayedWayPoints,
+                        optimizeWaypoints: false,
                         travelMode: 'DRIVING' //todo: multiple driving modes support
                     }, function(response, status) {
                         if (status === 'OK') {
-                            directionsDisplay.setDirections(response);
+                            self.directionsDisplay.setDirections(response);
                             var route = response.routes[0];
 //                        var summaryPanel = document.getElementById('directions-panel');
 //                        summaryPanel.innerHTML = '';
@@ -410,8 +433,21 @@
                             window.alert('Directions request failed due to ' + status);
                         }
                     });
-                } else {
-                    console.log('invalid start/end points')
+                }
+            },
+            swapWayPoints(index) {
+                if ((this.wayPoints.length - 1) > index) {
+                    // swap 2 waypoints
+                    var topWayPoint = this.wayPoints[index];
+                    this.wayPoints[index] = this.wayPoints[(index + 1)];
+                    this.wayPoints[(index + 1)] = topWayPoint;
+
+                    // workaround for Vue to call updated()
+                    this.wayPoints.push({})
+                    this.wayPoints.splice(-1, 1)
+
+                    console.log(this.wayPoints)
+                    this.calculateAndDisplayRoute()
                 }
             },
             /** Step 3 */
@@ -420,8 +456,9 @@
             saveExplore () {
                 const explore = {
                     vehicle: this.vehicle,
-                    location: this.startingLocation,
-                    address: this.startingAddress,
+                    startPoint: this.startPoint,
+                    endPoint: this.endPoint,
+                    wayPoints: this.wayPoints,
                     date: this.date,
                     time: this.time,
                     title: this.title,
@@ -440,12 +477,18 @@
                     && this.vehicle !== ''
             },
             step2Completed () {
-                return this.startingLocation !== null
-                    && this.startingLocation !== undefined
-                    && this.startingLocation !== ''
-                    && this.startingAddress !== null
-                    && this.startingAddress !== undefined
-                    && this.startingAddress !== ''
+                return this.startPoint.location !== null
+                    && this.startPoint.location !== undefined
+                    && this.startPoint.location !== ''
+                    && this.startPoint.address !== null
+                    && this.startPoint.address !== undefined
+                    && this.startPoint.address !== ''
+                    && this.endPoint.location !== null
+                    && this.endPoint.location !== undefined
+                    && this.endPoint.location !== ''
+                    && this.endPoint.address !== null
+                    && this.endPoint.address !== undefined
+                    && this.endPoint.address !== ''
             },
             step3Completed () {
                 return this.date !== null
@@ -482,8 +525,17 @@
                 return this.$store.getters.loading
             }
         },
+        updated () {
+            if (this.step === 2 && !this.initialized) {
+                this.initialized = true;
+                this.initMap()
+            }
+        },
         mounted () {
-            this.initMap()
+            if (this.step === 2) {
+                this.initialized = true;
+                this.initMap()
+            }
         }
     }
 </script>
