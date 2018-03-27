@@ -505,10 +505,10 @@
 
                 // add to db
                 this.$store.dispatch('organizeExplore', explore).then(response => {
-                    console.log()
                     this.$router.push('/')
+                    this.$store.dispatch('successMessage', 'Explore Organized!')
                 }, error => {
-                    // error handling was done in action
+                    this.$store.dispatch('erroMessage', error.message)
                 })
             },
         },

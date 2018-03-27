@@ -79,7 +79,6 @@ export default {
         firebase.firestore()
             .collection('/explores')
             .onSnapshot((querySnapshot) => {
-                commit('clearMessage')
                 const explores = []
 
                 querySnapshot.forEach(function(doc) {
@@ -88,6 +87,7 @@ export default {
 
                 commit('setExplores', explores)
             }, (error) => {
+                commit('clearMessage')
                 commit('setMessage', {text:error.message, type: 'error'
             })
         })
@@ -98,11 +98,10 @@ export default {
             firebase.firestore().collection('/explores').add(explore).then(docRef => {
                 commit('setLoading', false)
                 commit('clearMessage')
-                commit('setMessage', {text:'Explore Organized!', type: 'success'})
                 resolve(docRef);  // Let the calling function know that http is done. You may send some data back
             }, error => {
-                commit('setMessage', {text:error.message, type: 'error'})
-                reject(error);
+                commit('clearMessage')
+                reject(error)
             })
         })
     },
