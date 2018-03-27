@@ -3,7 +3,7 @@
         <!--InfoWindow-->
         <v-navigation-drawer app dark right mobile-break-point="100000" v-model="selectedExplore" v-if="selectedExplore" class="purple-to-orange">
             <v-card flat style="background: none!important">
-                <v-card-media height="200px">
+                <v-card-media height="130px">
                     <v-layout wrap align-center>
                         <v-flex class="text-xs-center">
                                 <v-avatar>
@@ -16,9 +16,13 @@
                     </v-layout>
                 </v-card-media>
                 <v-divider></v-divider>
-                <v-card-title primary-title>
-                    <div class="headline">{{selectedExplore.title}}</div>
-                </v-card-title>
+
+                <v-tooltip left>
+                    <v-card-title primary-title slot="activator">
+                        <div class="headline">{{selectedExplore.title}}</div>
+                    </v-card-title>
+                    <span>{{selectedExplore.title}}</span>
+                </v-tooltip>
 
                 <v-list>
                     <v-list-tile>
@@ -26,29 +30,32 @@
                             <v-list-tile-action slot="activator">
                                 <v-icon>date_range</v-icon>
                             </v-list-tile-action>
-                            <span>Date</span>
+                            <span>When</span>
                         </v-tooltip>
                         <v-list-tile-content>
-                            <v-list-tile-title>{{selectedExplore.date | date}}</v-list-tile-title>
+                            <v-list-tile-title>{{selectedExplore.date | date}} - {{selectedExplore.time | time}}</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                     <v-list-tile>
                         <v-tooltip left>
                             <v-list-tile-action slot="activator">
-                                <v-icon>alarm</v-icon>
+                                <v-icon>flight_takeoff</v-icon>
                             </v-list-tile-action>
-                            <span>Time</span>
+                            <span>Starting Location</span>
                         </v-tooltip>
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{selectedExplore.time | time}}</v-list-tile-title>
-                        </v-list-tile-content>
+                        <v-tooltip left>
+                            <v-list-tile-content  slot="activator">
+                                <v-list-tile-title>{{selectedExplore.startPoint.address}}</v-list-tile-title>
+                            </v-list-tile-content>
+                            <span>{{selectedExplore.startPoint.address}}</span>
+                        </v-tooltip>
                     </v-list-tile>
                     <v-list-tile>
                         <v-tooltip left>
                             <v-list-tile-action slot="activator">
                                 <v-icon>trending_flat</v-icon>
                             </v-list-tile-action>
-                            <span>Distance</span>
+                            <span>Total Distance</span>
                         </v-tooltip>
                         <v-list-tile-content>
                             <v-list-tile-title>{{selectedExplore.distance | distance}}</v-list-tile-title>
@@ -72,6 +79,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="accent">Join</v-btn>
+                    <v-btn flat>Route</v-btn>
                     <v-btn flat @click="selectedExplore = null">Close</v-btn>
                 </v-card-actions>
             </v-card>
