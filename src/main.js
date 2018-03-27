@@ -41,8 +41,17 @@ Vue.component('app-alert', AlertCmp)
  */
 Vue.config.productionTip = false
 
-Vue.filter('date-format', function (date) {
+Vue.filter('date', function (date) {
     return Moment(date).format('MMMM Do YYYY')
+})
+Vue.filter('time', function (time) {
+    return time + " u";
+})
+Vue.filter('distance', function (distance) {
+    return (Math.round((distance/1000) * 10 ) / 10).toFixed(1) + " km"
+})
+Vue.filter('capitalize', function (text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
 })
 
 /**

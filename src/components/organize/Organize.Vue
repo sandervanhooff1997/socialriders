@@ -80,17 +80,20 @@
                                                 :placeholder="startPoint.placeholder"
                                                 prepend-icon="flight_takeoff"
                                                 :value="startPoint.address"
+                                                class="noPadding"
                                                 clearable
+                                                autofocus
                                         ></v-text-field>
 
                                         <!--wayPoints-->
-                                        <div v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
+                                        <div v v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
                                             <v-text-field
                                                     :id="wayPoint.id"
                                                     :placeholder="wayPoint.placeholder"
                                                     prepend-icon="explore"
                                                     :value="wayPoint.address"
                                                     clearable
+                                                    autofocus
                                             ></v-text-field>
                                             <v-btn
                                                     style="z-index: 1"
@@ -108,7 +111,11 @@
                                             </v-btn>
                                         </div>
 
-                                        <v-btn @click="addWayPoint(getWayPointId(), 'waypoint ' + (wayPoints.length + 1))" fab dark color="accent">
+                                        <v-btn @click="addWayPoint(getWayPointId(), 'waypoint ' + (wayPoints.length + 1))"
+                                               fab
+                                               dark
+                                               color="warning"
+                                                class="noMargin">
                                             <v-icon dark>add</v-icon>
                                         </v-btn>
 
@@ -118,11 +125,10 @@
                                                 :placeholder="endPoint.placeholder"
                                                 prepend-icon="flight_land"
                                                 :value="endPoint.address"
+                                                class="noPadding"
                                                 clearable
                                         ></v-text-field>
-
-                                        <!--Selected starting location-->
-                                        <span class="subtitle" v-if="startingAddress">Selected address: <b>{{startingAddress}}</b></span>
+                                        <span v-if="distance" class="title darkgrey--text">Total distance of {{distance | distance}} </span>
                                     </v-container>
                                 </v-flex>
                                 <v-flex xs12 sm6>
@@ -150,7 +156,7 @@
                         <v-container grid-list-md text-xs-center>
                             <v-layout row wrap v-if="step == 3">
                                 <!--Date Picker-->
-                                <v-flex xs12 sm4 offset-sm1>
+                                <v-flex xs10 offset-xs1 sm4 offset-sm1>
                                     <p class="title mt-0 pt-0">Pick a Date</p>
                                     <v-date-picker
                                             full-width
@@ -160,7 +166,7 @@
                                     ></v-date-picker>
                                 </v-flex>
                                 <!--Time Picker-->
-                                <v-flex xs12 sm4 offset-sm2 class="mb-3">
+                                <v-flex xs10 offset-xs1 sm4 offset-sm2 class="mb-3">
                                     <p class="title">Pick a Time</p>
                                     <v-time-picker
                                             v-model="time"
@@ -215,7 +221,7 @@
     export default {
         data () {
             return {
-                step: 2,
+                step: 1,
                 initialized: false,
                 headers: {
                     step1:  'Vehicle',
@@ -242,6 +248,7 @@
                 endPoint: {id: 'endPoint', placeholder: 'Target destination', location: null, address: null},
                 wayPoints: [],
                 displayedWayPoints: [],
+                distance: null,
                 showInfoText: false,
                 map: null,
                 mapId: "map",
@@ -257,8 +264,6 @@
                     styles: mapStyles.retro
                 },
                 markers: [],
-                startingLocation: null,
-                startingAddress: null,
                 directionsService: new google.maps.DirectionsService,
                 directionsDisplay: new google.maps.DirectionsRenderer,
                 /** Step 3 */
@@ -396,6 +401,7 @@
 
                     this.directionsDisplay.setMap(null)
                     this.directionsDisplay.setMap(this.map);
+                    this.distance = null
 
                     // wayPoints
                     self.displayedWayPoints = []
@@ -408,28 +414,33 @@
                         }
                     }
 
+                    // determine the travelmode bases on the selected vehicle
+                    let travelMode = this.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
+
                     this.directionsService.route({
                         origin: self.startPoint.location,
                         destination: self.endPoint.location,
                         waypoints: self.displayedWayPoints,
                         optimizeWaypoints: false,
-                        travelMode: 'DRIVING' //todo: multiple driving modes support
+                        travelMode: travelMode
                     }, function(response, status) {
                         if (status === 'OK') {
-                            self.directionsDisplay.setDirections(response);
-                            var route = response.routes[0];
-//                        var summaryPanel = document.getElementById('directions-panel');
-//                        summaryPanel.innerHTML = '';
-                            // For each route, display summary information.
-//                        for (var i = 0; i < route.legs.length; i++) {
-//                            var routeSegment = i + 1;
-//                            summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
-//                                '</b><br>';
-//                            summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
-//                            summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-//                            summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
-//                        }
-                        } else {
+                            self.directionsDisplay.setDirections(response)
+//                            console.log(response)
+                            const route = response.routes[0];
+                            let distance = 0;
+                            let duration = 0;
+
+                            //For each route, display summary information.
+                            for (var i = 0; i < route.legs.length; i++) {
+                                distance += route.legs[i].distance.value
+                                duration += route.legs[i].duration.value
+                                console.log(route.legs[i].duration.text)
+                            }
+                            self.distance = distance
+                            self.duration = duration
+                        }
+                        else {
                             window.alert('Directions request failed due to ' + status);
                         }
                     });
@@ -454,20 +465,51 @@
 
             /** Step 4 */
             saveExplore () {
+                // transform waypoints to the right db format
+                let wayPoints = []
+                for (let i = 0;i < this.wayPoints.length; i++) {
+                    wayPoints.push({
+                        location: {
+                            lat: this.wayPoints[i].location.lat(),
+                            lng: this.wayPoints[i].location.lng()
+                        },
+                        address: this.wayPoints[i].address
+                    })
+                }
+
+                // create the db model
                 const explore = {
                     vehicle: this.vehicle,
-                    startPoint: this.startPoint,
-                    endPoint: this.endPoint,
-                    wayPoints: this.wayPoints,
+                    startPoint: {
+                        location: {
+                            lat: this.startPoint.location.lat(),
+                            lng: this.startPoint.location.lng()
+                        },
+                        address: this.startPoint.address
+                    },
+                    endPoint: {
+                        location: {
+                            lat: this.endPoint.location.lat(),
+                            lng: this.endPoint.location.lng()
+                        },
+                        address: this.endPoint.address
+                    },
+                    wayPoints: wayPoints,
+                    distance: this.distance,
                     date: this.date,
                     time: this.time,
                     title: this.title,
                     description: this.description,
                     user: this.$store.getters.user
                 }
-                if (this.$store.dispatch('organizeExplore', explore)){
+
+                // add to db
+                this.$store.dispatch('organizeExplore', explore).then(response => {
+                    console.log()
                     this.$router.push('/')
-                }
+                }, error => {
+                    // error handling was done in action
+                })
             },
         },
         computed: {
@@ -560,5 +602,11 @@
         height: 300px;
         margin: 0 auto;
         background: gray;
+    }
+    .noMargin {
+        margin: 0!important;
+    }
+    .noPadding {
+        padding: 0!important;
     }
 </style>

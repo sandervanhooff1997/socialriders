@@ -1,12 +1,11 @@
 <template>
     <div style="width: 100%; height: 100%;">
         <!--InfoWindow-->
-        <v-navigation-drawer app right mobile-break-point="100000" v-model="selectedExplore" v-if="selectedExplore">
-            <v-card flat>
-                <v-card-media src="https://vuetifyjs.com/static/doc-images/parallax/material2.jpg" height="200px">
+        <v-navigation-drawer app dark right mobile-break-point="100000" v-model="selectedExplore" v-if="selectedExplore" class="purple-to-orange">
+            <v-card flat style="background: none!important">
+                <v-card-media height="200px">
                     <v-layout wrap align-center>
                         <v-flex class="text-xs-center">
-
                                 <v-avatar>
                                     <router-link :to="{ name: 'profile', params: { uid: selectedExplore.user.uid }}">
                                     <img  :src="selectedExplore.user.photoUrl" :alt="selectedExplore.user.name">
@@ -16,19 +15,63 @@
                         </v-flex>
                     </v-layout>
                 </v-card-media>
+                <v-divider></v-divider>
                 <v-card-title primary-title>
-                    <div>
-                        <div class="headline">{{selectedExplore.title}}</div>
-                        <span class="grey--text">{{selectedExplore.date | date-format}} - {{selectedExplore.time}}</span>
-                    </div>
+                    <div class="headline">{{selectedExplore.title}}</div>
                 </v-card-title>
-                <v-slide-y-transition>
-                    <v-card-text>
-                        <p class="text-xs-left">{{selectedExplore.description}}</p>
-                    </v-card-text>
-                </v-slide-y-transition>
+
+                <v-list>
+                    <v-list-tile>
+                        <v-tooltip left>
+                            <v-list-tile-action slot="activator">
+                                <v-icon>date_range</v-icon>
+                            </v-list-tile-action>
+                            <span>Date</span>
+                        </v-tooltip>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{selectedExplore.date | date}}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-tooltip left>
+                            <v-list-tile-action slot="activator">
+                                <v-icon>alarm</v-icon>
+                            </v-list-tile-action>
+                            <span>Time</span>
+                        </v-tooltip>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{selectedExplore.time | time}}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-tooltip left>
+                            <v-list-tile-action slot="activator">
+                                <v-icon>trending_flat</v-icon>
+                            </v-list-tile-action>
+                            <span>Distance</span>
+                        </v-tooltip>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{selectedExplore.distance | distance}}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile>
+                        <v-tooltip left>
+                            <v-list-tile-action slot="activator">
+                                <v-icon>motorcycle</v-icon>
+                            </v-list-tile-action>
+                            <span>Vehicle</span>
+                        </v-tooltip>
+                        <v-list-tile-content>
+                            <v-list-tile-title>{{selectedExplore.vehicle | capitalize}}</v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                </v-list>
+
+                <v-card-text>
+                    <p class="text-xs-left">{{selectedExplore.description}}</p>
+                </v-card-text>
                 <v-card-actions>
-                    <v-btn color="secondary">Join</v-btn>
+                    <v-btn color="accent">Join</v-btn>
                     <v-btn flat @click="selectedExplore = null">Close</v-btn>
                 </v-card-actions>
             </v-card>
@@ -86,10 +129,113 @@
                         name: 'More than 60 days',
                         icon: redMarker
                     }
-                }
+                },
             }
         },
         methods: {
+            initMap () {
+                var self = this;
+
+                // Google maps
+                this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
+
+                // selecting element by ID must be in $(document).ready()
+                $(document).ready(function(){
+                    // Create the search box
+                    var input = document.getElementById('search-input');
+                    var searchBox = new google.maps.places.SearchBox(input);
+
+                    self.map.addListener('bounds_changed', function() {
+                        searchBox.setBounds(self.map.getBounds());
+                    });
+
+                    var markers = [];
+                    // Listen for the event fired when the user selects a prediction and retrieve
+                    // more details for that place.
+                    searchBox.addListener('places_changed', function() {
+                        var places = searchBox.getPlaces();
+
+                        if (places.length === 0) {
+                            return;
+                        }
+
+                        // Clear out the old markers.
+                        markers.forEach(function(marker) {
+                            marker.setMap(null);
+                        });
+                        markers = [];
+
+                        // For each place, get the icon, name and location.
+                        var bounds = new google.maps.LatLngBounds();
+                        places.forEach(function(place) {
+                            if (!place.geometry) {
+                                console.log("Returned place contains no geometry");
+                                return;
+                            }
+                            var icon = {
+                                url: place.icon,
+                                size: new google.maps.Size(71, 71),
+                                origin: new google.maps.Point(0, 0),
+                                anchor: new google.maps.Point(17, 34),
+                                scaledSize: new google.maps.Size(25, 25)
+                            };
+
+                            // Create a marker for each place.
+                            markers.push(new google.maps.Marker({
+                                map: self.map,
+                                icon: icon,
+                                title: place.name,
+                                position: place.geometry.location
+                            }));
+
+                            if (place.geometry.viewport) {
+                                // Only geocodes have viewport.
+                                bounds.union(place.geometry.viewport);
+                            } else {
+                                bounds.extend(place.geometry.location);
+                            }
+                        });
+                        self.map.fitBounds(bounds);
+                    });
+
+                    // Generate a legend
+                    var legend = document.getElementById('legend');
+                    for (var key in self.icons) {
+                        const type = self.icons[key];
+                        const name = type.name;
+                        const icon = type.icon;
+                        const div = document.createElement('div');
+
+                        div.innerHTML = '<img style="vertical-align: middle" src="' + icon + '"> ' + name;
+                        legend.appendChild(div);
+                    }
+                    self.map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
+
+                    // Render explores
+                    self.explores.forEach(explore => {
+                        const icon = self.getMarkerIcon(explore.date)
+                        const marker = self.addMarker(explore.startPoint.location, icon)
+                        self.addInfoWindowClickListener(marker, explore)
+                    })
+
+                    // Async load current position and create marker on success
+                    var options = {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    };
+
+                    self.getPosition(options)
+                        .then((position) => {
+                            self.mapOptions.center.lat = position.coords.latitude
+                            self.mapOptions.center.lng = position.coords.longitude
+                            self.addMarker({lat: position.coords.latitude, lng: position.coords.longitude}, homeMarker)
+                        })
+                        .catch((err) => {
+                            console.error("Error fetching current position: " + err.message);
+                        });
+                })
+            },
             /**
              *  Returns a promise containing the users position
              */
@@ -144,104 +290,8 @@
             }
         },
         mounted () {
-            var self = this;
-
-            // Google maps
-            this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
-
-            // Create the search box
-            var input = document.getElementById('search-input');
-            var searchBox = new google.maps.places.SearchBox(input);
-
-            this.map.addListener('bounds_changed', function() {
-                searchBox.setBounds(self.map.getBounds());
-            });
-
-            var markers = [];
-            // Listen for the event fired when the user selects a prediction and retrieve
-            // more details for that place.
-            searchBox.addListener('places_changed', function() {
-                var places = searchBox.getPlaces();
-
-                if (places.length === 0) {
-                    return;
-                }
-
-                // Clear out the old markers.
-                markers.forEach(function(marker) {
-                    marker.setMap(null);
-                });
-                markers = [];
-
-                // For each place, get the icon, name and location.
-                var bounds = new google.maps.LatLngBounds();
-                places.forEach(function(place) {
-                    if (!place.geometry) {
-                        console.log("Returned place contains no geometry");
-                        return;
-                    }
-                    var icon = {
-                        url: place.icon,
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25)
-                    };
-
-                    // Create a marker for each place.
-                    markers.push(new google.maps.Marker({
-                        map: self.map,
-                        icon: icon,
-                        title: place.name,
-                        position: place.geometry.location
-                    }));
-
-                    if (place.geometry.viewport) {
-                        // Only geocodes have viewport.
-                        bounds.union(place.geometry.viewport);
-                    } else {
-                        bounds.extend(place.geometry.location);
-                    }
-                });
-                self.map.fitBounds(bounds);
-            });
-
-            // Generate a legend
-            var legend = document.getElementById('legend');
-            for (var key in this.icons) {
-                const type = this.icons[key];
-                const name = type.name;
-                const icon = type.icon;
-                const div = document.createElement('div');
-
-                div.innerHTML = '<img style="vertical-align: middle" src="' + icon + '"> ' + name;
-                legend.appendChild(div);
-            }
-            this.map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
-
-            // Render explores
-            this.explores.forEach((explore) => {
-                const icon = this.getMarkerIcon(explore.date)
-                const marker = this.addMarker(explore.location, icon)
-                this.addInfoWindowClickListener(marker, explore)
-            })
-
-            // Async load current position and create marker on success
-            var options = {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            };
-            this.getPosition(options)
-                .then((position) => {
-                    this.mapOptions.center.lat = position.coords.latitude
-                    this.mapOptions.center.lng = position.coords.longitude
-                    this.addMarker({lat: position.coords.latitude, lng: position.coords.longitude}, homeMarker)
-                })
-                .catch((err) => {
-                    console.error("Error fetching current position: " + err.message);
-                });
-        }
+            this.initMap()
+        },
     }
 </script>
 
