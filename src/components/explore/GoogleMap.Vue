@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%; height: 100%;">
         <!--InfoWindow-->
-        <v-navigation-drawer app dark right mobile-break-point="100000" v-model="selectedExplore" v-if="selectedExplore" class="purple-to-orange">
+        <v-navigation-drawer app dark right mobile-break-point="100000" v-model="selectedExplore" v-if="selectedExplore && selected" class="purple-to-orange">
             <v-card flat style="background: none!important">
                 <v-card-media height="130px">
                     <v-layout wrap align-center>
@@ -79,12 +79,12 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="accent">Join</v-btn>
-                    <v-btn flat>Route</v-btn>
-                    <v-btn flat @click="selectedExplore = null">Close</v-btn>
+                    <v-btn flat @click="selected = false">Close</v-btn>
                 </v-card-actions>
             </v-card>
         </v-navigation-drawer>
 
+        <v-btn color="secondary" id="hide-route" v-show="route" @click="hideRoute()">Hide Route</v-btn>
         <div class="google-map" :id="mapId">Google Maps</div>
 
         <div id="legend">
@@ -123,7 +123,11 @@
                     styles: mapStyles.retro
                 },
                 markers: [], // all map markers
+                selected: false,
                 selectedExplore: null,
+                route: false,
+                directionsService: new google.maps.DirectionsService,
+                directionsDisplay: new google.maps.DirectionsRenderer,
                 icons: {
                     green: {
                         name: 'Less than 30 days',
@@ -151,8 +155,10 @@
                 $(document).ready(function(){
                     // Create the search box
                     var input = document.getElementById('search-input');
+                    var button = document.getElementById('hide-route');
                     var searchBox = new google.maps.places.SearchBox(input);
 
+                    self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(button);
                     self.map.addListener('bounds_changed', function() {
                         searchBox.setBounds(self.map.getBounds());
                     });
@@ -292,10 +298,57 @@
             },
             showInfoWindow (explore) {
                 this.selectedExplore = explore
+                this.selected = true;
+                this.showRoute()
             },
             hideInfoWindow() {
                 this.selectedExplore = null
-            }
+            },
+            showRoute() {
+                this.calculateAndDisplayRoute()
+                this.route = true
+            },
+            hideRoute(){
+                this.directionsDisplay.setMap(null)
+                this.route = false
+            },
+            calculateAndDisplayRoute() {
+                if (this.selectedExplore !== null) {
+                    const self = this;
+
+                    this.hideRoute()
+                    this.directionsDisplay.setMap(this.map);
+
+                    // wayPoints
+                    var wayPoints = []
+                    for (let i = 0; i < this.selectedExplore.wayPoints.length; i++) {
+                        if (this.selectedExplore.wayPoints[i].location) {
+                            wayPoints.push({
+                                location: this.selectedExplore.wayPoints[i].location,
+                                stopover: true
+                            });
+                        }
+                    }
+
+                    // determine the travelmode bases on the selected vehicle
+                    let travelMode = this.selectedExplore.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
+
+                    this.directionsService.route({
+                        origin: self.selectedExplore.startPoint.location,
+                        destination: self.selectedExplore.endPoint.location,
+                        waypoints: wayPoints,
+                        optimizeWaypoints: false,
+                        travelMode: travelMode,
+                    }, function(response, status) {
+                        if (status === 'OK') {
+                            self.directionsDisplay.setDirections(response)
+                        }
+                        else {
+                            window.alert('Directions request failed due to ' + status);
+                        }
+                    });
+                }
+            },
         },
         mounted () {
             this.initMap()

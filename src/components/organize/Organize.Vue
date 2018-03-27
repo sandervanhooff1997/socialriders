@@ -74,6 +74,30 @@
                             <v-layout row wrap v-if="step == 2">
                                 <v-flex xs12 sm6>
                                     <v-container fluid>
+                                        <v-btn flat  @click="options = !options">Options</v-btn>
+                                        <div v-if="options">
+                                            <v-layout row wrap>
+                                                <v-flex xs12 md4>
+                                                    <v-checkbox
+                                                            label="Avoid Highways"
+                                                            v-model="avoidHighways"
+                                                    ></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs12 md4>
+                                                    <v-checkbox
+                                                            label="Avoid Ferries"
+                                                            v-model="avoidFerries"
+                                                    ></v-checkbox>
+                                                </v-flex>
+                                                <v-flex xs12 md4>
+                                                    <v-checkbox
+                                                            label="Avoid Tolls"
+                                                            v-model="avoidTolls"
+                                                    ></v-checkbox>
+                                                </v-flex>
+                                            </v-layout>
+                                        </div>
+
                                         <!--startpoint-->
                                         <v-text-field
                                                 :id="startPoint.id"
@@ -266,12 +290,29 @@
                 markers: [],
                 directionsService: new google.maps.DirectionsService,
                 directionsDisplay: new google.maps.DirectionsRenderer,
+                avoidFerries: false,
+                avoidHighways: false,
+                avoidTolls: false,
+                checkbox: false,
+                options: false,
                 /** Step 3 */
                 date: null,
                 time: null,
                 /** Step 4 */
                 title: null,
                 description: null,
+            }
+        },
+        watch: {
+            avoidFerries (value) {
+                this.calculateAndDisplayRoute()
+            },
+            avoidHighways (value) {
+                console.log(value)
+                this.calculateAndDisplayRoute()
+            },
+            avoidTolls (value) {
+                this.calculateAndDisplayRoute()
             }
         },
         methods: {
@@ -422,7 +463,11 @@
                         destination: self.endPoint.location,
                         waypoints: self.displayedWayPoints,
                         optimizeWaypoints: false,
-                        travelMode: travelMode
+                        travelMode: travelMode,
+                        provideRouteAlternatives: false,
+                        avoidFerries: self.avoidFerries,
+                        avoidHighways: self.avoidHighways,
+                        avoidTolls: self.avoidTolls,
                     }, function(response, status) {
                         if (status === 'OK') {
                             self.directionsDisplay.setDirections(response)
@@ -435,7 +480,6 @@
                             for (var i = 0; i < route.legs.length; i++) {
                                 distance += route.legs[i].distance.value
                                 duration += route.legs[i].duration.value
-                                console.log(route.legs[i].duration.text)
                             }
                             self.distance = distance
                             self.duration = duration
