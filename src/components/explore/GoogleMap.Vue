@@ -33,7 +33,7 @@
                             <span>When</span>
                         </v-tooltip>
                         <v-list-tile-content>
-                            <v-list-tile-title>{{selectedExplore.date | date}} - {{selectedExplore.time | time}}</v-list-tile-title>
+                            <v-list-tile-title>{{selectedExplore.date | date}}</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                     <v-list-tile>
@@ -84,7 +84,7 @@
             </v-card>
         </v-navigation-drawer>
 
-        <v-btn color="secondary" id="hide-route" v-show="route" @click="hideRoute()">Hide Route</v-btn>
+        <v-btn color="accent" id="hide-route" v-show="route" @click="hideRoute()">Hide Route</v-btn>
         <div class="google-map" :id="mapId">Google Maps</div>
 
         <div id="legend">
@@ -151,6 +151,25 @@
                 // Google maps
                 this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
 
+                // Async load current position and create marker on success
+                const options = {
+                    enableHighAccuracy: false,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+                self.getPosition(options)
+                    .then((position) => {
+                        self.addMarker({lat: position.coords.latitude, lng: position.coords.longitude}, homeMarker)
+
+                        let bounds = new google.maps.LatLngBounds();
+                        bounds.lat = position.coords.latitude
+                        bounds.lng = position.coords.longitude
+                        self.map.fitBounds(bounds)
+                    })
+                    .catch((err) => {
+                        console.error("Error fetching current position: " + err.message);
+                    });
+
                 // selecting element by ID must be in $(document).ready()
                 $(document).ready(function(){
                     // Create the search box
@@ -180,13 +199,13 @@
                         markers = [];
 
                         // For each place, get the icon, name and location.
-                        var bounds = new google.maps.LatLngBounds();
+                        let bounds = new google.maps.LatLngBounds();
                         places.forEach(function(place) {
                             if (!place.geometry) {
                                 console.log("Returned place contains no geometry");
                                 return;
                             }
-                            var icon = {
+                            const icon = {
                                 url: place.icon,
                                 size: new google.maps.Size(71, 71),
                                 origin: new google.maps.Point(0, 0),
@@ -213,7 +232,7 @@
                     });
 
                     // Generate a legend
-                    var legend = document.getElementById('legend');
+                    let legend = document.getElementById('legend');
                     for (var key in self.icons) {
                         const type = self.icons[key];
                         const name = type.name;
@@ -231,23 +250,6 @@
                         const marker = self.addMarker(explore.startPoint.location, icon)
                         self.addInfoWindowClickListener(marker, explore)
                     })
-
-                    // Async load current position and create marker on success
-                    var options = {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    };
-
-                    self.getPosition(options)
-                        .then((position) => {
-                            self.mapOptions.center.lat = position.coords.latitude
-                            self.mapOptions.center.lng = position.coords.longitude
-                            self.addMarker({lat: position.coords.latitude, lng: position.coords.longitude}, homeMarker)
-                        })
-                        .catch((err) => {
-                            console.error("Error fetching current position: " + err.message);
-                        });
                 })
             },
             /**
@@ -372,5 +374,8 @@
     }
     #legend .legendDevider {
         margin: 5px 0;
+    }
+    #hide-route {
+        margin-top: 20px;
     }
 </style>

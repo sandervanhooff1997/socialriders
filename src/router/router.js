@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import AuthGuard from './auth-guard'
 
 import Experience from '@/components/experience/Experience'
-import Experiences from '@/components/experience/Experiences'
+import ExperienceDetail from '@/components/experience/Detail'
 import Explore from '@/components/explore/Explore'
 import Organize from '@/components/organize/Organize'
 import Profile from '@/components/profile/Profile'
@@ -18,7 +18,7 @@ let router = new Router({
         {
             path: '/',
             redirect: {
-                name: 'explore',
+                name: 'experience',
             }
         },
         {
@@ -28,16 +28,15 @@ let router = new Router({
             beforeEnter: AuthGuard
         },
         {
-            path: '/experiences',
-            name: 'experiences',
-            component: Experiences,
-            beforeEnter: AuthGuard
-        },
-        {
             path: '/experience',
             name: 'experience',
             component: Experience,
             beforeEnter: AuthGuard
+        },
+        {
+            path: '/experience/:id',
+            component: ExperienceDetail,
+            props: true
         },
         {
             path: '/profile',

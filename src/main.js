@@ -42,7 +42,7 @@ Vue.component('app-alert', AlertCmp)
 Vue.config.productionTip = false
 
 Vue.filter('date', function (date) {
-    return Moment(date).format('MMMM Do YYYY')
+    return Moment(date).format('MMMM Do YYYY - hh:m') + 'u'
 })
 Vue.filter('time', function (time) {
     return time + " u";

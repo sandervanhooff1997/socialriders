@@ -36,7 +36,7 @@
             }
         },
         mounted () {
-            this.$store.dispatch('fetchExplores')
+            this.$store.dispatch('getExplores')
         },
     }
 </script>

@@ -540,8 +540,7 @@
                     },
                     wayPoints: wayPoints,
                     distance: this.distance,
-                    date: this.date,
-                    time: this.time,
+                    date: new Date(this.date + ' ' + this.time),
                     title: this.title,
                     description: this.description,
                     user: this.$store.getters.user
@@ -552,7 +551,7 @@
                     this.$router.push('/')
                     this.$store.dispatch('successMessage', 'Explore Organized!')
                 }, error => {
-                    this.$store.dispatch('erroMessage', error.message)
+                    this.$store.dispatch('errorMessage', error.message)
                 })
             },
         },

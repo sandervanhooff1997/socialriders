@@ -105,7 +105,6 @@
                     .catch(function(error) {
                         self.$store.commit('setMessage', {text: error.message, type: 'error'})
                     });
-
 //                firebase.firestore()
 //                    .collection("social-networks")
 //                    .where("uid", "==", self.uid)
@@ -128,23 +127,12 @@
 </script>
 
 <style scoped>
-    .banner {
-        -webkit-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);
-        -moz-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);
-        box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);
-        background: #8e24aa;
-        background: -webkit-linear-gradient(100deg, #8e24aa 0%, #ff6e40 100%);
-        background: linear-gradient(100deg, #8e24aa 0%, #ff6e40 100%);
-    }
     .avatar {
         -webkit-box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
         -moz-box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
         box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
     }
-    nav {
-        box-shadow: none!important;
-    }
-    .thinText {
-        font-weight: lighter;
+    .banner {
+        height: 300px!important;
     }
 </style>

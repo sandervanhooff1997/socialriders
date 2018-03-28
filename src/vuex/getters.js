@@ -8,6 +8,9 @@ export default {
     explores (state) {
         return state.explores
     },
+    experiences (state) {
+        return state.experiences
+    },
     loading (state) {
         return state.loading
     },

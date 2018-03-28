@@ -20,7 +20,7 @@
       </v-navigation-drawer>
 
       <!--Desktop menu-->
-      <v-toolbar v-if="$route.name !== 'signin'" class="toolbar purple-to-orange" :class="{toolbarProfile: $route.name === 'profile'}" dark app>
+      <v-toolbar v-if="$route.name !== 'signin'" class="toolbar purple-to-orange" dark app>
         <v-toolbar-side-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
 
         <v-toolbar-title>
@@ -118,7 +118,7 @@
             },
             onSignInPage () {
                 return this.$route.name === 'signin'
-            }
+            },
         }
     }
 </script>

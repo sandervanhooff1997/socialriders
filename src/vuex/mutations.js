@@ -5,6 +5,9 @@ export default {
     setExplores (state, explores) {
         state.explores = explores
     },
+    setExperiences (state, experiences) {
+        state.experiences = experiences
+    },
     setLoading (state, loading) {
         state.loading = loading
     },

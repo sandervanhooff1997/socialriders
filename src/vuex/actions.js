@@ -8,14 +8,14 @@ export default {
         var provider;
 
         if (providedProvider === 'google') {
-            provider = new firebase.auth.GoogleAuthProvider();
+            provider = new GoogleAuthProvider();
         } else if (providedProvider === 'facebook') {
-            provider = new firebase.auth.FacebookAuthProvider();
+            provider = new FacebookAuthProvider();
         } else {
             return
         }
 
-        firebase.auth().signInWithPopup(provider).then(function (result) {
+        auth().signInWithPopup(provider).then(function (result) {
             commit('setLoading', false)
             commit('clearMessage')
 
@@ -47,7 +47,7 @@ export default {
             .then((docRef) => {
                 // Did not found a existing user matching this uid
                 if (docRef.empty) {
-                    firebase.firestore()
+                    firestore()
                         .collection('users')
                         .add(user)
                         .then((docRef) => {
@@ -72,12 +72,13 @@ export default {
         })
     },
     logout ({commit}) {
-        firebase.auth().signOut()
+        auth().signOut()
         commit('setUser', null)
     },
-    fetchExplores ({commit}) {
+    getExplores ({commit}) {
         firebase.firestore()
             .collection('/explores')
+            .where('date', '>', new Date())
             .onSnapshot((querySnapshot) => {
                 const explores = []
 
@@ -89,8 +90,8 @@ export default {
             }, (error) => {
                 commit('clearMessage')
                 commit('setMessage', {text:error.message, type: 'error'
+                })
             })
-        })
     },
     organizeExplore({commit}, explore) {
         return new Promise((resolve, reject) => {
@@ -99,6 +100,45 @@ export default {
                 commit('setLoading', false)
                 commit('clearMessage')
                 resolve(docRef);  // Let the calling function know that http is done. You may send some data back
+            }, error => {
+                commit('clearMessage')
+                reject(error)
+            })
+        })
+    },
+    getExperiences({commit}) {
+        firebase.firestore()
+            .collection('/explores')
+            .where('date', '<', new Date())
+            .orderBy('date', 'desc')
+            .onSnapshot((querySnapshot) => {
+                const experiences = []
+
+                querySnapshot.forEach(function(doc) {
+                    experiences.push(doc.data())
+                });
+
+                commit('setExperiences', experiences)
+            }, (error) => {
+                commit('clearMessage')
+                commit('setMessage', {text:error.message, type: 'error'
+                })
+            })
+    },
+    getExperience({commit}, id) {
+        return new Promise((resolve, reject) => {
+            commit('setLoading', true)
+            firebase.firestore().collection('/explores')
+                .where(firebase.firestore.FieldPath.documentId(), "==", id)
+                .limit(1)
+                .get()
+                .then(querySnapshot => {
+                    commit('setLoading', false)
+                    commit('clearMessage')
+                    querySnapshot.forEach(function(doc) {
+                        resolve(doc.data());
+                    });
+
             }, error => {
                 commit('clearMessage')
                 reject(error)
