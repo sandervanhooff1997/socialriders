@@ -8,14 +8,14 @@ export default {
         var provider;
 
         if (providedProvider === 'google') {
-            provider = new GoogleAuthProvider();
+            provider = new firebase.auth.GoogleAuthProvider();
         } else if (providedProvider === 'facebook') {
-            provider = new FacebookAuthProvider();
+            provider = new firebase.auth.FacebookAuthProvider();
         } else {
             return
         }
 
-        auth().signInWithPopup(provider).then(function (result) {
+        firebase.auth().signInWithPopup(provider).then(function (result) {
             commit('setLoading', false)
             commit('clearMessage')
 
@@ -72,7 +72,7 @@ export default {
         })
     },
     logout ({commit}) {
-        auth().signOut()
+        firebase.auth().signOut()
         commit('setUser', null)
     },
     getExplores ({commit}) {

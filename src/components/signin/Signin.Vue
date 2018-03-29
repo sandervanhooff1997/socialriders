@@ -1,5 +1,23 @@
 <template>
     <div id="wrapper">
+        <v-toolbar class="signinToolbar" dense dark flat>
+            <v-spacer></v-spacer>
+            <v-toolbar-items style="margin: 0;">
+                <v-menu
+                        v-for="item in info"
+                        :key="item.title"
+                        :close-on-content-click="false"
+                        max-width="300"
+                        min-width="300"
+                        absolute
+                >
+                    <v-btn flat slot="activator">{{item.title}}</v-btn>
+                    <v-card>
+                        <v-card-text v-html="item.text"></v-card-text>
+                    </v-card>
+                </v-menu>
+            </v-toolbar-items>
+        </v-toolbar>
         <div class="text-xs-center">
             <v-avatar :size="400" class="mt-4">
                 <img src="./../../assets/logo512x512-white.png" align="Logo">
@@ -25,6 +43,31 @@
 
 <script>
     export default {
+        data () {
+            return {
+                menu: false,
+                info: [
+                    {
+                        title: 'Google & Facebook signin',
+                        text: 'Signing in with <b>Google</b> or <b>Facebook</b> makes sure your profile information is <b>secured</b> by their powerful authentication systems.<br><br>' +
+                        'This also <b>prevents</b> you from having to <b>register</b> your account at <b>SocialRiders</b>.<br><br>'
+                    },
+                    {
+                        title: 'Privacy',
+                        text: 'We only use the following <b>public</b> profile information:<br>' +
+                        'Email<br>' +
+                        'Name<br>' +
+                        'Profile Picture</b>'
+                    },
+                    {
+                        title: 'About',
+                        text: '<b>SocialRiders</b> is an online <b>social media</b> where riders of all kinds can ride <b>together</b>.<br><br>' +
+                        'You can <b>organize</b> your own trips, <b>explore</b> trips and share <b>experiences</b> with others.<br><br>' +
+                        'Our main goal is to offer you a tool to support the social aspect of this principle.'
+                    }
+                ]
+            }
+        },
         methods: {
             signin (provider) {
                 this.$store.dispatch('signIn', provider)
@@ -51,5 +94,8 @@
 <style>
     .signinBtn.facebook {
         background-color: #4968AD!important;
+    }
+    .signinToolbar {
+        background: none!important;
     }
 </style>

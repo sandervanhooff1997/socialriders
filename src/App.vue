@@ -4,7 +4,7 @@
       <app-alert v-if="message" @dismissed="onDismissed" :text="message.text" :type="message.type"></app-alert>
 
       <!--Mobile Menu-->
-      <v-navigation-drawer  app v-model="drawer">
+      <v-navigation-drawer  v-if="$route.name !== 'signin'" app v-model="drawer">
         <v-list class="pt-0">
 
             <!--Menu links-->
