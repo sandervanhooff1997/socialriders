@@ -2,21 +2,20 @@
     <div>
         <v-stepper v-model="step" style="height: 100%;">
             <v-stepper-header>
-                <v-stepper-step step="1" :complete="step > 1">{{headers.step1}}</v-stepper-step>
+                <v-stepper-step step="1" :complete="step > 1">{{titles.step1}}</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="2" :complete="step > 2">{{headers.step2}}</v-stepper-step>
+                <v-stepper-step step="2" :complete="step > 2">{{titles.step2}}</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="3" :complete="step > 3">{{headers.step3}}</v-stepper-step>
+                <v-stepper-step step="3" :complete="step > 3">{{titles.step3}}</v-stepper-step>
                 <v-divider></v-divider>
-                <v-stepper-step step="4" :complete="step > 4">{{headers.step4}}</v-stepper-step>
+                <v-stepper-step step="4" :complete="step > 4">{{titles.step4}}</v-stepper-step>
             </v-stepper-header>
-            <v-stepper-items style="height: 100%;">
+            <v-stepper-items>
                 <v-stepper-content step="1">
-                    <v-card class="mb-3">
+                    <v-card class="mb-3" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p v-if="!step1Completed" class="display-1 stepTitle">{{titles.step1}}</p>
-                                <v-btn fab dark color="accent" v-if="step1Completed" @click="step = 2">
+                                <p class="display-1 stepTitle">{{titles.step1}}</p>
                                     <v-icon dark>forward</v-icon>
                                 </v-btn>
                                 <div>{{subtitles.step1}}</div>
@@ -60,11 +59,10 @@
                     </v-card>
                 </v-stepper-content>
                 <v-stepper-content step="2">
-                    <v-card class="mb-3">
+                    <v-card class="mb-3" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p v-if="!step2Completed" class="display-1 stepTitle">{{titles.step2}}</p>
-                                <v-btn fab dark color="accent" v-if="step2Completed" @click="step = 3">
+                                <p class="display-1 stepTitle">{{titles.step2}}</p>
                                     <v-icon dark>forward</v-icon>
                                 </v-btn>
                                 <div></div>
@@ -72,90 +70,98 @@
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
                             <v-layout row wrap v-if="step == 2">
-                                <v-flex xs12 sm6>
-                                    <v-container fluid>
-                                        <v-btn flat  @click="options = !options">Options</v-btn>
-                                        <div v-if="options">
-                                            <v-layout row wrap>
-                                                <v-flex xs12 md4>
+                                <v-flex xs12 sm4>
+                                    <v-list>
+                                        <v-list-tile-sub-title>
+                                            Configure
+                                            <span v-if="distance && duration"> ({{distance | distance}} - {{duration | duration}}) </span>
+                                        </v-list-tile-sub-title>
+                                    </v-list>
+                                    <v-expansion-panel>
+                                        <v-expansion-panel-content value="true">
+                                            <div slot="header">Route</div>
+                                            <v-card>
+                                                <v-card-text>
+                                                    <!--startpoint-->
+                                                    <v-text-field
+                                                            :id="startPoint.id"
+                                                            :placeholder="startPoint.placeholder"
+                                                            prepend-icon="flight_takeoff"
+                                                            :value="startPoint.address"
+                                                            class="noPadding"
+                                                            clearable
+                                                            autofocus
+                                                    ></v-text-field>
+
+                                                    <!--wayPoints-->
+                                                    <div v v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
+                                                        <v-text-field
+                                                                :id="wayPoint.id"
+                                                                :placeholder="wayPoint.placeholder"
+                                                                prepend-icon="explore"
+                                                                :value="wayPoint.address"
+                                                                clearable
+                                                                autofocus
+                                                        ></v-text-field>
+                                                        <v-btn
+                                                                style="z-index: 1"
+                                                                v-if="index !== (wayPoints.length -1)"
+                                                                @click="swapWayPoints(index)"
+                                                                absolute
+                                                                dark
+                                                                fab
+                                                                bottom
+                                                                small
+                                                                left
+                                                                color="warning"
+                                                        >
+                                                            <v-icon>swap_vert</v-icon>
+                                                        </v-btn>
+                                                    </div>
+
+                                                    <v-btn @click="addWayPoint(getWayPointId(), 'waypoint ' + (wayPoints.length + 1))"
+                                                           fab
+                                                           dark
+                                                           color="warning"
+                                                           class="noMargin">
+                                                        <v-icon dark>add</v-icon>
+                                                    </v-btn>
+
+                                                    <!--endpoint-->
+                                                    <v-text-field
+                                                            :id="endPoint.id"
+                                                            :placeholder="endPoint.placeholder"
+                                                            prepend-icon="flight_land"
+                                                            :value="endPoint.address"
+                                                            class="noPadding"
+                                                            clearable
+                                                    ></v-text-field>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-expansion-panel-content>
+                                        <v-expansion-panel-content v-if="vehicle != 'bicycle'">
+                                            <div slot="header">Options</div>
+                                            <v-card>
+                                                <v-card-text>
                                                     <v-checkbox
                                                             label="Avoid Highways"
                                                             v-model="avoidHighways"
                                                     ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs12 md4>
                                                     <v-checkbox
                                                             label="Avoid Ferries"
                                                             v-model="avoidFerries"
                                                     ></v-checkbox>
-                                                </v-flex>
-                                                <v-flex xs12 md4>
                                                     <v-checkbox
                                                             label="Avoid Tolls"
                                                             v-model="avoidTolls"
                                                     ></v-checkbox>
-                                                </v-flex>
-                                            </v-layout>
-                                        </div>
-
-                                        <!--startpoint-->
-                                        <v-text-field
-                                                :id="startPoint.id"
-                                                :placeholder="startPoint.placeholder"
-                                                prepend-icon="flight_takeoff"
-                                                :value="startPoint.address"
-                                                class="noPadding"
-                                                clearable
-                                                autofocus
-                                        ></v-text-field>
-
-                                        <!--wayPoints-->
-                                        <div v v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
-                                            <v-text-field
-                                                    :id="wayPoint.id"
-                                                    :placeholder="wayPoint.placeholder"
-                                                    prepend-icon="explore"
-                                                    :value="wayPoint.address"
-                                                    clearable
-                                                    autofocus
-                                            ></v-text-field>
-                                            <v-btn
-                                                    style="z-index: 1"
-                                                    v-if="index !== (wayPoints.length -1)"
-                                                    @click="swapWayPoints(index)"
-                                                    absolute
-                                                    dark
-                                                    fab
-                                                    bottom
-                                                    small
-                                                    left
-                                                    color="warning"
-                                            >
-                                                <v-icon>swap_vert</v-icon>
-                                            </v-btn>
-                                        </div>
-
-                                        <v-btn @click="addWayPoint(getWayPointId(), 'waypoint ' + (wayPoints.length + 1))"
-                                               fab
-                                               dark
-                                               color="warning"
-                                                class="noMargin">
-                                            <v-icon dark>add</v-icon>
-                                        </v-btn>
-
-                                        <!--endpoint-->
-                                        <v-text-field
-                                                :id="endPoint.id"
-                                                :placeholder="endPoint.placeholder"
-                                                prepend-icon="flight_land"
-                                                :value="endPoint.address"
-                                                class="noPadding"
-                                                clearable
-                                        ></v-text-field>
-                                        <span v-if="distance" class="title darkgrey--text">Total distance of {{distance | distance}} </span>
-                                    </v-container>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-expansion-panel-content>
+                                    </v-expansion-panel>
                                 </v-flex>
-                                <v-flex xs12 sm6>
+
+                                <v-flex xs12 sm8>
                                     <v-container fluid>
                                         <!--Google Maps element-->
                                         <div class="google-map" id="map">Google Maps</div>
@@ -164,14 +170,13 @@
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn @click="step = 1" flat>Back</v-btn>
+                    <div class="bottomMargin"></div>
                 </v-stepper-content>
                 <v-stepper-content  step="3">
-                    <v-card class="mb-3">
+                    <v-card class="mb-3" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p v-if="!step3Completed" class="display-1 stepTitle">{{titles.step3}}</p>
-                                <v-btn fab dark color="accent" v-if="step3Completed" @click="step = 4">
+                                <p class="display-1 stepTitle">{{titles.step3}}</p>
                                     <v-icon dark>forward</v-icon>
                                 </v-btn>
                                 <div>{{subtitles.step3}}</div>
@@ -201,14 +206,12 @@
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn @click="step = 2" flat>Back</v-btn>
                 </v-stepper-content>
                 <v-stepper-content  step="4">
-                    <v-card class="mb-3">
+                    <v-card class="mb-3" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
-                                <p v-if="!allStepsCompleted" class="display-1 stepTitle">{{titles.step4}}</p>
-                                <v-btn fab dark color="success" v-if="allStepsCompleted" @click="saveExplore()">
+                                <p class="display-1 stepTitle">{{titles.step4}}</p>
                                     <v-icon dark>send</v-icon>
                                 </v-btn>
                                 <div>{{subtitles.step4}}</div>
@@ -232,10 +235,60 @@
                             </v-layout>
                         </v-container>
                     </v-card>
-                    <v-btn @click="step = 3" flat>Back</v-btn>
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
+        <v-toolbar fixed flat class="bottomToolbar">
+            <v-toolbar-items style="width: 100%;" >
+                <v-fab-transition>
+                    <v-btn
+                    color="accent"
+                    fab
+                    dark
+                    absolute
+                    top
+                    left
+                    @click="back()"
+                    class="backBtn"
+                    v-if="step !== 1"
+                    >
+                    <v-icon>keyboard_arrow_left</v-icon>
+                    </v-btn>
+                </v-fab-transition>
+
+                <v-fab-transition>
+                    <v-btn
+                    color="accent"
+                    fab
+                    dark
+                    absolute
+                    top
+                    right
+                    @click="forward()"
+                    class="backBtn"
+                    v-show="stepCompleted"
+                    >
+                    <v-icon>keyboard_arrow_right</v-icon>
+                    </v-btn>
+                </v-fab-transition>
+
+                <v-fab-transition>
+                    <v-btn
+                            color="success"
+                            fab
+                            dark
+                            absolute
+                            top
+                            right
+                            @click="saveExplore()"
+                            class="backBtn"
+                            v-show="allStepsCompleted"
+                    >
+                        <v-icon>send</v-icon>
+                    </v-btn>
+                </v-fab-transition>
+            </v-toolbar-items>
+        </v-toolbar>
     </div>
 </template>
 
@@ -245,23 +298,17 @@
     export default {
         data () {
             return {
-                step: 1,
+                step: 2,
                 initialized: false,
-                headers: {
-                    step1:  'Vehicle',
-                    step2:  'Location',
-                    step3:  'When',
-                    step4:  'Additionals'
-                },
                 titles: {
                     step1: 'Vehicle',
-                    step2: 'Location',
+                    step2: 'Route',
                     step3: 'When',
                     step4: 'Additionals'
                 },
                 subtitles: {
                     step1: 'Please choose the type of vehicle',
-                    step2: 'Click on the map below to set the starting location of your trip',
+                    step2: '',
                     step3: 'Choose when you plan on taking this trip',
                     step4: 'Enter any additional information about the trip'
                 },
@@ -273,6 +320,7 @@
                 wayPoints: [],
                 displayedWayPoints: [],
                 distance: null,
+                duration: null,
                 showInfoText: false,
                 map: null,
                 mapId: "map",
@@ -294,7 +342,6 @@
                 avoidHighways: false,
                 avoidTolls: false,
                 checkbox: false,
-                options: false,
                 /** Step 3 */
                 date: null,
                 time: null,
@@ -313,12 +360,36 @@
             },
             avoidTolls (value) {
                 this.calculateAndDisplayRoute()
+            },
+            step (value) {
+//                console.log('step changed')
+//                if (value === 2) {
+//                    console.log('step is 2')
+//                    this.initMap()
+//                }
             }
         },
         methods: {
+            back () {
+                if (this.step > 1) {
+                    this.step--
+                }
+            },
+            forward () {
+                if (this.step < 4) {
+                    if (this.step === 1 && this.step1Completed ||
+                        this.step === 2 && this.step1Completed && this.step2Completed ||
+                        this.step === 3 && this.step1Completed && this.step2Completed && this.step3Completed ||
+                        this.step === 4 && this.allStepsCompleted)
+                    {
+                        this.step++
+                    }
+                }
+            },
             /** Step 1 */
             setVehicle(vehicle) {
                 this.vehicle = vehicle
+                this.step = 2
             },
             isVehicle(vehicle) {
                 return this.vehicle === vehicle
@@ -540,6 +611,7 @@
                     },
                     wayPoints: wayPoints,
                     distance: this.distance,
+                    duration: this.duration,
                     date: new Date(this.date + ' ' + this.time),
                     title: this.title,
                     description: this.description,
@@ -556,6 +628,12 @@
             },
         },
         computed: {
+            stepCompleted () {
+                return this.step === 1 && this.step1Completed ||
+                        this.step === 2 && this.step1Completed && this.step2Completed ||
+                        this.step === 3 && this.step1Completed && this.step2Completed && this.step3Completed
+
+            },
             step1Completed () {
                 return this.vehicle !== null
                     && this.vehicle !== undefined
@@ -610,17 +688,8 @@
                 return this.$store.getters.loading
             }
         },
-        updated () {
-            if (this.step === 2 && !this.initialized) {
-                this.initialized = true;
-                this.initMap()
-            }
-        },
         mounted () {
-            if (this.step === 2) {
-                this.initialized = true;
-                this.initMap()
-            }
+            this.initMap()
         }
     }
 </script>
@@ -642,7 +711,7 @@
     }
     .google-map {
         width: 100%;
-        height: 300px;
+        height: 400px;
         margin: 0 auto;
         background: gray;
     }
@@ -651,5 +720,18 @@
     }
     .noPadding {
         padding: 0!important;
+    }
+    .bottomToolbar {
+        text-align: center;
+        top: auto;
+        bottom: 0;
+        background: #fff;
+    }
+    .backBtn {
+        width: 56px;
+        height: 56px;
+    }
+    .bottomMargin {
+        height: 64px;
     }
 </style>
