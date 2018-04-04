@@ -75,7 +75,7 @@
       </v-toolbar>
 
       <v-content id="appContent">
-          <router-view></router-view>
+          <router-view :key="$route.fullPath"></router-view>
       </v-content>
 
   </v-app>
