@@ -15,3 +15,5 @@ requireComponent.keys().forEach(fileName => {
   
   Vue.component(componentName, componentConfig.default || componentConfig)
 })
+
+// source: https://youtu.be/7lpemgMhi0k?t=6m12s
