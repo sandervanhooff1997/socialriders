@@ -133,72 +133,52 @@
 
                             <br>
 
-                                <v-flex xs6 sm12>
-                                    <v-subheader class="filter-header">
-                                        <v-switch label="Date" hide-details v-model="filters.date.on"></v-switch>
-                                    </v-subheader>
-                                    <v-menu
-                                            lazy
-                                            transition="scale-transition"
-                                            :nudge-right="40"
-                                            min-width="290px"
-                                            :disabled="!filters.date.on"
-                                    >
-                                        <v-text-field
-                                                slot="activator"
-                                                prepend-icon="event"
-                                                readonly
-                                                label="Choose a date"
-                                                color="accent"
-                                                v-model="filters.date.value"
-                                                :disabled="!filters.date.on"
-                                        ></v-text-field>
-                                        <v-date-picker
-                                                no-title
-                                                scrollable
-                                                v-model="filters.date.value"
-                                                :disabled="!filters.date.on"
-                                                :min="today"></v-date-picker>
-                                    </v-menu>
-                                </v-flex>
-                                <v-flex xs6 sm12>
-                                    <!--<v-container fluid style="padding-top: 0; padding-bottom: 0;">-->
-                                        <v-subheader class="filter-header">
-                                            <v-switch label="Daypart" hide-details v-model="filters.daypart.on"></v-switch>
-                                        </v-subheader>
-                                        <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
-                                            <v-radio
-                                                    v-for="item in filters.dayparts"
-                                                    :key="item.value"
-                                                    :label="item.text"
-                                                    :value="item.value"
-                                                    :selected="item.selected"
-                                                    :disabled="!filters.daypart.on"
-                                            ></v-radio>
-                                        </v-radio-group>
-                                    <!--</v-container>-->
-                                </v-flex>
+                            <v-subheader class="filter-header">
+                                <v-switch label="Date" hide-details v-model="filters.date.on"></v-switch>
+                            </v-subheader>
+                            <v-menu
+                                    lazy
+                                    transition="scale-transition"
+                                    :nudge-right="40"
+                                    min-width="290px"
+                                    :disabled="!filters.date.on"
+                            >
+                                <v-text-field
+                                        slot="activator"
+                                        prepend-icon="event"
+                                        readonly
+                                        label="Choose a date"
+                                        color="accent"
+                                        v-model="filters.date.value"
+                                        :disabled="!filters.date.on"
+                                ></v-text-field>
+                                <v-date-picker
+                                        no-title
+                                        scrollable
+                                        v-model="filters.date.value"
+                                        :disabled="!filters.date.on"
+                                        :min="today"></v-date-picker>
+                            </v-menu>
+
+                            <v-subheader class="filter-header">
+                                <v-switch label="Part of the day" hide-details v-model="filters.daypart.on"></v-switch>
+                            </v-subheader>
+                            <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
+                                <v-checkbox
+                                        v-for="item in filters.dayparts"
+                                        :key="item.value"
+                                        :label="item.text"
+                                        :disabled="!filters.daypart.on"
+                                        v-model="item.on"
+                                        hide-details
+                                ></v-checkbox>
+                            </v-radio-group>
                         </v-card>
                     </v-container>
                 </v-flex>
                 <v-flex xs12 sm9>
-                    <v-btn color="accent" id="hide-route" v-show="route" @click="hideRoute()">Hide Route</v-btn>
+                    <v-btn color="accent" id="hide-route" v-show="route" round @click="hideRoute()">Hide Route</v-btn>
                     <div class="google-map" :id="mapId">Google Maps</div>
-
-                    <!--<v-fab-transition>-->
-                    <!--<v-btn-->
-                    <!--:color="accent"-->
-                    <!--dark-->
-                    <!--fab-->
-                    <!--absolute-->
-                    <!--top-->
-                    <!--left-->
-                    <!--v-model="fab"-->
-                    <!--&gt;-->
-                    <!--<v-icon>lock_open</v-icon>-->
-                    <!--<v-icon>close</v-icon>-->
-                    <!--</v-btn>-->
-                    <!--</v-fab-transition>-->
                 </v-flex>
             </v-layout>
     </div>
@@ -252,25 +232,36 @@
                         on: false
                     },
                     daypart: {
-                        value: 'morning',
                         on: false
                     },
                     dayparts: [
                         {
                             text: 'Morning',
-                            value: 'morning'
+                            value: 'morning',
+                            on: true,
+                            min: 6,
+                            max: 12,
                         },
                         {
                             text: 'Noon',
-                            value: 'noon'
+                            value: 'noon',
+                            on: true,
+                            min: 12,
+                            max: 18,
                         },
                         {
                             text: 'Evening',
-                            value: 'evening'
+                            value: 'evening',
+                            on: true,
+                            min: 18,
+                            max: 22,
                         },
                         {
                             text: 'Midnight',
-                            value: 'midnight'
+                            value: 'midnight',
+                            on: true,
+                            min: 22,
+                            max: 6,
                         },
                     ]
                 }
@@ -304,8 +295,17 @@
             filterDaypartOn() {
                 return this.filters.daypart.on
             },
-            filterDaypartValue() {
-                return this.filters.daypart.value
+            filterDaypartsMorningOn() {
+                return this.filters.dayparts[0].on
+            },
+            filterDaypartsNoonOn() {
+                return this.filters.dayparts[1].on
+            },
+            filterDaypartsEveningOn() {
+                return this.filters.dayparts[2].on
+            },
+            filterDaypartNightOn() {
+                return this.filters.dayparts[3].on
             },
         },
         watch: {
@@ -315,6 +315,10 @@
             filterDateValue: 'filterExplores',
             filterDaypartOn: 'filterExplores',
             filterDaypartValue: 'filterExplores',
+            filterDaypartsMorningOn: 'filterExplores',
+            filterDaypartsNoonOn: 'filterExplores',
+            filterDaypartsEveningOn: 'filterExplores',
+            filterDaypartsNightOn: 'filterExplores',
         },
         methods: {
             initMap () {
@@ -438,24 +442,21 @@
                 }
 
                 if (self.filters.daypart.on) {
-                    explores = explores.filter(explore => {
-                        let hours = new Date(explore.date).getHours()
+                    let tempExplores = []
 
-                        switch (self.filters.daypart.value) {
-                            case 'morning':
-                                return hours >= 6 && hours < 12
-                                break;
-                            case 'noon':
-                                return hours >= 12 && hours < 18
-                                break;
-                            case 'evening':
-                                return hours >= 18 && hours < 22
-                                break;
-                            case 'midnight':
-                                return hours >= 22 && hours < 6
-                                break;
+                    self.filters.dayparts.forEach(daypart => {
+                        if (daypart.on) {
+                            explores.forEach(explore => {
+                                let hours = new Date(explore.date).getHours()
+
+                                if (hours >= daypart.min && hours < daypart.max) {
+                                    tempExplores.push(explore)
+                                }
+                            })
                         }
                     })
+
+                    explores = tempExplores
                 }
 
                 if (explores.length === 0
@@ -589,16 +590,6 @@
         min-height: 400px;
         margin: 0 auto;
         background: gray;
-    }
-    #legend {
-        font-weight:bold;
-        background: rgba(255,255,255,0.9);
-        padding: 10px;
-        margin: 10px;
-        text-align: left;
-    }
-    #legend .legendDevider {
-        margin: 5px 0;
     }
     #hide-route {
         margin-top: 20px;
