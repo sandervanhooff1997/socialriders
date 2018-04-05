@@ -86,7 +86,7 @@
                                                     <v-text-field
                                                             :id="startPoint.id"
                                                             :placeholder="startPoint.placeholder"
-                                                            prepend-icon="flight_takeoff"
+                                                            prepend-icon="nature_people"
                                                             :value="startPoint.address"
                                                             class="noPadding"
                                                             clearable
@@ -131,7 +131,7 @@
                                                     <v-text-field
                                                             :id="endPoint.id"
                                                             :placeholder="endPoint.placeholder"
-                                                            prepend-icon="flight_land"
+                                                            prepend-icon="flag"
                                                             :value="endPoint.address"
                                                             class="noPadding"
                                                             clearable
@@ -352,15 +352,9 @@
             }
         },
         watch: {
-            avoidFerries (value) {
-                this.calculateAndDisplayRoute()
-            },
-            avoidHighways (value) {
-                this.calculateAndDisplayRoute()
-            },
-            avoidTolls (value) {
-                this.calculateAndDisplayRoute()
-            },
+            'options.avoidHighways': 'calculateAndDisplayRoute',
+            'options.avoidTolls': 'calculateAndDisplayRoute',
+            'options.avoidFerries': 'calculateAndDisplayRoute',
             step (value) {
                 if (value === 2) {
                     this.initMap()
@@ -542,7 +536,7 @@
                     }, function(response, status) {
                         if (status === 'OK') {
                             self.directionsDisplay.setDirections(response)
-//                            console.log(response)
+
                             const route = response.routes[0];
                             let distance = 0;
                             let duration = 0;
@@ -690,7 +684,9 @@
             }
         },
         mounted () {
-            this.initMap()
+            if (this.step === 2) {
+                this.initMap()
+            }
         }
     }
 </script>

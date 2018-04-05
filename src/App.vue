@@ -40,7 +40,7 @@
                 <v-avatar size="36px" slot="activator">
                     <img :src="user.photoUrl" :alt="user.name">
                 </v-avatar>
-                <v-list>
+                <v-list class="purple-to-orange" dark>
                     <v-list-tile avatar>
                         <v-list-tile-avatar>
                             <img :src="user.photoUrl" :alt="user.name">
