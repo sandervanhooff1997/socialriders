@@ -114,6 +114,14 @@
     }
 </script>
 
-<style>
-
+<style scoped>
+    aside, nav {
+        font-family: 'Passion One', cursive;
+    }
+    aside *, nav * {
+        font-size: 20px!important;
+    }
+    .toolbar__title span {
+        font-size: 30px!important;
+    }
 </style>

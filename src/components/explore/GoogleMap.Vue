@@ -1,186 +1,183 @@
 <template>
     <div style="width: 100%; height: 100%;">
-        <!--InfoWindow-->
-        <v-navigation-drawer app dark right mobile-break-point="100000" v-model="selectedExplore" v-if="selectedExplore && selected" class="purple-to-orange">
-            <v-card flat style="background: none!important">
-                <v-card-media height="130px">
-                    <v-layout wrap align-center>
-                        <v-flex class="text-xs-center">
-                                <v-avatar>
-                                    <router-link :to="{ name: 'profile', params: { uid: selectedExplore.user.uid }}">
-                                    <img  :src="selectedExplore.user.photoUrl" :alt="selectedExplore.user.name">
-                                    </router-link>
-                                </v-avatar>
-                                <div class="title white--text">{{selectedExplore.user.name}}</div>
-                        </v-flex>
-                    </v-layout>
-                </v-card-media>
-                <v-divider></v-divider>
+        <v-layout row wrap fill-height class="banner">
+            <v-flex xs12 sm3>
+                <v-container fluid>
+                    <!--ROUTE DETAILS-->
+                    <v-card v-if="selectedExplore" flat dark style="background: none!important;">
+                        <v-card-media height="130px">
+                            <v-layout wrap align-center>
+                                <v-flex class="text-xs-center">
+                                    <v-avatar>
+                                        <router-link :to="{ name: 'profile', params: { uid: selectedExplore.user.uid }}">
+                                            <img  :src="selectedExplore.user.photoUrl" :alt="selectedExplore.user.name">
+                                        </router-link>
+                                    </v-avatar>
+                                    <div class="title white--text">{{selectedExplore.user.name}}</div>
+                                </v-flex>
+                            </v-layout>
+                        </v-card-media>
+                        <v-divider></v-divider>
 
-                <v-tooltip left>
-                    <v-card-title primary-title slot="activator">
-                        <div class="headline">{{selectedExplore.title}}</div>
-                    </v-card-title>
-                    <span>{{selectedExplore.title}}</span>
-                </v-tooltip>
+                        <v-tooltip left>
+                            <v-card-title primary-title slot="activator">
+                                <div class="headline">{{selectedExplore.title}}</div>
+                            </v-card-title>
+                            <span>{{selectedExplore.title}}</span>
+                        </v-tooltip>
 
-                <v-list>
-                    <v-list-tile>
-                        <v-tooltip left>
-                            <v-list-tile-action slot="activator">
-                                <v-icon>date_range</v-icon>
-                            </v-list-tile-action>
-                            <span>When</span>
-                        </v-tooltip>
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{selectedExplore.date | date}}</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                        <v-tooltip left>
-                            <v-list-tile-action slot="activator">
-                                <v-icon>flight_takeoff</v-icon>
-                            </v-list-tile-action>
-                            <span>Starting Location</span>
-                        </v-tooltip>
-                        <v-tooltip left>
-                            <v-list-tile-content  slot="activator">
-                                <v-list-tile-title>{{selectedExplore.startPoint.address}}</v-list-tile-title>
-                            </v-list-tile-content>
-                            <span>{{selectedExplore.startPoint.address}}</span>
-                        </v-tooltip>
-                    </v-list-tile>
-                    <v-list-tile>
-                        <v-tooltip left>
-                            <v-list-tile-action slot="activator">
-                                <v-icon>trending_flat</v-icon>
-                            </v-list-tile-action>
-                            <span>Total Distance</span>
-                        </v-tooltip>
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{selectedExplore.distance | distance}}</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                    <v-list-tile>
-                        <v-tooltip left>
-                            <v-list-tile-action slot="activator">
-                                <v-icon>motorcycle</v-icon>
-                            </v-list-tile-action>
-                            <span>Vehicle</span>
-                        </v-tooltip>
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{selectedExplore.vehicle | capitalize}}</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
+                        <v-list style="background: none!important;">
+                            <v-list-tile>
+                                <v-tooltip left>
+                                    <v-list-tile-action slot="activator">
+                                        <v-icon>date_range</v-icon>
+                                    </v-list-tile-action>
+                                    <span>When</span>
+                                </v-tooltip>
+                                <v-list-tile-content>
+                                    <v-list-tile-title>{{selectedExplore.date | date}}</v-list-tile-title>
+                                </v-list-tile-content>
+                            </v-list-tile>
+                            <v-list-tile>
+                                <v-tooltip left>
+                                    <v-list-tile-action slot="activator">
+                                        <v-icon>flight_takeoff</v-icon>
+                                    </v-list-tile-action>
+                                    <span>Starting Location</span>
+                                </v-tooltip>
+                                <v-tooltip left>
+                                    <v-list-tile-content  slot="activator">
+                                        <v-list-tile-title>{{selectedExplore.startPoint.address}}</v-list-tile-title>
+                                    </v-list-tile-content>
+                                    <span>{{selectedExplore.startPoint.address}}</span>
+                                </v-tooltip>
+                            </v-list-tile>
+                            <v-list-tile>
+                                <v-tooltip left>
+                                    <v-list-tile-action slot="activator">
+                                        <v-icon>trending_flat</v-icon>
+                                    </v-list-tile-action>
+                                    <span>Total Distance</span>
+                                </v-tooltip>
+                                <v-list-tile-content>
+                                    <v-list-tile-title>{{selectedExplore.distance | distance}}</v-list-tile-title>
+                                </v-list-tile-content>
+                            </v-list-tile>
+                            <v-list-tile>
+                                <v-tooltip left>
+                                    <v-list-tile-action slot="activator">
+                                        <v-icon>motorcycle</v-icon>
+                                    </v-list-tile-action>
+                                    <span>Vehicle</span>
+                                </v-tooltip>
+                                <v-list-tile-content>
+                                    <v-list-tile-title>{{selectedExplore.vehicle | capitalize}}</v-list-tile-title>
+                                </v-list-tile-content>
+                            </v-list-tile>
+                        </v-list>
 
-                <v-card-text>
-                    <p class="text-xs-left">{{selectedExplore.description}}</p>
-                </v-card-text>
-                <v-card-actions>
-                    <v-btn color="accent">Join</v-btn>
-                    <v-btn flat @click="selected = false">Close</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-navigation-drawer>
+                        <v-card-text>
+                            <p class="text-xs-left">{{selectedExplore.description}}</p>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn round color="accent">Join</v-btn>
+                            <v-btn round flat @click="hideRoute()">Close</v-btn>
+                        </v-card-actions>
+                    </v-card>
 
-            <v-layout row wrap fill-height class="banner">
-                <v-flex xs12 sm3>
-                    <v-container fluid>
-                        <v-card flat dark style="background: none!important;">
+                    <!--FILTERS-->
+                    <v-card v-if="!selectedExplore" flat dark style="background: none!important;">
+                        <v-text-field
+                                clearable
+                                solo-inverted
+                                prepend-icon="explore"
+                                id="search-input"
+                                placeholder="Search explores"
+                        ></v-text-field>
 
+                        <br>
+
+                        <v-subheader class="filter-header">
+                            <v-switch label="Max Distance" hide-details v-model="filters.distance.on"></v-switch>
+                        </v-subheader>
+                        <v-slider class="pa-0"
+                                  color="accent"
+                                  :min="filters.distance.min"
+                                  :max="filters.distance.max"
+                                  :label="filters.distance.value + ' km'"
+                                  :disabled="!filters.distance.on"
+                                  hide-details
+                                  v-model="filters.distance.value"
+                                  @mouseup="filterExplores()"
+                                  @keyup="filterExplores()"
+                        ></v-slider>
+
+                        <br>
+
+                        <v-subheader class="filter-header">
+                            <v-switch label="Max Duration" hide-details v-model="filters.duration.on"></v-switch>
+                        </v-subheader>
+                        <v-slider class="pa-0"
+                                  color="accent"
+                                  :min="filters.duration.min"
+                                  :max="filters.duration.max"
+                                  :label="filters.duration.value + ' hr'"
+                                  :disabled="!filters.duration.on"
+                                  hide-details
+                                  v-model="filters.duration.value"
+                                  @mouseup="filterExplores()"
+                                  @keyup="filterExplores()"
+                        ></v-slider>
+
+                        <br>
+
+                        <v-subheader class="filter-header">
+                            <v-switch label="Date" hide-details v-model="filters.date.on"></v-switch>
+                        </v-subheader>
+                        <v-menu
+                                lazy
+                                transition="scale-transition"
+                                :nudge-right="40"
+                                min-width="290px"
+                                :disabled="!filters.date.on"
+                        >
                             <v-text-field
-                                    clearable
-                                    solo-inverted
-                                    prepend-icon="explore"
-                                    id="search-input"
-                                    placeholder="Search explores"
-                            ></v-text-field>
-
-                            <br>
-
-                            <v-subheader class="filter-header">
-                                <v-switch label="Max Distance" hide-details v-model="filters.distance.on"></v-switch>
-                            </v-subheader>
-                            <v-slider class="pa-0"
-                                      color="accent"
-                                      :min="filters.distance.min"
-                                      :max="filters.distance.max"
-                                      :label="filters.distance.value + ' km'"
-                                      :disabled="!filters.distance.on"
-                                      hide-details
-                                      v-model="filters.distance.value"
-                                      @mouseup="filterExplores()"
-                                      @keyup="filterExplores()"
-                            ></v-slider>
-
-                            <br>
-
-                            <v-subheader class="filter-header">
-                                <v-switch label="Max Duration" hide-details v-model="filters.duration.on"></v-switch>
-                            </v-subheader>
-                            <v-slider class="pa-0"
-                                      color="accent"
-                                      :min="filters.duration.min"
-                                      :max="filters.duration.max"
-                                      :label="filters.duration.value + ' hr'"
-                                      :disabled="!filters.duration.on"
-                                      hide-details
-                                      v-model="filters.duration.value"
-                                      @mouseup="filterExplores()"
-                                      @keyup="filterExplores()"
-                            ></v-slider>
-
-                            <br>
-
-                            <v-subheader class="filter-header">
-                                <v-switch label="Date" hide-details v-model="filters.date.on"></v-switch>
-                            </v-subheader>
-                            <v-menu
-                                    lazy
-                                    transition="scale-transition"
-                                    :nudge-right="40"
-                                    min-width="290px"
+                                    slot="activator"
+                                    prepend-icon="event"
+                                    readonly
+                                    label="Choose a date"
+                                    color="accent"
+                                    v-model="filters.date.value"
                                     :disabled="!filters.date.on"
-                            >
-                                <v-text-field
-                                        slot="activator"
-                                        prepend-icon="event"
-                                        readonly
-                                        label="Choose a date"
-                                        color="accent"
-                                        v-model="filters.date.value"
-                                        :disabled="!filters.date.on"
-                                ></v-text-field>
-                                <v-date-picker
-                                        no-title
-                                        scrollable
-                                        v-model="filters.date.value"
-                                        :disabled="!filters.date.on"
-                                        :min="today"></v-date-picker>
-                            </v-menu>
+                            ></v-text-field>
+                            <v-date-picker
+                                    no-title
+                                    scrollable
+                                    v-model="filters.date.value"
+                                    :disabled="!filters.date.on"
+                                    :min="today"></v-date-picker>
+                        </v-menu>
 
-                            <v-subheader class="filter-header">
-                                <v-switch label="Part of the day" hide-details v-model="filters.daypart.on"></v-switch>
-                            </v-subheader>
-                            <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
-                                <v-checkbox
-                                        v-for="item in filters.dayparts"
-                                        :key="item.value"
-                                        :label="item.text"
-                                        :disabled="!filters.daypart.on"
-                                        v-model="item.on"
-                                        hide-details
-                                ></v-checkbox>
-                            </v-radio-group>
-                        </v-card>
-                    </v-container>
-                </v-flex>
-                <v-flex xs12 sm9>
-                    <v-btn color="accent" id="hide-route" v-show="route" round @click="hideRoute()">Hide Route</v-btn>
-                    <div class="google-map" :id="mapId">Google Maps</div>
-                </v-flex>
-            </v-layout>
+                        <v-subheader class="filter-header">
+                            <v-switch label="Part of the day" hide-details v-model="filters.daypart.on"></v-switch>
+                        </v-subheader>
+                        <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
+                            <v-checkbox
+                                    v-for="item in filters.dayparts"
+                                    :key="item.value"
+                                    :label="item.text"
+                                    :disabled="!filters.daypart.on"
+                                    v-model="item.on"
+                                    hide-details
+                            ></v-checkbox>
+                        </v-radio-group>
+                    </v-card>
+                </v-container>
+            </v-flex>
+            <v-flex xs12 sm9>
+                <div class="google-map" :id="mapId">Google Maps</div>
+            </v-flex>
+        </v-layout>
     </div>
 </template>
 
@@ -208,7 +205,6 @@
                 },
                 myPosition: null,
                 markers: [], // all map markers
-                selected: false,
                 selectedExplore: null,
                 route: false,
                 directionsService: new google.maps.DirectionsService,
@@ -216,13 +212,13 @@
                 switchDate: false,
                 filters: {
                     distance: {
-                        value: 100,
+                        value: 1000,
                         min: 1,
                         max: 1000,
                         on: false
                     },
                     duration: {
-                        value: 3,
+                        value: 12,
                         min: 1,
                         max: 12,
                         on: false
@@ -519,30 +515,22 @@
             addInfoWindowClickListener (marker, explore) {
                 const self = this;
                 marker.addListener('click', function() {
-                    self.showInfoWindow(explore)
+                    self.showRoute(explore)
                 });
             },
-            showInfoWindow (explore) {
+            showRoute(explore) {
                 this.selectedExplore = explore
-                this.selected = true;
-                this.showRoute()
-            },
-            hideInfoWindow() {
-                this.selectedExplore = null
-            },
-            showRoute() {
                 this.calculateAndDisplayRoute()
-                this.route = true
             },
             hideRoute(){
+                this.selectedExplore = null
+                this.map.setZoom(7)
                 this.directionsDisplay.setMap(null)
-                this.route = false
             },
             calculateAndDisplayRoute() {
                 if (this.selectedExplore !== null) {
                     const self = this;
 
-                    this.hideRoute()
                     this.directionsDisplay.setMap(this.map);
 
                     // wayPoints
@@ -590,9 +578,6 @@
         min-height: 400px;
         margin: 0 auto;
         background: gray;
-    }
-    #hide-route {
-        margin-top: 20px;
     }
     .filter-header {
         height: auto;
