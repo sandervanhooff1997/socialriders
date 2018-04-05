@@ -12,7 +12,7 @@
             </v-stepper-header>
             <v-stepper-items>
                 <v-stepper-content step="1">
-                    <v-card class="mb-3" flat>
+                    <v-card class="mb-3 stepperContent" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step1}}</p>
@@ -59,7 +59,7 @@
                     </v-card>
                 </v-stepper-content>
                 <v-stepper-content step="2">
-                    <v-card class="mb-3" flat>
+                    <v-card class="mb-3 stepperContent" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step2}}</p>
@@ -138,22 +138,22 @@
                                                     ></v-text-field>
                                                 </v-card-text>
                                             </v-card>
-                                        </v-expansion-panel-content>
+                                            </v-expansion-panel-content>
                                         <v-expansion-panel-content v-if="vehicle != 'bicycle'">
                                             <div slot="header">Options</div>
                                             <v-card>
                                                 <v-card-text>
                                                     <v-checkbox
                                                             label="Avoid Highways"
-                                                            v-model="avoidHighways"
+                                                            v-model="options.avoidHighways"
                                                     ></v-checkbox>
                                                     <v-checkbox
                                                             label="Avoid Ferries"
-                                                            v-model="avoidFerries"
+                                                            v-model="options.avoidFerries"
                                                     ></v-checkbox>
                                                     <v-checkbox
                                                             label="Avoid Tolls"
-                                                            v-model="avoidTolls"
+                                                            v-model="options.avoidTolls"
                                                     ></v-checkbox>
                                                 </v-card-text>
                                             </v-card>
@@ -173,7 +173,7 @@
                     <div class="bottomMargin"></div>
                 </v-stepper-content>
                 <v-stepper-content  step="3">
-                    <v-card class="mb-3" flat>
+                    <v-card class="mb-3 stepperContent" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step3}}</p>
@@ -208,7 +208,7 @@
                     </v-card>
                 </v-stepper-content>
                 <v-stepper-content  step="4">
-                    <v-card class="mb-3" flat>
+                    <v-card class="mb-3 stepperContent" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step4}}</p>
@@ -298,7 +298,7 @@
     export default {
         data () {
             return {
-                step: 2,
+                step: 1,
                 initialized: false,
                 titles: {
                     step1: 'Vehicle',
@@ -338,10 +338,11 @@
                 markers: [],
                 directionsService: new google.maps.DirectionsService,
                 directionsDisplay: new google.maps.DirectionsRenderer,
-                avoidFerries: false,
-                avoidHighways: false,
-                avoidTolls: false,
-                checkbox: false,
+                options: {
+                    avoidFerries: false,
+                    avoidHighways: false,
+                    avoidTolls: false,
+                },
                 /** Step 3 */
                 date: null,
                 time: null,
@@ -355,18 +356,15 @@
                 this.calculateAndDisplayRoute()
             },
             avoidHighways (value) {
-                console.log(value)
                 this.calculateAndDisplayRoute()
             },
             avoidTolls (value) {
                 this.calculateAndDisplayRoute()
             },
             step (value) {
-//                console.log('step changed')
-//                if (value === 2) {
-//                    console.log('step is 2')
-//                    this.initMap()
-//                }
+                if (value === 2) {
+                    this.initMap()
+                }
             }
         },
         methods: {
@@ -400,9 +398,11 @@
                 const self = this;
 
                 // Google maps
-                this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
-                this.addSearchBox(this.startPoint.id, this.startPoint.placeholder)
-                this.addSearchBox(this.endPoint.id, this.endPoint.placeholder)
+                $(document).ready(() => {
+                    this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
+                    this.addSearchBox(this.startPoint.id, this.startPoint.placeholder)
+                    this.addSearchBox(this.endPoint.id, this.endPoint.placeholder)
+                })
             },
             getWayPointId () {
                return 'waypoint' + this.wayPoints.length;
@@ -536,9 +536,9 @@
                         optimizeWaypoints: false,
                         travelMode: travelMode,
                         provideRouteAlternatives: false,
-                        avoidFerries: self.avoidFerries,
-                        avoidHighways: self.avoidHighways,
-                        avoidTolls: self.avoidTolls,
+                        avoidFerries: self.options.avoidFerries,
+                        avoidHighways: self.options.avoidHighways,
+                        avoidTolls: self.options.avoidTolls,
                     }, function(response, status) {
                         if (status === 'OK') {
                             self.directionsDisplay.setDirections(response)
@@ -609,6 +609,7 @@
                         },
                         address: this.endPoint.address
                     },
+                    options: this.options,
                     wayPoints: wayPoints,
                     distance: this.distance,
                     duration: this.duration,
@@ -620,7 +621,7 @@
 
                 // add to db
                 this.$store.dispatch('organizeExplore', explore).then(response => {
-                    this.$router.push('/')
+                    this.$router.push({name: 'explore'})
                     this.$store.dispatch('successMessage', 'Explore Organized!')
                 }, error => {
                     this.$store.dispatch('errorMessage', error.message)
@@ -733,5 +734,8 @@
     }
     .bottomMargin {
         height: 64px;
+    }
+    .stepperContent {
+        margin-bottom: 30px!important;
     }
 </style>

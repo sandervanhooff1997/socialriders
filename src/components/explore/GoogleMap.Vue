@@ -84,13 +84,123 @@
             </v-card>
         </v-navigation-drawer>
 
-        <v-btn color="accent" id="hide-route" v-show="route" @click="hideRoute()">Hide Route</v-btn>
-        <div class="google-map" :id="mapId">Google Maps</div>
+            <v-layout row wrap fill-height class="banner">
+                <v-flex xs12 sm3>
+                    <v-container fluid>
+                        <v-card flat dark style="background: none!important;">
 
-        <div id="legend">
-            <h3>Legend</h3>
-            <v-divider class="legendDevider"></v-divider>
-        </div>
+                            <v-text-field
+                                    clearable
+                                    solo-inverted
+                                    prepend-icon="explore"
+                                    id="search-input"
+                                    placeholder="Search explores"
+                            ></v-text-field>
+
+                            <br>
+
+                            <v-subheader class="filter-header">
+                                <v-switch label="Max Distance" hide-details v-model="filters.distance.on"></v-switch>
+                            </v-subheader>
+                            <v-slider class="pa-0"
+                                      color="accent"
+                                      :min="filters.distance.min"
+                                      :max="filters.distance.max"
+                                      :label="filters.distance.value + ' km'"
+                                      :disabled="!filters.distance.on"
+                                      hide-details
+                                      v-model="filters.distance.value"
+                                      @mouseup="filterExplores()"
+                                      @keyup="filterExplores()"
+                            ></v-slider>
+
+                            <br>
+
+                            <v-subheader class="filter-header">
+                                <v-switch label="Max Duration" hide-details v-model="filters.duration.on"></v-switch>
+                            </v-subheader>
+                            <v-slider class="pa-0"
+                                      color="accent"
+                                      :min="filters.duration.min"
+                                      :max="filters.duration.max"
+                                      :label="filters.duration.value + ' hr'"
+                                      :disabled="!filters.duration.on"
+                                      hide-details
+                                      v-model="filters.duration.value"
+                                      @mouseup="filterExplores()"
+                                      @keyup="filterExplores()"
+                            ></v-slider>
+
+                            <br>
+
+                                <v-flex xs6 sm12>
+                                    <v-subheader class="filter-header">
+                                        <v-switch label="Date" hide-details v-model="filters.date.on"></v-switch>
+                                    </v-subheader>
+                                    <v-menu
+                                            lazy
+                                            transition="scale-transition"
+                                            :nudge-right="40"
+                                            min-width="290px"
+                                            :disabled="!filters.date.on"
+                                    >
+                                        <v-text-field
+                                                slot="activator"
+                                                prepend-icon="event"
+                                                readonly
+                                                label="Choose a date"
+                                                color="accent"
+                                                v-model="filters.date.value"
+                                                :disabled="!filters.date.on"
+                                        ></v-text-field>
+                                        <v-date-picker
+                                                no-title
+                                                scrollable
+                                                v-model="filters.date.value"
+                                                :disabled="!filters.date.on"
+                                                :min="today"></v-date-picker>
+                                    </v-menu>
+                                </v-flex>
+                                <v-flex xs6 sm12>
+                                    <!--<v-container fluid style="padding-top: 0; padding-bottom: 0;">-->
+                                        <v-subheader class="filter-header">
+                                            <v-switch label="Daypart" hide-details v-model="filters.daypart.on"></v-switch>
+                                        </v-subheader>
+                                        <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
+                                            <v-radio
+                                                    v-for="item in filters.dayparts"
+                                                    :key="item.value"
+                                                    :label="item.text"
+                                                    :value="item.value"
+                                                    :selected="item.selected"
+                                                    :disabled="!filters.daypart.on"
+                                            ></v-radio>
+                                        </v-radio-group>
+                                    <!--</v-container>-->
+                                </v-flex>
+                        </v-card>
+                    </v-container>
+                </v-flex>
+                <v-flex xs12 sm9>
+                    <v-btn color="accent" id="hide-route" v-show="route" @click="hideRoute()">Hide Route</v-btn>
+                    <div class="google-map" :id="mapId">Google Maps</div>
+
+                    <!--<v-fab-transition>-->
+                    <!--<v-btn-->
+                    <!--:color="accent"-->
+                    <!--dark-->
+                    <!--fab-->
+                    <!--absolute-->
+                    <!--top-->
+                    <!--left-->
+                    <!--v-model="fab"-->
+                    <!--&gt;-->
+                    <!--<v-icon>lock_open</v-icon>-->
+                    <!--<v-icon>close</v-icon>-->
+                    <!--</v-btn>-->
+                    <!--</v-fab-transition>-->
+                </v-flex>
+            </v-layout>
     </div>
 </template>
 
@@ -98,12 +208,6 @@
     import Vue from 'vue'
     import DateDiff from 'date-diff'
     import mapStyles from '../shared/maps/map-styles'
-
-    // Custom Marker Icons
-    import greenMarker from './../../assets/markers/green-marker.png'
-    import yellowMarker from './../../assets/markers/yellow-marker.png'
-    import redMarker from './../../assets/markers/red-marker.png'
-    import homeMarker from './../../assets/markers/home-marker.png'
 
     export default {
         props: ['explores'],
@@ -122,27 +226,95 @@
                     zoom: 7,
                     styles: mapStyles.retro
                 },
+                myPosition: null,
                 markers: [], // all map markers
                 selected: false,
                 selectedExplore: null,
                 route: false,
                 directionsService: new google.maps.DirectionsService,
                 directionsDisplay: new google.maps.DirectionsRenderer,
-                icons: {
-                    green: {
-                        name: 'Less than 30 days',
-                        icon: greenMarker
+                switchDate: false,
+                filters: {
+                    distance: {
+                        value: 100,
+                        min: 1,
+                        max: 1000,
+                        on: false
                     },
-                    yellow: {
-                        name: 'Between 30 and 60 days',
-                        icon: yellowMarker
+                    duration: {
+                        value: 3,
+                        min: 1,
+                        max: 12,
+                        on: false
                     },
-                    red: {
-                        name: 'More than 60 days',
-                        icon: redMarker
-                    }
-                },
+                    date: {
+                        value: null,
+                        on: false
+                    },
+                    daypart: {
+                        value: 'morning',
+                        on: false
+                    },
+                    dayparts: [
+                        {
+                            text: 'Morning',
+                            value: 'morning'
+                        },
+                        {
+                            text: 'Noon',
+                            value: 'noon'
+                        },
+                        {
+                            text: 'Evening',
+                            value: 'evening'
+                        },
+                        {
+                            text: 'Midnight',
+                            value: 'midnight'
+                        },
+                    ]
+                }
             }
+        },
+        computed: {
+            today () {
+                var now = new Date();
+                var dd = now.getDate();
+                var mm = now.getMonth()+1; //January is 0!
+                var yyyy = now.getFullYear();
+
+                if(dd<10) dd = '0'+dd
+
+                if(mm<10)  mm = '0'+mm
+
+                return yyyy + '-' + mm + '-' + dd;
+            },
+            filterDistanceOn() {
+                return this.filters.distance.on
+            },
+            filterDurationOn() {
+                return this.filters.duration.on
+            },
+            filterDateOn() {
+                return this.filters.date.on
+            },
+            filterDateValue() {
+                return this.filters.date.value
+            },
+            filterDaypartOn() {
+                return this.filters.daypart.on
+            },
+            filterDaypartValue() {
+                return this.filters.daypart.value
+            },
+        },
+        watch: {
+            filterDistanceOn: 'filterExplores',
+            filterDurationOn: 'filterExplores',
+            filterDateOn: 'filterExplores',
+            filterDateValue: 'filterExplores',
+            filterDaypartOn: 'filterExplores',
+            filterDaypartValue: 'filterExplores',
         },
         methods: {
             initMap () {
@@ -151,24 +323,7 @@
                 // Google maps
                 this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
 
-                // Async load current position and create marker on success
-                const options = {
-                    enableHighAccuracy: false,
-                    timeout: 10000,
-                    maximumAge: 0
-                };
-                self.getPosition(options)
-                    .then((position) => {
-                        self.addMarker({lat: position.coords.latitude, lng: position.coords.longitude}, homeMarker)
-
-                        let bounds = new google.maps.LatLngBounds();
-                        bounds.lat = position.coords.latitude
-                        bounds.lng = position.coords.longitude
-                        self.map.fitBounds(bounds)
-                    })
-                    .catch((err) => {
-                        console.error("Error fetching current position: " + err.message);
-                    });
+                self.setMyPosition()
 
                 // selecting element by ID must be in $(document).ready()
                 $(document).ready(function(){
@@ -231,43 +386,127 @@
                         self.map.fitBounds(bounds);
                     });
 
-                    // Generate a legend
-                    let legend = document.getElementById('legend');
-                    for (var key in self.icons) {
-                        const type = self.icons[key];
-                        const name = type.name;
-                        const icon = type.icon;
-                        const div = document.createElement('div');
-
-                        div.innerHTML = '<img style="vertical-align: middle" src="' + icon + '"> ' + name;
-                        legend.appendChild(div);
-                    }
-                    self.map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(legend);
-
                     // Render explores
-                    self.explores.forEach(explore => {
-                        const icon = self.getMarkerIcon(explore.date)
-                        const marker = self.addMarker(explore.startPoint.location, icon)
-                        self.addInfoWindowClickListener(marker, explore)
-                    })
+                    self.filterExplores()
                 })
+            },
+            renderExplores (explores) {
+                const self = this
+
+                if (this.markers.length > 0) {
+                    this.markers.forEach(marker => {
+                        marker.setMap(null)
+                    })
+                    this.markers = []
+                }
+
+                explores.forEach(explore => {
+                    const marker = self.addMarker(explore.startPoint.location)
+                    self.addInfoWindowClickListener(marker, explore)
+                })
+            },
+            /**
+             * filters all explores with the given filters
+             */
+            filterExplores() {
+                const self = this
+
+                let explores = self.explores
+
+                if (self.filters.distance.on) {
+                    explores = explores.filter(explore => {
+                        return explore.distance <= (self.filters.distance.value * 1000)
+                    })
+                }
+
+                if (self.filters.duration.on) {
+                    explores = explores.filter(explore => {
+                        return explore.duration <= (self.filters.duration.value * 3600)
+                    })
+                }
+
+                if (self.filters.date.on) {
+                    explores = explores.filter(explore => {
+                        let exploreDate = new Date(explore.date)
+                        let filterDate = new Date(self.filters.date.value)
+
+                        exploreDate.setHours(0,0,0,0)
+                        filterDate.setHours(0,0,0,0)
+
+                        return exploreDate.getTime() === filterDate.getTime()
+                    })
+                }
+
+                if (self.filters.daypart.on) {
+                    explores = explores.filter(explore => {
+                        let hours = new Date(explore.date).getHours()
+
+                        switch (self.filters.daypart.value) {
+                            case 'morning':
+                                return hours >= 6 && hours < 12
+                                break;
+                            case 'noon':
+                                return hours >= 12 && hours < 18
+                                break;
+                            case 'evening':
+                                return hours >= 18 && hours < 22
+                                break;
+                            case 'midnight':
+                                return hours >= 22 && hours < 6
+                                break;
+                        }
+                    })
+                }
+
+                if (explores.length === 0
+                    && !self.filters.distance.on
+                    && !self.filters.duration.on
+                    && !self.filters.date.on
+                    && !self.filters.daypart.on) {
+                    explores = self.explores
+                }
+
+                this.renderExplores(explores)
             },
             /**
              *  Returns a promise containing the users position
              */
-            getPosition (options) {
-                return new Promise(function (resolve, reject) {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, options);
-                });
+            setMyPosition () {
+                let self = this
+
+                if (localStorage.getItem("lat") && localStorage.getItem("lng")) {
+                    self.myPosition = {
+                        lat: parseFloat(localStorage.getItem("lat")),
+                        lng: parseFloat(localStorage.getItem("lng"))
+                    }
+
+                    self.map.setCenter(self.myPosition)
+                } else {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(position => {
+                            self.myPosition = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            }
+
+                            localStorage.setItem("lat", self.myPosition.lat)
+                            localStorage.setItem("lng", self.myPosition.lng)
+
+                            self.map.setCenter(self.myPosition)
+                        });
+                    } else {
+                        console.log("Geolocation is not supported by your browser.")
+                    }
+                }
             },
             /**
              * Generates a Google Maps Marker on the given position with the given Custom Marker Icon
              */
-            addMarker (pos, icon) {
+            addMarker (pos) {
                 const marker = new google.maps.Marker({
                     position: new google.maps.LatLng(pos.lat, pos.lng),
                     map: this.map,
-                    icon: icon
+                    animation: google.maps.Animation.DROP
                 })
                 this.markers.push(marker)
                 return marker
@@ -281,22 +520,6 @@
                 marker.addListener('click', function() {
                     self.showInfoWindow(explore)
                 });
-            },
-            /**
-             * Returns the difference in days between the given date and today
-             */
-            getMarkerIcon (date) {
-                const today = new Date()
-                const exploreDate = new Date(date)
-                const diffInDays = new DateDiff(exploreDate, today).days()
-
-                if (diffInDays < 30) {
-                    return greenMarker
-                } else if (diffInDays >= 30 && diffInDays <= 60) {
-                    return yellowMarker
-                } else {
-                    return redMarker
-                }
             },
             showInfoWindow (explore) {
                 this.selectedExplore = explore
@@ -354,6 +577,7 @@
         },
         mounted () {
             this.initMap()
+            this.filters.date.value = this.today
         },
     }
 </script>
@@ -362,6 +586,7 @@
     .google-map {
         width: 100%;
         height: 100%;
+        min-height: 400px;
         margin: 0 auto;
         background: gray;
     }
@@ -377,5 +602,8 @@
     }
     #hide-route {
         margin-top: 20px;
+    }
+    .filter-header {
+        height: auto;
     }
 </style>
