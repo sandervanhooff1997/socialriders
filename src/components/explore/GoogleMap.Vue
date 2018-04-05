@@ -174,8 +174,58 @@
                     </v-card>
                 </v-container>
             </v-flex>
-            <v-flex xs12 sm9>
+            <v-flex xs12 sm9 >
                 <div class="google-map" :id="mapId">Google Maps</div>
+
+                <v-speed-dial
+                        id="map-actions"
+                        v-model="mapActions"
+                        direction="bottom"
+                        left
+                        open-on-hover
+                        transition="slide-y-reverse-transition"
+                >
+                    <v-btn
+                            class="action-margin"
+                            style="margin-top: 25px;"
+                            slot="activator"
+                            color="yellow"
+                            dark
+                            fab
+                            hover
+                            v-model="mapActions"
+                    >
+                        <v-icon>info</v-icon>
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-btn
+                            class="action-margin"
+                            round
+                            dark
+                            small
+                            color="accent"
+                    >
+                        Popular
+                    </v-btn>
+                    <v-btn
+                            class="action-margin"
+                            round
+                            dark
+                            small
+                            color="accent"
+                    >
+                        Recent
+                    </v-btn>
+                    <v-btn
+                            class="action-margin"
+                            round
+                            dark
+                            small
+                            color="accent"
+                    >
+                        Nearby
+                    </v-btn>
+                </v-speed-dial>
             </v-flex>
         </v-layout>
     </div>
@@ -260,7 +310,8 @@
                             max: 6,
                         },
                     ]
-                }
+                },
+                mapActions: false
             }
         },
         computed: {
@@ -328,14 +379,14 @@
                 // selecting element by ID must be in $(document).ready()
                 $(document).ready(function(){
                     // Create the search box
-                    var input = document.getElementById('search-input');
-                    var button = document.getElementById('hide-route');
-                    var searchBox = new google.maps.places.SearchBox(input);
+                    let input = document.getElementById('search-input');
+                    let searchBox = new google.maps.places.SearchBox(input);
 
-                    self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(button);
                     self.map.addListener('bounds_changed', function() {
                         searchBox.setBounds(self.map.getBounds());
                     });
+
+                    self.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('map-actions'));
 
                     var markers = [];
                     // Listen for the event fired when the user selects a prediction and retrieve
@@ -581,5 +632,8 @@
     }
     .filter-header {
         height: auto;
+    }
+    .action-margin {
+        margin-left: 25px;
     }
 </style>
