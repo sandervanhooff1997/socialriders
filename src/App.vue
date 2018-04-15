@@ -50,7 +50,7 @@
                             <v-list-tile-sub-title>{{user.email}}</v-list-tile-sub-title>
                         </v-list-tile-content>
                     </v-list-tile>
-                    <v-list-tile :to="{name:'Profile', params: { uid: user.uid }}">
+                    <v-list-tile :to="{name:'Profile', params: { uid: user.uid, profile: user }}">
                         <v-list-tile-content>
                             <v-list-tile-title class="text-xs-center">My Profile</v-list-tile-title>
                         </v-list-tile-content>

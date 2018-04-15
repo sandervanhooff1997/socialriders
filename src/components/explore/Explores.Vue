@@ -22,13 +22,11 @@
 <script>
     import GoogleMap from './googlemap/GoogleMap.vue'
     import Sidebar from './sidebar/Sidebar.vue'
-    import Loader from '@/components/shared/loader'
 
     export default {
         components: {
             GoogleMap,
             Sidebar,
-            Loader,
         },
         data() {
             return {

@@ -39,8 +39,8 @@
 </template>
 
 <script>
-    import * as mapFunctions from '../../shared/maps/map-functions'
-    import mapStyles from '../../shared/maps/map-styles'
+    import * as mapFunctions from '@/assets/maps/map-functions'
+    import mapStyles from '@/assets/maps/map-styles'
 
     export default {
         name: 'google-map',
@@ -72,9 +72,7 @@
         },
         methods: {
             initMap () {
-                var self = this;
-
-                this.map = mapFunctions.init(this.id, this.options)
+                this.map = mapFunctions.init(document.getElementById(this.id), this.options)
 
                 this.myPosition = mapFunctions.getMyPosition(this.map)
 
@@ -83,7 +81,7 @@
                 this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('map-actions'))
 
                 // Render explores
-                self.$parent.filterExplores()
+                this.$parent.filterExplores()
             },
             renderExplores (explores) {
                 const self = this

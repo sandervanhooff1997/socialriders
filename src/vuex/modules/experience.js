@@ -1,5 +1,3 @@
-import * as firebase from 'firebase'
-
 export default {
     state: {
         experiences: null,
@@ -19,7 +17,8 @@ export default {
 
     actions: {
         getExperiences({commit}) {
-            firebase.firestore()
+            firebase
+                .firestore()
                 .collection('/explores')
                 .where('date', '<', new Date())
                 .orderBy('date', 'desc')
@@ -43,7 +42,9 @@ export default {
         getExperience({commit}, id) {
             return new Promise((resolve, reject) => {
                 commit('setLoading', true)
-                firebase.firestore().collection('/explores')
+                firebase
+                    .firestore()
+                    .collection('/explores')
                     .where(firebase.firestore.FieldPath.documentId(), "==", id)
                     .limit(1)
                     .get()

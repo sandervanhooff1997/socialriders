@@ -23,9 +23,9 @@
                 {{ item }}
             </v-tab>
         </v-tabs>
-        <v-tabs-items v-model="tab" style="height: 100%;">
-            <v-tab-item v-for="item in items" :key="item" style="height: 100%;">
-                <v-card flat style="height: 100%;">
+        <v-tabs-items v-model="tab" class="fillHeight">
+            <v-tab-item v-for="item in items" :key="item" class="fillHeight">
+                <v-card flat class="fillHeight">
                     <v-container fill-height>
                         <v-layout>
                             <v-flex>
@@ -36,36 +36,13 @@
                 </v-card>
             </v-tab-item>
         </v-tabs-items>
-
-        <v-footer height="auto" v-if="socialNetworks">
-            <v-card flat tile width="100%" >
-                <v-card-title class="teal white--text">
-                    <strong class="subheading">Get connected with {{user.name}} on social networks!</strong>
-                    <v-spacer></v-spacer>
-                    <!--<v-btn-->
-                            <!--v-for="(socialNetwork, index) in socialNetworks"-->
-                            <!--v-if="socialNetwork != ''"-->
-                            <!--:key="index"-->
-                            <!--icon-->
-                            <!--dark-->
-                            <!--class="mx-3"-->
-                    <!--&gt;-->
-                        <!--<v-icon size="24px" color="white">lock_open</v-icon>-->
-                    <!--</v-btn>-->
-                </v-card-title>
-            </v-card>
-        </v-footer>
     </div>
 </template>
 
 <script>
-    import firebase from 'firebase'
-    import firestore from 'firebase/firestore'
-
     export default {
         data () {
             return {
-                socialNetworks: null,
                 user: {
                     name: '',
                     email: '',
@@ -84,40 +61,20 @@
             }
         },
         mounted () {
-            const self = this;
             let uid = this.$route.params.uid;
             let profile = this.$route.params.profile;
 
-            if (!uid) {
-                self.$router.push('/')
+            if (!uid || !profile) {
+                this.$router.push('/')
+                this.$store.dispatch('errorMessage', 'Error loading profile')
             }
 
             if (this.getUser.uid === uid) {
-                console.log(2)
                 // user from vuex
-                self.user = self.getUser
+                this.user = self.getUser
             } else {
-                if (profile) {
-                    console.log(profile)
-                    // user from route params
-                    self.user = profile
-                } else {
-                    // user from firebase
-                    firebase.firestore()
-                        .collection("users")
-                        .where("uid", "==", uid)
-                        .get()
-                        .then(function(querySnapshot) {
-                            console.log(uid)
-                            console.log(querySnapshot)
-                            if (!querySnapshot.empty) {
-                                self.user = querySnapshot.docs[0].data()
-                            }
-                        })
-                        .catch(function(error) {
-                            self.$store.commit('setMessage', {text: error.message, type: 'error'})
-                        });
-                }
+                // user from route params
+                this.user = profile
             }
         }
     }
@@ -131,5 +88,8 @@
     }
     .banner {
         height: 300px!important;
+    }
+    .fillHeight {
+        height: 100%;
     }
 </style>

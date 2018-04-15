@@ -1,5 +1,3 @@
-import * as firebase from 'firebase'
-
 export default {
     state: {
         user: null,
@@ -34,21 +32,24 @@ export default {
                 return
             }
 
-            firebase.auth().signInWithPopup(provider).then(function (result) {
-                commit('setLoading', false)
-                commit('clearMessage')
+            firebase
+                .auth()
+                .signInWithPopup(provider)
+                .then(function (result) {
+                    commit('setLoading', false)
+                    commit('clearMessage')
 
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const token = result.credential.accessToken
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    const token = result.credential.accessToken
 
-                const user = {
-                    uid: result.user.uid,
-                    email: result.user.email,
-                    name: result.user.displayName,
-                    photoUrl: result.user.photoURL
-                }
+                    const user = {
+                        uid: result.user.uid,
+                        email: result.user.email,
+                        name: result.user.displayName,
+                        photoUrl: result.user.photoURL
+                    }
 
-                commit('setUser', user)
+                    commit('setUser', user)
             }).catch(function (error) {
                 commit('setLoading', false)
                 commit('setMessage', {text:error.message, type: 'error'})

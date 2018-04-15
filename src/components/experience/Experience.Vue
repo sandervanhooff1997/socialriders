@@ -63,17 +63,13 @@
                 </v-tab-item>
             </v-tabs-items>
         </div>
-
-        <v-container v-else fill-height>
-            <v-layout justify-center align-center>
-                <v-progress-circular indeterminate :size="120" color="primary">Loading Experience</v-progress-circular>
-            </v-layout>
-        </v-container>
+        <loader v-else></loader>
     </div>
 </template>
 
 <script>
-    import mapStyles from '../shared/maps/map-styles'
+    import * as mapFunctions from '@/assets/maps/map-functions'
+    import mapStyles from '@/assets/maps/map-styles'
     import Isotope from 'isotope-layout'
 
     export default {
@@ -96,7 +92,6 @@
                     zoom: 7,
                     styles: mapStyles.retro,
                 },
-                directionsService: new google.maps.DirectionsService,
                 tab: null,
                 tabItems: [
                     'Media', 'Riders',
@@ -113,51 +108,11 @@
             }
         },
         methods: {
-                initMap () {
-                    $(document).ready(() => {
-                        this.map = new google.maps.Map(document.getElementById(this.id), this.options);
-                    })
-                },
-                calculateAndDisplayRoute() {
-                    if (this.experience !== null) {
-                        const self = this;
-
-                        // wayPoints
-                        var wayPoints = []
-                        for (let i = 0; i < self.experience.wayPoints.length; i++) {
-                            if (this.experience.wayPoints[i].location) {
-                                wayPoints.push({
-                                    location: this.experience.wayPoints[i].location,
-                                    stopover: true
-                                });
-                            }
-                        }
-
-                        // determine the travelmode bases on the selected vehicle
-                        let travelMode = self.experience.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
-
-                        self.directionsService.route({
-                            origin: self.experience.startPoint.location,
-                            destination: self.experience.endPoint.location,
-                            waypoints: wayPoints,
-                            optimizeWaypoints: false,
-                            travelMode: travelMode,
-                            avoidFerries: self.experience.options.avoidFerries,
-                            avoidHighways: self.experience.options.avoidHighways,
-                            avoidTolls: self.experience.options.avoidTolls,
-                        }, function(response, status) {
-                            if (status === 'OK') {
-                                let g =  new google.maps.DirectionsRenderer()
-
-                                g.setMap(self.map)
-                                g.setDirections(response)
-                            }
-                            else {
-                                window.alert('Directions request failed due to ' + status);
-                            }
-                        });
-                    }
-                },
+            initMap () {
+                $(() => {
+                    this.map = new google.maps.Map(document.getElementById(this.id), this.options);
+                })
+            },
         },
         mounted () {
             let self = this
@@ -166,7 +121,10 @@
                 self.experience = response
 
                 self.initMap()
-                self.calculateAndDisplayRoute()
+
+                $(() => {
+                    mapFunctions.calculateAndDisplayRoute(self.map, self.experience)
+                })
             }, error => {
                 this.$store.dispatch('errorMessage', error.message)
             })

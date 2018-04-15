@@ -9,7 +9,6 @@ import Organize from '@/components/organize/Organize'
 import Profile from '@/components/profile/Profile'
 import Signin from '@/components/signin/Signin'
 import NotFound from '@/components/shared/NotFound'
-import MapBox from '@/components/mapbox/MapBox'
 
 Vue.use(Router)
 
@@ -19,17 +18,11 @@ let router = new Router({
         {
             path: '/',
             redirect: {
-                name: 'Explores',
+                name: 'Organize',
                 params: {
                     id: '8sZ9I854qffhSbsHzsBg'
                 }
             }
-        },
-        {
-            path: '/mapbox',
-            name: 'MapBox',
-            component: MapBox,
-            beforeEnter: AuthGuard
         },
         {
             path: '/explore',

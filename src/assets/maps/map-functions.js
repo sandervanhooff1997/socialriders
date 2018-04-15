@@ -7,7 +7,7 @@ export const directionsService = new google.maps.DirectionsService
  * Used to render a Google route
  * @type {google.maps.DirectionsRenderer}
  */
-export const directionsRenderer = new google.maps.DirectionsRenderer
+export let directionsRenderer = new google.maps.DirectionsRenderer
 
 /**
  * Create's a Google Map
@@ -15,8 +15,8 @@ export const directionsRenderer = new google.maps.DirectionsRenderer
  * @param options
  * @returns {GoogleMap}
  */
-export function init(id, options) {
-    return new google.maps.Map(document.getElementById(id), options);
+export function init (el, options) {
+    return new google.maps.Map(el, options);
 }
 
 /**
@@ -60,7 +60,7 @@ export function getMyPosition (map) {
  * @param map
  * @param input
  */
-export function initSearchInput(map, input) {
+export function initSearchInput (map, input) {
     // selecting element by ID must be in $(document).ready()
     $(document).ready(function(){
         let searchBox = new google.maps.places.SearchBox(input);
@@ -69,11 +69,11 @@ export function initSearchInput(map, input) {
             searchBox.setBounds(map.getBounds());
         });
 
-        var markers = [];
+        let markers = [];
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
-            var places = searchBox.getPlaces();
+            let places = searchBox.getPlaces();
 
             if (places.length === 0) {
                 return;
@@ -93,7 +93,7 @@ export function initSearchInput(map, input) {
                     return;
                 }
 
-                const icon = {
+                let icon = {
                     url: place.icon,
                     size: new google.maps.Size(71, 71),
                     origin: new google.maps.Point(0, 0),
@@ -115,6 +115,8 @@ export function initSearchInput(map, input) {
                 } else {
                     bounds.extend(place.geometry.location);
                 }
+
+                return place
             });
             map.fitBounds(bounds);
         });
@@ -136,15 +138,14 @@ export function addMarker (map, pos) {
  * @param explore
  * @returns {boolean}
  */
-export function calculateAndDisplayRoute(map, explore) {
+export function calculateAndDisplayRoute (map, explore) {
     if (explore !== null) {
 
         clearRoute()
-        directionsRenderer.setMap(map);
 
         // wayPoints
-        var wayPoints = []
-        for (let i = 0; i <explore.wayPoints.length; i++) {
+        let wayPoints = []
+        for (let i = 0; i < explore.wayPoints.length; i++) {
             if (explore.wayPoints[i].location) {
                 wayPoints.push({
                     location: explore.wayPoints[i].location,
@@ -154,7 +155,7 @@ export function calculateAndDisplayRoute(map, explore) {
         }
 
         // travelmode bases on selected vehicle
-        let travelMode = explore.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
+        const travelMode = explore.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
 
         // calculate and display route
         directionsService.route({
@@ -168,18 +169,27 @@ export function calculateAndDisplayRoute(map, explore) {
             avoidTolls: explore.options.avoidTolls,
         }, function(response, status) {
             if (status === 'OK') {
+                directionsRenderer.setMap(map);
                 directionsRenderer.setDirections(response)
-                return true
-            }
-            else {
-                return false
+
+                const route = response.routes[0];
+                let data = {
+                    distance: 0,
+                    duration: 0
+                };
+
+                //For each route, display summary information.
+                for (var i = 0; i < route.legs.length; i++) {
+                    data.distance += route.legs[i].distance.value
+                    data.duration += route.legs[i].duration.value
+                }
+
+                return data
             }
         });
-
-        return false
     }
 }
 
-export function clearRoute() {
+export function clearRoute () {
     directionsRenderer.setMap(null);
 }

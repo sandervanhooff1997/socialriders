@@ -1,5 +1,3 @@
-import * as firebase from 'firebase'
-
 export default {
     state: {
         explores: null,
@@ -21,7 +19,8 @@ export default {
         getExplores ({commit}) {
             commit('setLoading', true)
             commit('clearMessage')
-            firebase.firestore()
+            firebase
+                .firestore()
                 .collection('/explores')
                 .where('date', '>', new Date())
                 .onSnapshot((querySnapshot) => {
@@ -47,9 +46,13 @@ export default {
             return new Promise((resolve, reject) => {
                 commit('setLoading', true)
                 commit('clearMessage')
-                firebase.firestore().collection('/explores').add(explore).then(docRef => {
-                    commit('setLoading', false)
-                    resolve(docRef);  // Let the calling function know that http is done. You may send some data back
+                firebase
+                    .firestore()
+                    .collection('/explores')
+                    .add(explore)
+                    .then(docRef => {
+                        commit('setLoading', false)
+                        resolve(docRef);  // Let the calling function know that http is done. You may send some data back
                 }, error => {
                     reject(error)
                 })
