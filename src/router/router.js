@@ -3,12 +3,13 @@ import Router from 'vue-router'
 import AuthGuard from './auth-guard'
 
 import Experience from '@/components/experience/Experience'
-import ExperienceDetail from '@/components/experience/Detail'
-import Explore from '@/components/explore/Explore'
+import Experiences from '@/components/experience/Experiences'
+import Explores from '@/components/explore/Explores'
 import Organize from '@/components/organize/Organize'
 import Profile from '@/components/profile/Profile'
 import Signin from '@/components/signin/Signin'
 import NotFound from '@/components/shared/NotFound'
+import MapBox from '@/components/mapbox/MapBox'
 
 Vue.use(Router)
 
@@ -18,46 +19,56 @@ let router = new Router({
         {
             path: '/',
             redirect: {
-                name: 'explore',
+                name: 'Explores',
+                params: {
+                    id: '8sZ9I854qffhSbsHzsBg'
+                }
             }
         },
         {
+            path: '/mapbox',
+            name: 'MapBox',
+            component: MapBox,
+            beforeEnter: AuthGuard
+        },
+        {
             path: '/explore',
-            name: 'explore',
-            component: Explore,
+            name: 'Explores',
+            component: Explores,
             beforeEnter: AuthGuard
         },
         {
             path: '/experience',
-            name: 'experience',
+            name: 'Experiences',
+            component: Experiences,
+            beforeEnter: AuthGuard,
+        },
+        {
+            path: '/experience/:id',
+            name: 'Experience',
             component: Experience,
             beforeEnter: AuthGuard
         },
         {
-            path: '/experience/:id',
-            component: ExperienceDetail,
-            props: true
-        },
-        {
-            path: '/profile',
-            name: 'profile',
+            path: '/profile/:uid',
+            name: 'Profile',
             component: Profile,
             beforeEnter: AuthGuard
         },
         {
             path: '/organize',
-            name: 'organize',
+            name: 'Organize',
             component: Organize,
             beforeEnter: AuthGuard
         },
         {
             path: '/signin',
-            name: 'signin',
+            name: 'Signin',
             component: Signin,
         },
         {
             path: '*',
-            name: 'notfound',
+            name: 'NotFound',
             component: NotFound
         }
     ]

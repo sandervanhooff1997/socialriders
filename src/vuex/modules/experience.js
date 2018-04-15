@@ -27,7 +27,10 @@ export default {
                     const experiences = []
 
                     querySnapshot.forEach(function(doc) {
-                        experiences.push(doc.data())
+                        let experience = doc.data()
+                        experience.id = doc.id
+
+                        experiences.push(experience)
                     });
 
                     commit('setExperiences', experiences)
@@ -48,10 +51,14 @@ export default {
                         commit('setLoading', false)
                         commit('clearMessage')
                         querySnapshot.forEach(function(doc) {
-                            resolve(doc.data());
+                            let experience = doc.data()
+                            experience.id = doc.id
+
+                            resolve(experience);
                         });
 
                     }, error => {
+                        commit('setLoading', false)
                         commit('clearMessage')
                         reject(error)
                     })

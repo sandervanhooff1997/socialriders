@@ -86,41 +86,34 @@
         mounted () {
             const self = this;
             let uid = this.$route.params.uid;
+            let profile = this.$route.params.profile;
 
-            if (uid === undefined) {
-                uid = this.getUser.uid
+            if (!uid) {
+                self.$router.push('/')
             }
 
-            // if the currently signed in user's id does not matches the fetched user's id this is another user's profile
-            if (this.getUser.uid !== uid) {
-                firebase.firestore()
-                    .collection("users")
-                    .where("uid", "==", uid)
-                    .get()
-                    .then(function(querySnapshot) {
-                        if (!querySnapshot.empty) {
-                            self.user = querySnapshot.docs[0].data()
-                        }
-                    })
-                    .catch(function(error) {
-                        self.$store.commit('setMessage', {text: error.message, type: 'error'})
-                    });
-//                firebase.firestore()
-//                    .collection("social-networks")
-//                    .where("uid", "==", self.uid)
-//                    .get()
-//                    .then(function(querySnapshot) {
-//                        if (querySnapshot.docs[0] !== undefined) {
-//                            var data = querySnapshot.docs[0].data()
-//                            self.socialNetworks = [];
-//                            self.socialNetworks.push(data.facebook, data.google, data.twitter, data.instagram, data.linkedin)
-//                        }
-//                    })
-//                    .catch(function(error) {
-//                        console.log("Error getting documents: ", error);
-//                    });
+            if (this.getUser.uid === uid) {
+                // user from vuex
+                self.user = self.getUser
             } else {
-                this.user = this.getUser
+                if (profile) {
+                    // user from route params
+                    self.user = profile
+                } else {
+                    // user from firebase
+                    firebase.firestore()
+                        .collection("users")
+                        .where("uid", "==", uid)
+                        .get()
+                        .then(function(querySnapshot) {
+                            if (!querySnapshot.empty) {
+                                self.user = querySnapshot.docs[0].data()
+                            }
+                        })
+                        .catch(function(error) {
+                            self.$store.commit('setMessage', {text: error.message, type: 'error'})
+                        });
+                }
             }
         }
     }

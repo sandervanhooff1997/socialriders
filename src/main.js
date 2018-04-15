@@ -29,7 +29,7 @@ Vue.use(Vuetify, {
 })
 
 window.Event = new Vue();
-window.$ = jQuery
+window.$ = window.jQuery = jQuery
 
 /**
  * Global components

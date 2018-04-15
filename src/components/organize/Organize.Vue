@@ -610,12 +610,13 @@
                     date: new Date(this.date + ' ' + this.time),
                     title: this.title,
                     description: this.description,
-                    user: this.$store.getters.user
+                    owner: this.$store.getters.user,
+                    riders: []
                 }
 
                 // add to db
                 this.$store.dispatch('organizeExplore', explore).then(response => {
-                    this.$router.push({name: 'explore'})
+                    this.$router.push({name: 'Explores'})
                     this.$store.dispatch('successMessage', 'Explore Organized!')
                 }, error => {
                     this.$store.dispatch('errorMessage', error.message)

@@ -20,7 +20,7 @@
       </v-navigation-drawer>
 
       <!--Desktop menu-->
-      <v-toolbar v-if="$route.name !== 'signin'" class="toolbar purple-to-orange" dark app>
+      <v-toolbar v-if="$route.name !== 'Signin'" class="toolbar purple-to-orange" dark app>
         <v-toolbar-side-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
 
         <v-toolbar-title>
@@ -40,7 +40,7 @@
                 <v-avatar size="36px" slot="activator">
                     <img :src="user.photoUrl" :alt="user.name">
                 </v-avatar>
-                <v-list class="purple-to-orange" dark>
+                <v-list subheader style="padding-bottom: 0;">
                     <v-list-tile avatar>
                         <v-list-tile-avatar>
                             <img :src="user.photoUrl" :alt="user.name">
@@ -50,9 +50,9 @@
                             <v-list-tile-sub-title>{{user.email}}</v-list-tile-sub-title>
                         </v-list-tile-content>
                     </v-list-tile>
-                    <v-list-tile to="/profile">
+                    <v-list-tile :to="{name:'Profile', params: { uid: user.uid }}">
                         <v-list-tile-content>
-                            <v-list-tile-title class="text-xs-center">Profile</v-list-tile-title>
+                            <v-list-tile-title class="text-xs-center">My Profile</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
                     <v-list-tile @click="onLogout">
@@ -108,20 +108,17 @@
                 return this.$store.getters.message
             },
             onSignInPage () {
-                return this.$route.name === 'signin'
+                return this.$route.name === 'Signin'
             },
         }
     }
 </script>
 
 <style scoped>
-    aside, nav {
-        font-family: 'Passion One', cursive;
-    }
     aside *, nav * {
-        font-size: 20px!important;
+        font-weight: bold;
     }
     .toolbar__title span {
-        font-size: 30px!important;
+        font-weight: bold;
     }
 </style>

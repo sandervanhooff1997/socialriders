@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 100%; height: 100%;">
+    <div style="width: 100%; height: 100%; text-align: left!important;">
         <v-layout row wrap fill-height class="banner">
             <v-flex xs12 sm3>
                 <v-container fluid>
@@ -9,7 +9,7 @@
                             <v-layout wrap align-center>
                                 <v-flex class="text-xs-center">
                                     <v-avatar>
-                                        <router-link :to="{ name: 'Profile', params: { uid: selectedExplore.owner.uid, profile: selectedExplore.owner }}">
+                                        <router-link :to="{ name: 'Profile', params: { uid: selectedExplore.owner.uid }}">
                                             <img  :src="selectedExplore.owner.photoUrl" :alt="selectedExplore.owner.name">
                                         </router-link>
                                     </v-avatar>
@@ -80,7 +80,7 @@
                             <p class="text-xs-left">{{selectedExplore.description}}</p>
                         </v-card-text>
                         <v-card-actions>
-                            <v-btn round color="accent" v-if="routeJoinable" @click="joinRoute()">Join</v-btn>
+                            <v-btn round color="accent">Join</v-btn>
                             <v-btn round flat @click="hideRoute()">Close</v-btn>
                         </v-card-actions>
                     </v-card>
@@ -174,91 +174,79 @@
                     </v-card>
                 </v-container>
             </v-flex>
-            <v-flex xs12 sm9 >
-                <div class="google-map" :id="mapId">Google Maps</div>
+            <v-flex xs12 sm9>
+                <div id="map"></div>
 
-                <v-speed-dial
-                        id="map-actions"
-                        v-model="mapActions"
-                        direction="bottom"
-                        left
-                        open-on-hover
-                        transition="slide-y-reverse-transition"
-                >
-                    <v-btn
-                            class="action-margin"
-                            style="margin-top: 25px;"
-                            slot="activator"
-                            color="yellow"
-                            dark
-                            fab
-                            hover
-                            v-model="mapActions"
-                    >
-                        <v-icon>info</v-icon>
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-btn
-                            class="action-margin"
-                            round
-                            dark
-                            small
-                            color="accent"
-                    >
-                        Popular
-                    </v-btn>
-                    <v-btn
-                            class="action-margin"
-                            round
-                            dark
-                            small
-                            color="accent"
-                    >
-                        Recent
-                    </v-btn>
-                    <v-btn
-                            class="action-margin"
-                            round
-                            dark
-                            small
-                            color="accent"
-                    >
-                        Nearby
-                    </v-btn>
-                </v-speed-dial>
+                <!--<v-speed-dial-->
+                        <!--id="map-actions"-->
+                        <!--v-model="mapActions"-->
+                        <!--direction="bottom"-->
+                        <!--left-->
+                        <!--open-on-hover-->
+                        <!--transition="slide-y-reverse-transition"-->
+                <!--&gt;-->
+                    <!--<v-btn-->
+                            <!--class="action-margin"-->
+                            <!--style="margin-top: 25px;"-->
+                            <!--slot="activator"-->
+                            <!--color="yellow"-->
+                            <!--dark-->
+                            <!--fab-->
+                            <!--hover-->
+                            <!--v-model="mapActions"-->
+                    <!--&gt;-->
+                        <!--<v-icon>info</v-icon>-->
+                        <!--<v-icon>close</v-icon>-->
+                    <!--</v-btn>-->
+                    <!--<v-btn-->
+                            <!--class="action-margin"-->
+                            <!--round-->
+                            <!--dark-->
+                            <!--small-->
+                            <!--color="accent"-->
+                    <!--&gt;-->
+                        <!--Popular-->
+                    <!--</v-btn>-->
+                    <!--<v-btn-->
+                            <!--class="action-margin"-->
+                            <!--round-->
+                            <!--dark-->
+                            <!--small-->
+                            <!--color="accent"-->
+                    <!--&gt;-->
+                        <!--Recent-->
+                    <!--</v-btn>-->
+                    <!--<v-btn-->
+                            <!--class="action-margin"-->
+                            <!--round-->
+                            <!--dark-->
+                            <!--small-->
+                            <!--color="accent"-->
+                    <!--&gt;-->
+                        <!--Nearby-->
+                    <!--</v-btn>-->
+                <!--</v-speed-dial>-->
             </v-flex>
         </v-layout>
     </div>
 </template>
 
 <script>
-    import Vue from 'vue'
+    import * as mapFunctions from '@/components/shared/maps/functions.js'
     import DateDiff from 'date-diff'
-    import mapStyles from '../shared/maps/map-styles'
+    import mapboxgl from 'mapbox-gl';
+    import MotorMarker from '@/assets/markers/motorbike.png'
+    import CarMarker from '@/assets/markers/car.png'
+    import BikeMarker from '@/assets/markers/bike.png'
 
     export default {
         props: ['explores'],
         data () {
             return {
                 map: null,
-                mapId: "map",
-                mapOptions: {
-                    zoomControl: true,
-                    mapTypeControl: false,
-                    scaleControl: false,
-                    streetViewControl: false,
-                    rotateControl: false,
-                    fullscreenControl: false,
-                    center: {lat: 	52.379189, lng: 4.899431},
-                    zoom: 7,
-                    styles: mapStyles.retro
-                },
                 myPosition: null,
-                markers: [], // all map markers
+                markers: [],
                 selectedExplore: null,
-                route: false,
-                directionsService: new google.maps.DirectionsService,
-                directionsDisplay: new google.maps.DirectionsRenderer,
                 switchDate: false,
                 filters: {
                     distance: {
@@ -354,11 +342,6 @@
             filterDaypartNightOn() {
                 return this.filters.dayparts[3].on
             },
-            routeJoinable () {
-                if (this.selectedExplore) {
-                    return this.selectedExplore.owner.uid !== this.$store.getters.user.uid
-                }
-            }
         },
         watch: {
             filterDistanceOn: 'filterExplores',
@@ -374,103 +357,65 @@
         },
         methods: {
             initMap () {
-                var self = this;
-
-                // Google maps
-                this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
-
-                self.setMyPosition()
-
-                // selecting element by ID must be in $(document).ready()
-                $(document).ready(function(){
-                    // Create the search box
-                    let input = document.getElementById('search-input');
-                    let searchBox = new google.maps.places.SearchBox(input);
-
-                    self.map.addListener('bounds_changed', function() {
-                        searchBox.setBounds(self.map.getBounds());
-                    });
-
-                    self.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('map-actions'));
-
-                    var markers = [];
-                    // Listen for the event fired when the user selects a prediction and retrieve
-                    // more details for that place.
-                    searchBox.addListener('places_changed', function() {
-                        var places = searchBox.getPlaces();
-
-                        if (places.length === 0) {
-                            return;
-                        }
-
-                        // Clear out the old markers.
-                        markers.forEach(function(marker) {
-                            marker.setMap(null);
-                        });
-                        markers = [];
-
-                        // For each place, get the icon, name and location.
-                        let bounds = new google.maps.LatLngBounds();
-                        places.forEach(function(place) {
-                            if (!place.geometry) {
-                                console.log("Returned place contains no geometry");
-                                return;
-                            }
-                            const icon = {
-                                url: place.icon,
-                                size: new google.maps.Size(71, 71),
-                                origin: new google.maps.Point(0, 0),
-                                anchor: new google.maps.Point(17, 34),
-                                scaledSize: new google.maps.Size(25, 25)
-                            };
-
-                            // Create a marker for each place.
-                            markers.push(new google.maps.Marker({
-                                map: self.map,
-                                icon: icon,
-                                title: place.name,
-                                position: place.geometry.location
-                            }));
-
-                            if (place.geometry.viewport) {
-                                // Only geocodes have viewport.
-                                bounds.union(place.geometry.viewport);
-                            } else {
-                                bounds.extend(place.geometry.location);
-                            }
-                        });
-                        self.map.fitBounds(bounds);
-                    });
-
-                    // Render explores
-                    self.filterExplores()
+                this.map = mapFunctions.init({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v9',
+                    center: {lat: 	52.379189, lng: 4.899431},
+                    zoom: 7,
                 })
-            },
-            joinRoute() {
-              if (this.selectedExplore.owner.uid !== this.$store.getters.user.uid)  {
 
-              }  else {
-                  console.log(123)
-              }
+                mapFunctions.setMyPosition(this.map)
+
+                this.map.addControl(new MapboxDirections({
+                    accessToken: mapboxgl.accessToken,
+                    unit: 'metric'
+                }), 'top-left');
+
+                this.map.addControl(new mapboxgl.NavigationControl(), 'bottom-right')
+
+                this.map.addControl(new mapboxgl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: false
+                    },
+                    fitBoundOptions: {
+                        maxZoom: 10
+                    },
+                    trackUserLocation: true
+                }))
+//                var client = new MapboxClient('pk.eyJ1Ijoic3ZoMTk5NyIsImEiOiJjamZ4bmF0azQweWF1MnprZG02ZTB6dWFsIn0.-058LEniBsf5Tcoy12SVhQ');
+
+
+                this.filterExplores()
             },
+
             renderExplores (explores) {
                 const self = this
 
                 if (this.markers.length > 0) {
                     this.markers.forEach(marker => {
-                        marker.setMap(null)
+                        marker.remove()
                     })
                     this.markers = []
                 }
 
                 explores.forEach(explore => {
-                    const marker = self.addMarker(explore.startPoint.location)
-                    self.addInfoWindowClickListener(marker, explore)
+                    let icon = MotorMarker
+
+                    if (explore.vehicle === 'car') {
+                        icon = CarMarker
+                    } else {
+                        icon = BikeMarker
+                    }
+
+                    let marker = mapFunctions.addMarker(self.map, icon, explore.startPoint.location)
+                    mapFunctions.addMarkerClickListener(marker, () => {
+                        self.selectedExplore = explore
+                    })
+                    self.markers.push(marker)
+
+//                    self.addInfoWindowClickListener(marker, explore)
                 })
             },
-            /**
-             * filters all explores with the given filters
-             */
             filterExplores() {
                 const self = this
 
@@ -528,107 +473,7 @@
 
                 this.renderExplores(explores)
             },
-            /**
-             *  Returns a promise containing the users position
-             */
-            setMyPosition () {
-                let self = this
 
-                if (localStorage.getItem("lat") && localStorage.getItem("lng")) {
-                    self.myPosition = {
-                        lat: parseFloat(localStorage.getItem("lat")),
-                        lng: parseFloat(localStorage.getItem("lng"))
-                    }
-
-                    self.map.setCenter(self.myPosition)
-                } else {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(position => {
-                            self.myPosition = {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude
-                            }
-
-                            localStorage.setItem("lat", self.myPosition.lat)
-                            localStorage.setItem("lng", self.myPosition.lng)
-
-                            self.map.setCenter(self.myPosition)
-                        });
-                    } else {
-                        console.log("Geolocation is not supported by your browser.")
-                    }
-                }
-            },
-            /**
-             * Generates a Google Maps Marker on the given position with the given Custom Marker Icon
-             */
-            addMarker (pos) {
-                const marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(pos.lat, pos.lng),
-                    map: this.map,
-                    animation: google.maps.Animation.DROP
-                })
-                this.markers.push(marker)
-                return marker
-            },
-            /**
-             * Generates an Google Maps InfoWindow with the given explore data
-             * Adds a click listener to the InfoWindow
-             */
-            addInfoWindowClickListener (marker, explore) {
-                const self = this;
-                marker.addListener('click', function() {
-                    self.showRoute(explore)
-                });
-            },
-            showRoute(explore) {
-                this.selectedExplore = explore
-                this.calculateAndDisplayRoute()
-            },
-            hideRoute(){
-                this.selectedExplore = null
-                this.map.setZoom(7)
-                this.directionsDisplay.setMap(null)
-            },
-            calculateAndDisplayRoute() {
-                if (this.selectedExplore !== null) {
-                    const self = this;
-
-                    this.directionsDisplay.setMap(this.map);
-
-                    // wayPoints
-                    var wayPoints = []
-                    for (let i = 0; i < this.selectedExplore.wayPoints.length; i++) {
-                        if (this.selectedExplore.wayPoints[i].location) {
-                            wayPoints.push({
-                                location: this.selectedExplore.wayPoints[i].location,
-                                stopover: true
-                            });
-                        }
-                    }
-
-                    // determine the travelmode bases on the selected vehicle
-                    let travelMode = this.selectedExplore.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
-
-                    this.directionsService.route({
-                        origin: self.selectedExplore.startPoint.location,
-                        destination: self.selectedExplore.endPoint.location,
-                        waypoints: wayPoints,
-                        optimizeWaypoints: false,
-                        travelMode: travelMode,
-                        avoidFerries: self.selectedExplore.options.avoidFerries,
-                        avoidHighways: self.selectedExplore.options.avoidHighways,
-                        avoidTolls: self.selectedExplore.options.avoidTolls,
-                    }, function(response, status) {
-                        if (status === 'OK') {
-                            self.directionsDisplay.setDirections(response)
-                        }
-                        else {
-                            window.alert('Directions request failed due to ' + status);
-                        }
-                    });
-                }
-            },
         },
         mounted () {
             this.initMap()
@@ -638,17 +483,19 @@
 </script>
 
 <style scoped>
-    .google-map {
+    #map {
         width: 100%;
         height: 100%;
-        min-height: 400px;
-        margin: 0 auto;
-        background: gray;
     }
     .filter-header {
         height: auto;
     }
     .action-margin {
         margin-left: 25px;
+    }
+    .marker {
+        width: 50px;
+        height: 50px;
+        background-color: red;
     }
 </style>

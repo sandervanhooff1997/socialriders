@@ -48,39 +48,11 @@ export default {
                     photoUrl: result.user.photoURL
                 }
 
-                dispatch('registerIfNewUser', user)
                 commit('setUser', user)
             }).catch(function (error) {
                 commit('setLoading', false)
                 commit('setMessage', {text:error.message, type: 'error'})
             });
-        },
-        registerIfNewUser({commit}, user) {
-            commit('setLoading', true)
-            commit('clearMessage')
-
-            firebase.firestore()
-                .collection('users')
-                .where("uid", "==", user.uid)
-                .get()
-                .then((docRef) => {
-                    // Did not found a existing user matching this uid
-                    if (docRef.empty) {
-                        firestore()
-                            .collection('users')
-                            .add(user)
-                            .then((docRef) => {
-                                commit('setLoading', false)
-                                console.log('New user added to firestore!')
-                            })
-                            .catch((error) => {
-                                commit('setMessage', {text: error.message, type: 'error'})
-                            })
-                    }
-                })
-                .catch((error) => {
-                    commit('setMessage', {text: error.message, type: 'error'})
-                })
         },
         autoSignIn ({commit}, user) {
             commit('setUser', {

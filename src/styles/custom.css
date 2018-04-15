@@ -1,5 +1,8 @@
 body {
-    font-family: 'Rubik', 'Roboto', sans-serif!important;
+    font-family: 'Roboto', sans-serif!important;
+}
+.application {
+    background: #fff!important;
 }
 #appContent > div > div {
     height: 100%;
@@ -13,7 +16,7 @@ body {
     margin-right: 20px !important;
 }
 .application.onSignInPage {
-    background-image: url('./../assets/bg1.jpg');
+    background-image: url('./../assets/bg1.jpg')!important;
     background-size: cover;
 }
 

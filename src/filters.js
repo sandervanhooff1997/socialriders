@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Moment from 'moment'
 
-Vue.filter('date', function (date) {
-    return Moment(date).format('MMMM Do YYYY - hh:m') + 'u'
+Vue.filter('datetime', function (date) {
+    return Moment(date).format('MMMM Do YYYY - hh:mm') + 'u'
 })
-Vue.filter('time', function (time) {
-    return time + " u";
+Vue.filter('date', function (date) {
+    return Moment(date).format('MMMM Do YYYY')
 })
 Vue.filter('distance', function (distance) {
     return (Math.round((distance/1000) * 10 ) / 10).toFixed(1) + " km"
