@@ -48,7 +48,7 @@
                                 </div>
 
                                 <div v-if="tab == 1">
-                                    <router-link v-for="i in 40" :to="{name: 'Profile', params: { uid: experience.owner.uid }}">
+                                    <router-link v-for="i in 40" :key="i" :to="{name: 'Profile', params: { uid: experience.owner.uid }}">
                                         <v-chip text-color="white" color="secondary">
                                             <v-avatar>
                                                 <img :src="experience.owner.photoUrl" alt="experience.owner.name">
@@ -81,8 +81,8 @@
             return {
                 experience: null,
                 map: null,
-                mapId: "map",
-                mapOptions: {
+                id: "map",
+                options: {
                     zoomControl: false,
                     mapTypeControl: false,
                     scaleControl: false,
@@ -115,7 +115,7 @@
         methods: {
                 initMap () {
                     $(document).ready(() => {
-                        this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
+                        this.map = new google.maps.Map(document.getElementById(this.id), this.options);
                     })
                 },
                 calculateAndDisplayRoute() {

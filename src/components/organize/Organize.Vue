@@ -323,8 +323,8 @@
                 duration: null,
                 showInfoText: false,
                 map: null,
-                mapId: "map",
-                mapOptions: {
+                id: "map",
+                options: {
                     zoomControl: true,
                     mapTypeControl: false,
                     scaleControl: false,
@@ -393,7 +393,7 @@
 
                 // Google maps
                 $(document).ready(() => {
-                    this.map = new google.maps.Map(document.getElementById(this.mapId), this.mapOptions);
+                    this.map = new google.maps.Map(document.getElementById(this.id), this.options);
                     this.addSearchBox(this.startPoint.id, this.startPoint.placeholder)
                     this.addSearchBox(this.endPoint.id, this.endPoint.placeholder)
                 })

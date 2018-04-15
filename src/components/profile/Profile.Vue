@@ -93,10 +93,12 @@
             }
 
             if (this.getUser.uid === uid) {
+                console.log(2)
                 // user from vuex
                 self.user = self.getUser
             } else {
                 if (profile) {
+                    console.log(profile)
                     // user from route params
                     self.user = profile
                 } else {
@@ -106,6 +108,8 @@
                         .where("uid", "==", uid)
                         .get()
                         .then(function(querySnapshot) {
+                            console.log(uid)
+                            console.log(querySnapshot)
                             if (!querySnapshot.empty) {
                                 self.user = querySnapshot.docs[0].data()
                             }

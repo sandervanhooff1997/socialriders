@@ -1,39 +1,69 @@
 <template>
-        <div class="text-xs-center">
-            <v-layout row v-if="error">
-                <v-flex xs12 offset-sm3 sm6>
-                    <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
-                </v-flex>
+    <div class="text-xs-center">
+        <div v-if="loaded" class="fillHeight">
+            <v-layout fill-height class="banner">
+                <sidebar
+                        ref="sidebar"
+                        :explores="explores"
+                        :selectedExplore="selectedExplore">
+                </sidebar>
+
+                <google-map
+                        ref="map"
+                        :explores="explores"
+                        :selectedExplore="selectedExplore">
+                </google-map>
             </v-layout>
-            <!--Only show Google Maps component if all assets are loaded (async)-->
-            <google-map v-if="explores" :explores="explores"></google-map>
-            <v-container v-else fill-height>
-                <v-layout justify-center align-center>
-                    <v-progress-circular indeterminate :size="120" color="primary">Loading Google Maps</v-progress-circular>
-                </v-layout>
-            </v-container>
         </div>
+        <loader v-else></loader>
+    </div>
 </template>
 
 <script>
-    import GoogleMap from './GoogleMap'
+    import GoogleMap from './googlemap/GoogleMap.vue'
+    import Sidebar from './sidebar/Sidebar.vue'
+    import Loader from '@/components/shared/loader'
 
     export default {
         components: {
-          GoogleMap
+            GoogleMap,
+            Sidebar,
+            Loader,
+        },
+        data() {
+            return {
+                loaded: false,
+                selectedExplore: null,
+            }
         },
         methods: {
-            onDismissed () {
-                this.$store.dispatch('clearError')
+            hideRoute() {
+                this.$refs.map.hideRoute()
             },
+            filterExplores () {
+                this.$refs.sidebar.filterExplores()
+            },
+            renderExplores (explores) {
+                this.$refs.map.renderExplores(explores)
+            },
+            setSelectedExplore (explore) {
+                this.selectedExplore = explore
+            },
+            clearSelectedExplore () {
+                this.selectedExplore = null
+            }
+        },
+        watch: {
+            explores (value) {
+                if (value) {
+                    this.loaded = true
+                }
+            }
         },
         computed: {
-            error () {
-                return this.$store.getters.error
-            },
             explores () {
                 return this.$store.getters.explores
-            }
+            },
         },
         mounted () {
             this.$store.dispatch('getExplores')
@@ -42,7 +72,7 @@
 </script>
 
 <style scoped>
-    .loader {
-
+    .fillHeight {
+        height: 100%;
     }
 </style>
