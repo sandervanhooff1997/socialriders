@@ -7,13 +7,13 @@ import router from './router/router'
 import Vuetify from 'vuetify'
 import * as firebase from 'firebase'
 import firestore from 'firebase/firestore'
-import { store } from './vuex/store'
+import { store } from './vuex/vuex'
 import AlertCmp from './components/shared/Alert'
 import LoaderCmp from './components/shared/Loader'
 import filters from './filters'
 import jQuery from 'jquery'
 import 'vuetify/dist/vuetify.min.css'
-import './styles/custom.css'
+import './assets/css/style.css'
 
 /**
  * Global usages
