@@ -39,6 +39,7 @@
 </template>
 
 <script>
+    import * as mapFunctions from '../../shared/maps/map-functions'
     import mapStyles from '../../shared/maps/map-styles'
 
     export default {
@@ -73,75 +74,16 @@
             initMap () {
                 var self = this;
 
-                // Google maps
-                this.map = new google.maps.Map(document.getElementById(this.id), this.options);
+                this.map = mapFunctions.init(this.id, this.options)
 
-                self.setMyPosition()
+                this.myPosition = mapFunctions.getMyPosition(this.map)
 
-                // selecting element by ID must be in $(document).ready()
-                $(document).ready(function(){
-                    // Create the search box
-                    let input = document.getElementById('search-input');
-                    let searchBox = new google.maps.places.SearchBox(input);
+                mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
-                    self.map.addListener('bounds_changed', function() {
-                        searchBox.setBounds(self.map.getBounds());
-                    });
+                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('map-actions'))
 
-                    self.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('map-actions'));
-
-                    var markers = [];
-                    // Listen for the event fired when the user selects a prediction and retrieve
-                    // more details for that place.
-                    searchBox.addListener('places_changed', function() {
-                        var places = searchBox.getPlaces();
-
-                        if (places.length === 0) {
-                            return;
-                        }
-
-                        // Clear out the old markers.
-                        markers.forEach(function(marker) {
-                            marker.setMap(null);
-                        });
-                        markers = [];
-
-                        // For each place, get the icon, name and location.
-                        let bounds = new google.maps.LatLngBounds();
-                        places.forEach(function(place) {
-                            if (!place.geometry) {
-                                console.log("Returned place contains no geometry");
-                                return;
-                            }
-                            const icon = {
-                                url: place.icon,
-                                size: new google.maps.Size(71, 71),
-                                origin: new google.maps.Point(0, 0),
-                                anchor: new google.maps.Point(17, 34),
-                                scaledSize: new google.maps.Size(25, 25)
-                            };
-
-                            // Create a marker for each place.
-                            markers.push(new google.maps.Marker({
-                                map: self.map,
-                                icon: icon,
-                                title: place.name,
-                                position: place.geometry.location
-                            }));
-
-                            if (place.geometry.viewport) {
-                                // Only geocodes have viewport.
-                                bounds.union(place.geometry.viewport);
-                            } else {
-                                bounds.extend(place.geometry.location);
-                            }
-                        });
-                        self.map.fitBounds(bounds);
-                    });
-
-                    // Render explores
-                    self.$parent.filterExplores()
-                })
+                // Render explores
+                self.$parent.filterExplores()
             },
             renderExplores (explores) {
                 const self = this
@@ -155,100 +97,31 @@
 
                 explores.forEach(explore => {
                     const marker = self.addMarker(explore.startPoint.location)
-                    self.addInfoWindowClickListener(marker, explore)
+                    self.addClickToShowRoute(marker, explore)
                 })
-            },
-            setMyPosition () {
-                let self = this
-
-                if (localStorage.getItem("lat") && localStorage.getItem("lng")) {
-                    self.myPosition = {
-                        lat: parseFloat(localStorage.getItem("lat")),
-                        lng: parseFloat(localStorage.getItem("lng"))
-                    }
-
-                    self.map.setCenter(self.myPosition)
-                } else {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(position => {
-                            self.myPosition = {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude
-                            }
-
-                            localStorage.setItem("lat", self.myPosition.lat)
-                            localStorage.setItem("lng", self.myPosition.lng)
-
-                            self.map.setCenter(self.myPosition)
-                        });
-                    } else {
-                        console.log("Geolocation is not supported by your browser.")
-                    }
-                }
             },
             addMarker (pos) {
-                const marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(pos.lat, pos.lng),
-                    map: this.map,
-                    animation: google.maps.Animation.DROP
-                })
+                const marker = mapFunctions.addMarker(this.map, pos)
                 this.markers.push(marker)
                 return marker
             },
-            addInfoWindowClickListener (marker, explore) {
-                const self = this;
+            addClickToShowRoute (marker, explore) {
+                const self = this
                 marker.addListener('click', function() {
                     self.showRoute(explore)
                 });
             },
             showRoute(explore) {
                 this.$parent.setSelectedExplore(explore)
-                this.calculateAndDisplayRoute()
+                mapFunctions.calculateAndDisplayRoute(this.map, explore)
             },
             hideRoute(){
                 this.$parent.clearSelectedExplore()
+                mapFunctions.clearRoute()
                 this.map.setZoom(7)
                 this.directionsDisplay.setMap(null)
             },
-            calculateAndDisplayRoute() {
-                if (this.selectedExplore !== null) {
-                    const self = this;
 
-                    this.directionsDisplay.setMap(this.map);
-
-                    // wayPoints
-                    var wayPoints = []
-                    for (let i = 0; i < this.selectedExplore.wayPoints.length; i++) {
-                        if (this.selectedExplore.wayPoints[i].location) {
-                            wayPoints.push({
-                                location: this.selectedExplore.wayPoints[i].location,
-                                stopover: true
-                            });
-                        }
-                    }
-
-                    // determine the travelmode bases on the selected vehicle
-                    let travelMode = this.selectedExplore.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
-
-                    this.directionsService.route({
-                        origin: self.selectedExplore.startPoint.location,
-                        destination: self.selectedExplore.endPoint.location,
-                        waypoints: wayPoints,
-                        optimizeWaypoints: false,
-                        travelMode: travelMode,
-                        avoidFerries: self.selectedExplore.options.avoidFerries,
-                        avoidHighways: self.selectedExplore.options.avoidHighways,
-                        avoidTolls: self.selectedExplore.options.avoidTolls,
-                    }, function(response, status) {
-                        if (status === 'OK') {
-                            self.directionsDisplay.setDirections(response)
-                        }
-                        else {
-                            window.alert('Directions request failed due to ' + status);
-                        }
-                    });
-                }
-            },
         },
         computed: {
             selectedExplore() {
