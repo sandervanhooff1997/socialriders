@@ -12,12 +12,10 @@
             </v-stepper-header>
             <v-stepper-items>
                 <v-stepper-content step="1">
-                    <v-card class="mb-3 stepperContent" flat>
+                    <v-card class="mb-3 stepperContent noBackground" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step1}}</p>
-                                    <v-icon dark>forward</v-icon>
-                                </v-btn>
                                 <div>{{subtitles.step1}}</div>
                             </div>
                         </v-card-text>
@@ -59,12 +57,10 @@
                     </v-card>
                 </v-stepper-content>
                 <v-stepper-content step="2">
-                    <v-card class="mb-3 stepperContent" flat>
+                    <v-card class="mb-3 stepperContent noBackground" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step2}}</p>
-                                    <v-icon dark>forward</v-icon>
-                                </v-btn>
                                 <div></div>
                             </div>
                         </v-card-text>
@@ -78,7 +74,7 @@
                                         </v-list-tile-sub-title>
                                     </v-list>
                                     <v-expansion-panel>
-                                        <v-expansion-panel-content value="true">
+                                        <v-expansion-panel-content value="true" class="transparent-background">
                                             <div slot="header">Route</div>
                                             <v-card>
                                                 <v-card-text>
@@ -113,7 +109,7 @@
                                                                 bottom
                                                                 small
                                                                 left
-                                                                color="warning"
+                                                                color="primary"
                                                         >
                                                             <v-icon>swap_vert</v-icon>
                                                         </v-btn>
@@ -122,7 +118,7 @@
                                                     <v-btn @click="addWayPoint(getWayPointId(), 'waypoint ' + (wayPoints.length + 1))"
                                                            fab
                                                            dark
-                                                           color="warning"
+                                                           color="primary"
                                                            class="noMargin">
                                                         <v-icon dark>add</v-icon>
                                                     </v-btn>
@@ -139,7 +135,7 @@
                                                 </v-card-text>
                                             </v-card>
                                             </v-expansion-panel-content>
-                                        <v-expansion-panel-content v-if="vehicle != 'bicycle'">
+                                        <v-expansion-panel-content v-if="vehicle != 'bicycle'" class="transparent-background">
                                             <div slot="header">Options</div>
                                             <v-card>
                                                 <v-card-text>
@@ -163,7 +159,7 @@
 
                                 <v-flex xs12 sm8>
                                     <v-container fluid>
-                                        <div class="google-map" :id="id">Maps</div>
+                                        <div class="google-map" :id="id">Error loading Google Maps</div>
                                     </v-container>
                                 </v-flex>
                             </v-layout>
@@ -172,12 +168,10 @@
                     <div class="bottomMargin"></div>
                 </v-stepper-content>
                 <v-stepper-content  step="3">
-                    <v-card class="mb-3 stepperContent" flat>
+                    <v-card class="mb-3 stepperContent noBackground" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step3}}</p>
-                                    <v-icon dark>forward</v-icon>
-                                </v-btn>
                                 <div>{{subtitles.step3}}</div>
                             </div>
                         </v-card-text>
@@ -207,12 +201,10 @@
                     </v-card>
                 </v-stepper-content>
                 <v-stepper-content  step="4">
-                    <v-card class="mb-3 stepperContent" flat>
+                    <v-card class="mb-3 stepperContent noBackground" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step4}}</p>
-                                    <v-icon dark>send</v-icon>
-                                </v-btn>
                                 <div>{{subtitles.step4}}</div>
                             </div>
                         </v-card-text>
@@ -241,7 +233,7 @@
             <v-toolbar-items style="width: 100%;" >
                 <v-fab-transition>
                     <v-btn
-                    color="accent"
+                    color="primary"
                     fab
                     dark
                     absolute
@@ -257,7 +249,7 @@
 
                 <v-fab-transition>
                     <v-btn
-                    color="accent"
+                    color="primary"
                     fab
                     dark
                     absolute
@@ -273,7 +265,7 @@
 
                 <v-fab-transition>
                     <v-btn
-                            color="success"
+                            color="primary"
                             fab
                             dark
                             absolute
@@ -387,10 +379,12 @@
 
             /** Step 2 */
             initMap () {
-                this.map = mapFunctions.init(document.getElementById(this.id), this.mapOptions)
+                $(() => {
+                    this.map = mapFunctions.init(document.getElementById(this.id), this.mapOptions)
 
-                mapFunctions.initSearchInput(this.map, document.getElementById(this.startPoint.id))
-                mapFunctions.initSearchInput(this.map, document.getElementById(this.endPoint.id))
+                    mapFunctions.initSearchInput(this.map, document.getElementById(this.startPoint.id))
+                    mapFunctions.initSearchInput(this.map, document.getElementById(this.endPoint.id))
+                })
             },
             getWayPointId () {
                return 'waypoint' + this.wayPoints.length;
@@ -575,11 +569,11 @@
 <style scoped>
     .faIcon {
         font-size: 100px!important;
-        color: lightgray;
+        color: rgba(255,255,255,0.5);
         cursor: pointer;
     }
     .faIcon:hover, .iconWrapper.active .faIcon {
-        color: #2196F3;
+        color: #1de9b6;
     }
     .stepTitle {
         margin-bottom: 8px;
@@ -615,4 +609,11 @@
     .stepperContent {
         margin-bottom: 30px!important;
     }
+    .stepper, .card, .list {
+        background: none!important;
+    }
+    .expansion-panel li {
+        background: rgba(255,255,255,0.2) !important;
+    }
+
 </style>

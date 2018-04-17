@@ -1,41 +1,44 @@
 <template>
     <div>
-        <v-jumbotron dark class="banner">
-            <v-container fill-height>
-                <v-layout align-center>
-                    <v-flex text-xs-center>
-                        <v-avatar size="120" class="grey lighten-4">
-                            <img :src="user.photoUrl" :alt="user.name">
-                        </v-avatar>
-                        <h3 class="display-3 thinText">{{user.name}}</h3>
-                    </v-flex>
-                </v-layout>
-            </v-container>
-        </v-jumbotron>
+        <div v-if="user">
+            <v-jumbotron dark style="height: 200px;">
+                <v-container fill-height>
+                    <v-layout align-center>
+                        <v-flex text-xs-center>
+                            <v-avatar size="120" class="grey lighten-4">
+                                <img :src="user.photoUrl" :alt="user.name">
+                            </v-avatar>
+                            <h3 class="display-3 thinText">{{user.name}}</h3>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-jumbotron>
 
-        <v-tabs
-                slot="extension"
-                v-model="tab"
-                grow
-        >
-            <v-tabs-slider color="primary"></v-tabs-slider>
-            <v-tab v-for="item in items" :key="item">
-                {{ item }}
-            </v-tab>
-        </v-tabs>
-        <v-tabs-items v-model="tab" class="fillHeight">
-            <v-tab-item v-for="item in items" :key="item" class="fillHeight">
-                <v-card flat class="fillHeight">
-                    <v-container fill-height>
-                        <v-layout>
-                            <v-flex>
-                                <v-card-text>{{ text }}</v-card-text>
-                            </v-flex>
-                        </v-layout>
-                    </v-container>
-                </v-card>
-            </v-tab-item>
-        </v-tabs-items>
+            <v-tabs
+                    slot="extension"
+                    v-model="tab"
+                    grow
+            >
+                <v-tabs-slider color="primary"></v-tabs-slider>
+                <v-tab v-for="item in items" :key="item">
+                    {{ item }}
+                </v-tab>
+            </v-tabs>
+            <v-tabs-items v-model="tab" class="fillHeight">
+                <v-tab-item v-for="item in items" :key="item" class="fillHeight">
+                    <v-card flat class="fillHeight">
+                        <v-container fill-height>
+                            <v-layout>
+                                <v-flex>
+                                    <v-card-text>{{ text }}</v-card-text>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </v-card>
+                </v-tab-item>
+            </v-tabs-items>
+        </div>
+        <loader v-else></loader>
     </div>
 </template>
 
@@ -43,11 +46,7 @@
     export default {
         data () {
             return {
-                user: {
-                    name: '',
-                    email: '',
-                    photoUrl: ''
-                },
+                user: null,
                 tab: null,
                 items: [
                     'experiences', 'explores', 'social media'
@@ -71,7 +70,7 @@
 
             if (this.getUser.uid === uid) {
                 // user from vuex
-                this.user = self.getUser
+                this.user = this.getUser
             } else {
                 // user from route params
                 this.user = profile
@@ -85,9 +84,6 @@
         -webkit-box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
         -moz-box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
         box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.3);
-    }
-    .banner {
-        height: 300px!important;
     }
     .fillHeight {
         height: 100%;

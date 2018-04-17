@@ -1,6 +1,10 @@
 /**
  * Imports
  */
+import 'vuetify/dist/vuetify.min.css'
+import './assets/css/style.css'
+import './assets/css/theme.css'
+import './assets/css/theme-overrides.css'
 import Vue from 'vue'
 import App from './App'
 import router from './router/router'
@@ -12,17 +16,15 @@ import AlertCmp from './components/shared/Alert'
 import LoaderCmp from './components/shared/Loader'
 import filters from './filters'
 import jQuery from 'jquery'
-import 'vuetify/dist/vuetify.min.css'
-import './assets/css/style.css'
 
 /**
  * Global usages
  */
 Vue.use(Vuetify, {
     theme: {
-        primary: '#8e24aa',
-        secondary: '#0288d1',
-        accent: '#1de9b6',
+        primary: '#1de9b6',
+        secondary: '#8e24aa',
+        accent: '#8093FA',
         error: '#FF5252',
         info: '#0288d1',
         success: '#43A047',

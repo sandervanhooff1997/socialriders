@@ -12,10 +12,9 @@
         <br>
 
         <v-subheader class="filter-header">
-            <v-switch label="Max Distance" hide-details v-model="filters.distance.on"></v-switch>
+            <v-switch label="Max Distance" color="primary" hide-details v-model="filters.distance.on"></v-switch>
         </v-subheader>
         <v-slider class="pa-0"
-                  color="accent"
                   :min="filters.distance.min"
                   :max="filters.distance.max"
                   :label="filters.distance.value + ' km'"
@@ -29,10 +28,9 @@
         <br>
 
         <v-subheader class="filter-header">
-            <v-switch label="Max Duration" hide-details v-model="filters.duration.on"></v-switch>
+            <v-switch label="Max Duration"  color="primary" hide-details v-model="filters.duration.on"></v-switch>
         </v-subheader>
         <v-slider class="pa-0"
-                  color="accent"
                   :min="filters.duration.min"
                   :max="filters.duration.max"
                   :label="filters.duration.value + ' hr'"
@@ -46,7 +44,7 @@
         <br>
 
         <v-subheader class="filter-header">
-            <v-switch label="Date" hide-details v-model="filters.date.on"></v-switch>
+            <v-switch label="Date" color="primary" hide-details v-model="filters.date.on"></v-switch>
         </v-subheader>
         <v-menu
                 lazy
@@ -60,7 +58,6 @@
                     prepend-icon="event"
                     readonly
                     label="Choose a date"
-                    color="accent"
                     v-model="filters.date.value"
                     :disabled="!filters.date.on"
             ></v-text-field>
@@ -73,7 +70,7 @@
         </v-menu>
 
         <v-subheader class="filter-header">
-            <v-switch label="Part of the day" hide-details v-model="filters.daypart.on"></v-switch>
+            <v-switch label="Part of the day" color="primary" hide-details v-model="filters.daypart.on"></v-switch>
         </v-subheader>
         <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
             <v-checkbox
@@ -82,6 +79,7 @@
                     :label="item.text"
                     :disabled="!filters.daypart.on"
                     v-model="item.on"
+                    color="primary"
                     hide-details
             ></v-checkbox>
         </v-radio-group>

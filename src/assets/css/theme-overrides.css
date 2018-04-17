@@ -1,0 +1,24 @@
+.application {
+    font-family: 'Poppins', sans-serif!important;
+}
+.material-icons {
+    font-family: 'Material Icons', sans-serif;
+}
+
+.transparent-background, .card {
+    background: rgba(255,255,255,0.2) !important;
+}
+
+.noBackground,
+.tabs__bar,
+.list,
+nav
+{
+    background: none!important;
+}
+
+.stepper, .stepper__header {
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+}

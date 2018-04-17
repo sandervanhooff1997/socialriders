@@ -172,6 +172,14 @@
     .signinBtn {
         width: 280px;
         margin-bottom: 20px;
+        background-color: #f3f3f3!important;
+    }
+    .signinBtn > div{
+        padding-left: 24px !important;
+        text-transform: none !important;
+    }
+    .signinIcon {
+        margin-right: 20px !important;
     }
     .signinBtn.facebook {
         background-color: #4968AD!important;

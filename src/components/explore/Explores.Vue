@@ -1,7 +1,7 @@
 <template>
     <div class="text-xs-center">
         <div v-if="loaded" class="fillHeight">
-            <v-layout fill-height class="banner">
+            <v-layout fill-height>
                 <sidebar
                         ref="sidebar"
                         :explores="explores"
@@ -12,6 +12,7 @@
                         ref="map"
                         :explores="explores"
                         :selectedExplore="selectedExplore">
+                    Error loading Google Maps
                 </google-map>
             </v-layout>
         </div>

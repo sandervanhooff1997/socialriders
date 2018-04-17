@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="experiences">
-            <v-jumbotron dark class="banner">
+            <v-jumbotron dark style="height: 200px;">
                 <v-container fill-height>
                     <v-layout align-center>
                         <v-flex text-xs-center>
@@ -16,8 +16,6 @@
                 <v-layout row wrap>
                     <v-flex xs12 sm6 md4 lg3 v-for="(experience, index) in experiences" :key="experience.title">
                         <v-card>
-                            <v-card-media src="https://vuetifyjs.com/static/doc-images/cards/desert.jpg" height="160px">
-                            </v-card-media>
                             <v-card-title primary-title>
                                 <div>
                                     <h3 class="headline mb-0">{{experience.title}}</h3>
@@ -35,8 +33,7 @@
                                 </div>
                             </v-card-title>
                             <v-card-actions>
-                                <v-btn flat round color="secondary" :to="{name: 'Experience', params: {id: experience.id}}">View</v-btn>
-                                <v-btn flat round color="orange">Share</v-btn>
+                                <v-btn round color="primary" :to="{name: 'Experience', params: {id: experience.id}}">View</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
@@ -61,9 +58,3 @@
         },
     }
 </script>
-
-<style scoped>
-    .banner {
-        height: 200px!important;
-    }
-</style>

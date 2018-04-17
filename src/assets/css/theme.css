@@ -1,0 +1,49 @@
+/*Gradients*/
+.purple-to-orange {
+    /*-webkit-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);*/
+    /*-moz-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);*/
+    /*box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5);*/
+    background: #8e24aa !important;
+    background: -webkit-linear-gradient(45deg, #8e24aa 0%, #ff6e40 100%) !important;
+    background: linear-gradient(45deg, #8e24aa 0%, #ff6e40 100%) !important;
+}
+.orange-to-purple {
+    /*-webkit-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5)!important;*/
+    /*-moz-box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5)!important;*/
+    /*box-shadow: 0 6px 20px 0 rgba(255, 110, 64, 0.5)!important;*/
+    background: #ff6e40!important;
+    background: -webkit-linear-gradient(45deg, #ff6e40 0%, #8e24aa 100%)!important;
+    background: linear-gradient(45deg, #ff6e40 0%, #8e24aa 100%)!important;
+}
+.blue-to-lightblue {
+    /*-webkit-box-shadow: 0 6px 20px 0 rgba(38, 198, 218, 0.5)!important;*/
+    /*-moz-box-shadow: 0 6px 20px 0 rgba(38, 198, 218, 0.5)!important;*/
+    /*box-shadow: 0 6px 20px 0 rgba(38, 198, 218, 0.5)!important;*/
+    background: #0288d1!important;
+    background: -webkit-linear-gradient(45deg, #0288d1 0%, #26c6da 100%)!important;
+    background: linear-gradient(45deg, #0288d1 0%, #26c6da 100%)!important;
+}
+.red-to-pink {
+    /*-webkit-box-shadow: 0 6px 20px 0 rgba(244, 143, 177, 0.5)!important;*/
+    /*-moz-box-shadow: 0 6px 20px 0 rgba(244, 143, 177, 0.5)!important;*/
+    /*box-shadow: 0 6px 20px 0 rgba(244, 143, 177, 0.5)!important;*/
+    background: #FF5252!important;
+    background: -webkit-linear-gradient(45deg, #FF5252 0%, #f48fb1 100%)!important;
+    background: linear-gradient(45deg, #FF5252 0%, #f48fb1 100%)!important;
+}
+.orange-to-yellow {
+    /*-webkit-box-shadow: 0 6px 20px 0 rgba(255, 111, 0, 0.3)!important;*/
+    /*-moz-box-shadow: 0 6px 20px 0 rgba(255, 111, 0, 0.3)!important;*/
+    /*box-shadow: 0 6px 20px 0 rgba(255, 111, 0, 0.3)!important;*/
+    background: #ff6f00!important;
+    background: -webkit-linear-gradient(45deg, #ff6f00 0%, #ffca28 100%)!important;
+    background: linear-gradient(45deg, #ff6f00 0%, #ffca28 100%)!important;
+}
+.green-to-cyan {
+    /*-webkit-box-shadow: 0 6px 20px 0 rgba(77, 182, 172, 0.5)!important;*/
+    /*-moz-box-shadow: 0 6px 20px 0 rgba(77, 182, 172, 0.5)!important;*/
+    /*box-shadow: 0 6px 20px 0 rgba(77, 182, 172, 0.5)!important;*/
+    background: #43A047!important;
+    background: -webkit-linear-gradient(45deg, #43A047 0%, #1de9b6 100%)!important;
+    background: linear-gradient(45deg, #43A047 0%, #1de9b6 100%)!important;
+}

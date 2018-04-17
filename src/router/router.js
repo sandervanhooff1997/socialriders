@@ -18,7 +18,7 @@ let router = new Router({
         {
             path: '/',
             redirect: {
-                name: 'Organize',
+                name: 'Explores',
                 params: {
                     id: '8sZ9I854qffhSbsHzsBg'
                 }

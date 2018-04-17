@@ -76,7 +76,7 @@
             <p class="text-xs-left">{{selectedExplore.description}}</p>
         </v-card-text>
         <v-card-actions>
-            <v-btn round color="accent" v-if="routeJoinable" @click="joinRoute()">Join</v-btn>
+            <v-btn round color="primary" v-if="routeJoinable" @click="joinRoute()">Join</v-btn>
             <v-btn round flat @click="hideRoute()">Close</v-btn>
         </v-card-actions>
     </v-card>

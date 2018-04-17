@@ -2,39 +2,20 @@
     <v-flex xs12 sm8 md9>
         <div class="map" :id="id">Maps</div>
 
-        <v-speed-dial
-                id="map-actions"
-                v-model="actions.on"
-                direction="bottom"
-                left
-                open-on-hover
-                transition="slide-y-reverse-transition"
-        >
-            <v-btn
-                    style="margin: 25px 0 0 25px;"
-                    slot="activator"
-                    color="yellow"
-                    dark
-                    fab
-                    hover
-                    v-model="actions.on"
-            >
-                <v-icon>info</v-icon>
-                <v-icon>close</v-icon>
-            </v-btn>
-
-            <v-btn
-                    v-for="(item, index) in actions.items"
-                    :key="index"
-                    style="margin-left: 25px;"
-                    round
-                    dark
-                    small
-                    color="accent"
-            >
-                {{item}}
-            </v-btn>
-        </v-speed-dial>
+        <div id="map-actions">
+            <div v-for="(item, index) in actions.items" :key="index" class="map-action">
+                <v-btn
+                        class="scale"
+                        style="margin-left: 25px;"
+                        round
+                        dark
+                        small
+                        color="primary"
+                >
+                    {{item}}
+                </v-btn>
+            </div>
+        </div>
     </v-flex>
 </template>
 
@@ -73,12 +54,9 @@
         methods: {
             initMap () {
                 this.map = mapFunctions.init(document.getElementById(this.id), this.options)
-
                 this.myPosition = mapFunctions.getMyPosition(this.map)
-
+                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("map-actions"))
                 mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
-
-                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById('map-actions'))
 
                 // Render explores
                 this.$parent.filterExplores()
@@ -143,8 +121,7 @@
         margin: 0 auto;
         background: gray;
     }
-    .action-margin {
-        margin-top: 25px;
-        margin-left: 25px;
+    #map-actions {
+        margin-top: 15px;
     }
 </style>

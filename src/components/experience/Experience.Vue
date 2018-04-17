@@ -18,7 +18,7 @@
                     <div id="owner">
                         <span class="title white--text">Creator</span><br>
                         <router-link :to="{name: 'Profile', params: { uid: experience.owner.uid }}">
-                            <v-chip text-color="white" color="accent">
+                            <v-chip class="scale" text-color="white" color="primary">
                                 <v-avatar>
                                     <img :src="experience.owner.photoUrl" alt="experience.owner.name">
                                 </v-avatar>
@@ -33,23 +33,38 @@
                     v-model="tab"
                     grow
             >
-                <v-tabs-slider color="primary"></v-tabs-slider>
-                <v-tab v-for="item in tabItems" :key="item">
+                <v-tabs-slider color="accent"></v-tabs-slider>
+                <v-tab v-for="item in tabItems" class="white--text" :key="item">
                     {{ item }}
                 </v-tab>
             </v-tabs>
             <v-tabs-items v-model="tab" style="height: 100%;">
                 <v-tab-item v-for="(item, index) in tabItems" :key="index" style="height: 100%;">
-                    <v-card flat style="height: 100%;">
+                    <v-card flat style="height: 100%;" class="noBackground">
                         <v-container fill-height>
                             <v-layout fill-height>
                                 <div v-if="tab == 0">
-
+                                    <div class="grid">
+                                        <div class="grid-sizer"></div>
+                                        <div class="grid-item grid-item--width2"></div>
+                                        <div class="grid-item grid-item--height2"></div>
+                                        <div class="grid-item"></div>
+                                        <div class="grid-item"></div>
+                                        <div class="grid-item grid-item--width2 grid-item--height2"></div>
+                                        <div class="grid-item grid-item--width2"></div>
+                                        <div class="grid-item grid-item--width2"></div>
+                                        <div class="grid-item grid-item--height2"></div>
+                                        <div class="grid-item"></div>
+                                        <div class="grid-item grid-item--width2"></div>
+                                        <div class="grid-item grid-item--height2"></div>
+                                        <div class="grid-item"></div>
+                                        <div class="grid-item"></div>
+                                    </div>
                                 </div>
 
                                 <div v-if="tab == 1">
                                     <router-link v-for="i in 40" :key="i" :to="{name: 'Profile', params: { uid: experience.owner.uid }}">
-                                        <v-chip text-color="white" color="secondary">
+                                        <v-chip class="scale" text-color="white" color="primary">
                                             <v-avatar>
                                                 <img :src="experience.owner.photoUrl" alt="experience.owner.name">
                                             </v-avatar>
@@ -124,6 +139,13 @@
 
                 $(() => {
                     mapFunctions.calculateAndDisplayRoute(self.map, self.experience)
+                    $('.grid').isotope({
+                        itemSelector: '.grid-item',
+                        percentPosition: true,
+                        masonry: {
+                            columnWidth: '.grid-sizer'
+                        }
+                    });
                 })
             }, error => {
                 this.$store.dispatch('errorMessage', error.message)
@@ -161,13 +183,37 @@
         left: 20px;
         bottom: 20px;
     }
-    .chip:hover{
-        cursor: pointer;
-        -webkit-transform: scale(1.1);
-        -moz-transform: scale(1.1);
-        -ms-transform: scale(1.1);
-        -o-transform: scale(1.1);
-        transform: scale(1.1);
+
+    /* ---- grid ---- */
+
+    .grid {
+        background: #DDD;
     }
+
+    /* clear fix */
+    .grid:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+
+    /* ---- .element-item ---- */
+
+    /* 5 columns, percentage width */
+    .grid-item,
+    .grid-sizer {
+        width: 20%;
+    }
+
+    .grid-item {
+        float: left;
+        height: 100px;
+        background: #0D8;
+        border: 2px solid #333;
+        border-color: hsla(0, 0%, 0%, 0.7);
+    }
+
+    .grid-item--width2 { width: 40%; }
+    .grid-item--height2 { height: 200px; }
 
 </style>
