@@ -34,7 +34,7 @@
                         <img width="400" height="400" src="@/assets/images/logo.png" class="logo" align="Logo">
                     </v-flex>
                     <v-flex xs12 >
-                        <h3 class="display-3 signin-title">Welcome!</h3>
+                        <h3 class="display-3 signin-title black--text">Welcome!</h3>
                         <v-btn  @click="signin('google')"
                                 class="signinBtn grey--text text--darken-2"
                                 large

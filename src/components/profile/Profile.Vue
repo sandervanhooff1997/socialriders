@@ -26,7 +26,7 @@
             </v-tabs>
             <v-tabs-items v-model="tab" class="fillHeight">
                 <v-tab-item v-for="item in items" :key="item" class="fillHeight">
-                    <v-card flat class="fillHeight">
+                    <v-card flat class="fillHeight noBackground">
                         <v-container fill-height>
                             <v-layout>
                                 <v-flex>

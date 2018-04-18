@@ -140,14 +140,17 @@
                                             <v-card>
                                                 <v-card-text>
                                                     <v-checkbox
+                                                            color="primary"
                                                             label="Avoid Highways"
                                                             v-model="options.avoidHighways"
                                                     ></v-checkbox>
                                                     <v-checkbox
+                                                            color="primary"
                                                             label="Avoid Ferries"
                                                             v-model="options.avoidFerries"
                                                     ></v-checkbox>
                                                     <v-checkbox
+                                                            color="primary"
                                                             label="Avoid Tolls"
                                                             v-model="options.avoidTolls"
                                                     ></v-checkbox>
@@ -185,6 +188,7 @@
                                             class="mt-3"
                                             v-model="date"
                                             :min="today"
+                                            color="primary"
                                     ></v-date-picker>
                                 </v-flex>
                                 <!--Time Picker-->
@@ -194,6 +198,7 @@
                                             v-model="time"
                                             format="24hr"
                                             full-width
+                                            color="primary"
                                     ></v-time-picker>
                                 </v-flex>
                             </v-layout>
@@ -290,7 +295,7 @@
     export default {
         data () {
             return {
-                step: 2,
+                step: 1,
                 initialized: false,
                 titles: {
                     step1: 'Vehicle',
@@ -333,6 +338,8 @@
                     avoidHighways: false,
                     avoidTolls: false,
                 },
+                directionsService: new google.maps.DirectionsService,
+                directionsDisplay: new google.maps.DirectionsRenderer,
                 /** Step 3 */
                 date: null,
                 time: null,
@@ -381,9 +388,8 @@
             initMap () {
                 $(() => {
                     this.map = mapFunctions.init(document.getElementById(this.id), this.mapOptions)
-
-                    mapFunctions.initSearchInput(this.map, document.getElementById(this.startPoint.id))
-                    mapFunctions.initSearchInput(this.map, document.getElementById(this.endPoint.id))
+                    this.addSearchBox(this.startPoint.id, this.startPoint.placeholder)
+                    this.addSearchBox(this.endPoint.id, this.endPoint.placeholder)
                 })
             },
             getWayPointId () {
@@ -391,19 +397,70 @@
             },
             addWayPoint (id, placeholder) {
                 this.wayPoints.push({location: null, address: null, id: id, placeholder: placeholder})
-                $(() => {
-                    mapFunctions.initSearchInput(this.map, document.getElementById(id))
-                })
+                this.addSearchBox(id)
             },
-            addSearchBox () {
-                // todo: return found place to the caller
-                if (input.id === self.startPoint.id) {
-                    self.startPlaceFound(place)
-                } else if (input.id === self.endPoint.id) {
-                    self.endPlaceFound(place)
-                } else {
-                    self.wayPointPlaceFound(input, place)
-                }
+            addSearchBox (inputId) {
+                const self = this;
+                // selecting element by ID must be in $(document).ready()
+                $(document).ready(function(){
+                    // Create the search box and link it to the UI element.
+                    const input = document.getElementById(inputId);
+                    const searchBox = new google.maps.places.SearchBox(input);
+                    // Bias the SearchBox results towards current map's viewport.
+                    self.map.addListener('bounds_changed', function() {
+                        searchBox.setBounds(self.map.getBounds());
+                    });
+                    let markers = [];
+                    // Listen for the event fired when the user selects a prediction and retrieve
+                    // more details for that place.
+                    searchBox.addListener('places_changed', function() {
+                        let places = searchBox.getPlaces();
+                        if (places.length === 0) {
+                            return;
+                        }
+                        // Clear out the old markers.
+                        markers.forEach(function(marker) {
+                            marker.setMap(null);
+                        });
+                        markers = [];
+                        // For each place, get the icon, name and location.
+                        let bounds = new google.maps.LatLngBounds();
+                        places.forEach(function(place) {
+                            if (!place.geometry) {
+                                console.log("Returned place contains no geometry");
+                                return;
+                            }
+                            const icon = {
+                                url: place.icon,
+                                size: new google.maps.Size(71, 71),
+                                origin: new google.maps.Point(0, 0),
+                                anchor: new google.maps.Point(17, 34),
+                                scaledSize: new google.maps.Size(25, 25)
+                            };
+                            // Create a marker for each place.
+                            markers.push(new google.maps.Marker({
+                                map: self.map,
+                                icon: icon,
+                                title: place.name,
+                                position: place.geometry.location
+                            }));
+                            if (input.id === self.startPoint.id) {
+                                self.startPlaceFound(place)
+                            } else if (input.id === self.endPoint.id) {
+                                self.endPlaceFound(place)
+                            } else {
+                                self.wayPointPlaceFound(input, place)
+                            }
+                            if (place.geometry.viewport) {
+                                // Only geocodes have viewport.
+                                bounds.union(place.geometry.viewport);
+                            } else {
+                                bounds.extend(place.geometry.location);
+                            }
+                        });
+                        self.map.fitBounds(bounds);
+                    });
+                })
             },
             startPlaceFound(place) {
                 this.startPoint.address = place.formatted_address
@@ -424,9 +481,7 @@
                     wayPoint.address = place.formatted_address
                     wayPoint.location = place.geometry.location
 
-                    const data = mapFunctions.calculateAndDisplayRoute()
-                    this.distance = data.distance
-                    this.duration = data.duration
+                    this.calculateAndDisplayRoute()
                 }
             },
             swapWayPoints(index) {
@@ -495,6 +550,56 @@
                 }, error => {
                     this.$store.dispatch('errorMessage', error.message)
                 })
+            },
+            calculateAndDisplayRoute() {
+                if (this.startPoint.location !== null
+                    && this.endPoint.location !== null)
+                {
+                    const self = this;
+                    this.directionsDisplay.setMap(null)
+                    this.directionsDisplay.setMap(this.map);
+                    this.distance = null
+                    // wayPoints
+                    self.displayedWayPoints = []
+                    for (let i = 0; i < this.wayPoints.length; i++) {
+                        if (this.wayPoints[i].location) {
+                            self.displayedWayPoints.push({
+                                location: this.wayPoints[i].location,
+                                stopover: true
+                            });
+                        }
+                    }
+                    // determine the travelmode bases on the selected vehicle
+                    let travelMode = this.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
+                    this.directionsService.route({
+                        origin: self.startPoint.location,
+                        destination: self.endPoint.location,
+                        waypoints: self.displayedWayPoints,
+                        optimizeWaypoints: false,
+                        travelMode: travelMode,
+                        provideRouteAlternatives: false,
+                        avoidFerries: self.options.avoidFerries,
+                        avoidHighways: self.options.avoidHighways,
+                        avoidTolls: self.options.avoidTolls,
+                    }, function(response, status) {
+                        if (status === 'OK') {
+                            self.directionsDisplay.setDirections(response)
+                            const route = response.routes[0];
+                            let distance = 0;
+                            let duration = 0;
+                            //For each route, display summary information.
+                            for (var i = 0; i < route.legs.length; i++) {
+                                distance += route.legs[i].distance.value
+                                duration += route.legs[i].duration.value
+                            }
+                            self.distance = distance
+                            self.duration = duration
+                        }
+                        else {
+                            window.alert('Directions request failed due to ' + status);
+                        }
+                    });
+                }
             },
         },
         computed: {

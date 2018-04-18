@@ -5,8 +5,15 @@
     font-family: 'Material Icons', sans-serif;
 }
 
-.transparent-background, .card {
+.transparent-background,
+.card,
+.picker__body,
+.time-picker-clock {
     background: rgba(255,255,255,0.2) !important;
+}
+
+.time-picker-clock--indeterminate>span.active {
+    background: #1de9b6!important;
 }
 
 .noBackground,
