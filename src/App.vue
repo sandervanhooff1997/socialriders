@@ -5,7 +5,12 @@
           <app-alert v-if="message" @dismissed="onDismissed" :text="message.text" :type="message.type"></app-alert>
 
           <!--Mobile Menu-->
-          <v-navigation-drawer v-if="$route.name !== 'signin'" app v-model="drawer">
+          <v-navigation-drawer
+                  v-if="$route.name !== 'signin'"
+                  app
+                  disable-resize-watcher
+                  class="overlay-background"
+                  v-model="drawer">
               <div class="sidebar-overlay">
                   <v-list class="pt-0">
 
@@ -40,30 +45,32 @@
             <v-btn icon v-if="userIsAuthenticated">
                 <!--Profile Icon Menu-->
                 <v-menu transition="slide-y-transition" bottom>
-                    <v-avatar size="36px" slot="activator">
-                        <img :src="user.photoUrl" :alt="user.name">
-                    </v-avatar>
-                    <v-list subheader style="padding-bottom: 0;" class="profile-menu-background">
-                        <v-list-tile avatar>
-                            <v-list-tile-avatar>
-                                <img :src="user.photoUrl" :alt="user.name">
-                            </v-list-tile-avatar>
-                            <v-list-tile-content>
-                                <v-list-tile-title>{{user.name}}</v-list-tile-title>
-                                <v-list-tile-sub-title>{{user.email}}</v-list-tile-sub-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                        <v-list-tile :to="{name:'Profile', params: { uid: user.uid, profile: user }}">
-                            <v-list-tile-content>
-                                <v-list-tile-title class="text-xs-center">My Profile</v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                        <v-list-tile @click="onLogout">
-                            <v-list-tile-content>
-                                <v-list-tile-title class="text-xs-center">Logout</v-list-tile-title>
-                            </v-list-tile-content>
-                        </v-list-tile>
-                    </v-list>
+                        <v-avatar size="36px" slot="activator">
+                            <img :src="user.photoUrl" :alt="user.name">
+                        </v-avatar>
+                        <v-list subheader style="padding-bottom: 0;" class="overlay-background-small">
+                            <div class="profile-menu-overlay">
+                                <v-list-tile avatar>
+                                    <v-list-tile-avatar>
+                                        <img :src="user.photoUrl" :alt="user.name">
+                                    </v-list-tile-avatar>
+                                    <v-list-tile-content>
+                                        <v-list-tile-title>{{user.name}}</v-list-tile-title>
+                                        <v-list-tile-sub-title>{{user.email}}</v-list-tile-sub-title>
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                                <v-list-tile :to="{name:'Profile', params: { uid: user.uid, profile: user }}">
+                                    <v-list-tile-content>
+                                        <v-list-tile-title class="text-xs-center">My Profile</v-list-tile-title>
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                                <v-list-tile @click="onLogout">
+                                    <v-list-tile-content>
+                                        <v-list-tile-title class="text-xs-center">Logout</v-list-tile-title>
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                            </div>
+                        </v-list>
                 </v-menu>
             </v-btn>
           </v-toolbar>
@@ -118,12 +125,6 @@
 </script>
 
 <style scoped>
-    aside *, nav * {
-        font-weight: bold;
-    }
-    .toolbar__title span {
-        font-weight: bold;
-    }
     .profile-menu-background {
         background: rgba(0,0,0,0.8) !important;
     }

@@ -29,3 +29,34 @@ nav
     -moz-box-shadow: none !important;
     box-shadow: none !important;
 }
+
+.list-tile-explore {
+    padding: 0px;
+    height: 34px;
+}
+
+.application-overlay, .sidebar-overlay {
+    width: 100%;
+    height: 100%;
+    background: #8e24aa;
+    background: -webkit-linear-gradient(45deg, rgba(142, 36, 170, 0.9) 0%, rgba(255, 110, 64, 0.8) 100%);
+    background: linear-gradient(45deg, rgba(142, 36, 170, 0.9) 0%, rgba(255, 110, 64, 0.8) 100%);
+}
+.profile-menu-overlay {
+    background: #8e24aa;
+    background: -webkit-linear-gradient(45deg, rgba(255, 110, 64, 0.8) 0%, rgba(142, 36, 170, 0.9) 100%);
+    background: linear-gradient(45deg, rgba(255, 110, 64, 0.8) 0%, rgba(142, 36, 170, 0.9) 100%);
+}
+.overlay-background {
+    background: url('./../images/bg3.jpg') !important;
+    background-size: cover;
+    background-position: 50%;
+}
+.overlay-background-small {
+    background: url('./../images/bg3-small.jpg') !important;
+    background-size: cover;
+    background-position: 50%;
+}
+.navigation-drawer {
+    padding: 0;
+}
