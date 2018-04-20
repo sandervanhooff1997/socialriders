@@ -1,11 +1,11 @@
 <template>
     <v-flex xs12 sm4 md3>
         <v-container fluid>
-            <explore
+            <selected
                     ref="explore"
                     v-if="selectedExplore"
                     :selectedExplore="selectedExplore"
-            ></explore>
+            ></selected>
             <filters
                     ref="filters"
                     v-else
@@ -16,12 +16,13 @@
 </template>
 
 <script>
-    import Explore from './Explore'
+    import Selected from './Selected'
     import Filters from './Filters'
 
     export default {
+        props: ['selectedExplore', 'explores'],
         components: {
-            Explore, Filters
+            Selected, Filters
         },
         methods: {
             hideRoute() {
@@ -34,6 +35,5 @@
                 this.$parent.renderExplores(explores)
             }
         },
-        props: ['selectedExplore', 'explores'],
     }
 </script>

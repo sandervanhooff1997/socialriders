@@ -43,8 +43,8 @@
                 },
                 myPosition: null,
                 markers: [],
-                directionsService: new google.maps.DirectionsService,
-                directionsDisplay: new google.maps.DirectionsRenderer,
+                directionsService: mapFunctions.directionsService,
+                directionsRenderer: mapFunctions.directionsRenderer,
                 actions: {
                     on: false,
                     items: ['popular', 'recent', 'nearby']
@@ -95,7 +95,6 @@
                 this.$parent.clearSelectedExplore()
                 mapFunctions.clearRoute()
                 this.map.setZoom(7)
-                this.directionsDisplay.setMap(null)
             },
 
         },
@@ -106,9 +105,6 @@
         },
         mounted () {
             this.initMap()
-            if (this.selectedExplore) {
-                this.showRoute(this.selectedExplore)
-            }
         },
     }
 </script>

@@ -339,7 +339,7 @@
                     avoidTolls: false,
                 },
                 directionsService: new google.maps.DirectionsService,
-                directionsDisplay: new google.maps.DirectionsRenderer,
+                directionsRenderer: new google.maps.DirectionsRenderer,
                 /** Step 3 */
                 date: null,
                 time: null,
@@ -545,8 +545,8 @@
 
                 // add to db
                 this.$store.dispatch('organizeExplore', explore).then(response => {
-                    this.$router.push({name: 'Explores'})
                     this.$store.dispatch('successMessage', 'Explore Organized!')
+                    this.$router.push({name: 'Explores'})
                 }, error => {
                     this.$store.dispatch('errorMessage', error.message)
                 })
@@ -556,8 +556,8 @@
                     && this.endPoint.location !== null)
                 {
                     const self = this;
-                    this.directionsDisplay.setMap(null)
-                    this.directionsDisplay.setMap(this.map);
+                    this.directionsRenderer.setMap(null)
+                    this.directionsRenderer.setMap(this.map);
                     this.distance = null
                     // wayPoints
                     self.displayedWayPoints = []
@@ -583,7 +583,7 @@
                         avoidTolls: self.options.avoidTolls,
                     }, function(response, status) {
                         if (status === 'OK') {
-                            self.directionsDisplay.setDirections(response)
+                            self.directionsRenderer.setDirections(response)
                             const route = response.routes[0];
                             let distance = 0;
                             let duration = 0;

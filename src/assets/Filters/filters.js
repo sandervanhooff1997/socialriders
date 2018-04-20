@@ -25,3 +25,7 @@ Vue.filter('duration', function (duration) {
 Vue.filter('capitalize', function (text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 })
+Vue.filter('riders', function (count) {
+    // returns 1 rider / * riders
+    return count === 1 ? count + ' Rider already Joined!' : count + ' Riders already Joined!'
+})

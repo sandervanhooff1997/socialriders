@@ -2,12 +2,12 @@
  * Used to calculate a Google route
  * @type {google.maps.DirectionsService}
  */
-export const directionsService = new google.maps.DirectionsService
+export let directionsService = null
 /**
  * Used to render a Google route
  * @type {google.maps.DirectionsRenderer}
  */
-export let directionsRenderer = new google.maps.DirectionsRenderer
+export let directionsRenderer = null
 
 /**
  * Create's a Google Map
@@ -16,7 +16,13 @@ export let directionsRenderer = new google.maps.DirectionsRenderer
  * @returns {GoogleMap}
  */
 export function init (el, options) {
+    initDirections()
     return new google.maps.Map(el, options);
+}
+
+export function initDirections() {
+    directionsService = new google.maps.DirectionsService
+    directionsRenderer = new google.maps.DirectionsRenderer
 }
 
 /**

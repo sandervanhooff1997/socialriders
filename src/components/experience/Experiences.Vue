@@ -15,27 +15,7 @@
             <v-container grid-list-md text-xs-center>
                 <v-layout row wrap>
                     <v-flex xs12 sm6 md4 lg3 v-for="(experience, index) in experiences" :key="experience.title">
-                        <v-card>
-                            <v-card-title primary-title>
-                                <div>
-                                    <h3 class="headline mb-0">{{experience.title}}</h3>
-                                    <v-list two-line>
-                                        <v-list-tile avatar>
-                                            <v-list-tile-avatar>
-                                                <v-icon>date_range</v-icon>
-                                            </v-list-tile-avatar>
-                                            <v-list-tile-content>
-                                                <v-list-tile-title>{{experience.startPoint.address}}</v-list-tile-title>
-                                                <v-list-tile-sub-title>{{experience.date | date}}</v-list-tile-sub-title>
-                                            </v-list-tile-content>
-                                        </v-list-tile>
-                                    </v-list>
-                                </div>
-                            </v-card-title>
-                            <v-card-actions>
-                                <v-btn round color="primary" :to="{name: 'Experience', params: {id: experience.id}}">View</v-btn>
-                            </v-card-actions>
-                        </v-card>
+                        <card :experience="experience"></card>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -45,7 +25,12 @@
 </template>
 
 <script>
+    import Card from '../shared/experience/Card.vue'
+
     export default {
+        components: {
+            Card
+        },
         computed: {
             experiences () {
                 return this.$store.getters.experiences

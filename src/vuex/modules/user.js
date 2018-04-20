@@ -19,7 +19,7 @@ export default {
     },
 
     actions: {
-        signIn ({commit, dispatch}, providedProvider) {
+        signIn ({commit}, providedProvider) {
             commit('setLoading', true)
 
             var provider;
@@ -32,9 +32,7 @@ export default {
                 return
             }
 
-            firebase
-                .auth()
-                .signInWithPopup(provider)
+            firebase.auth().signInWithPopup(provider)
                 .then(function (result) {
                     commit('setLoading', false)
                     commit('clearMessage')

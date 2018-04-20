@@ -2,19 +2,18 @@
  * Imports
  */
 import 'vuetify/dist/vuetify.min.css'
-import './assets/css/style.css'
-import './assets/css/theme.css'
-import './assets/css/theme-overrides.css'
+import '@/assets/css/style.css'
+import '@/assets/css/theme.css'
+import '@/assets/css/theme-overrides.css'
+import '@/assets/filters/filters'
 import Vue from 'vue'
 import App from './App'
 import router from './router/router'
 import Vuetify from 'vuetify'
-import * as firebase from 'firebase'
-import firestore from 'firebase/firestore'
+import { firebaseApp, firestore } from '@/assets/firebase/firebaseInit'
 import { store } from './vuex/vuex'
 import AlertCmp from './components/shared/Alert'
 import LoaderCmp from './components/shared/Loader'
-import filters from './filters'
 import jQuery from 'jquery'
 
 /**
@@ -32,7 +31,8 @@ Vue.use(Vuetify, {
     }
 })
 
-window.firebase = firebase
+window.firebase = firebaseApp
+window.db = firestore
 window.Event = new Vue();
 window.$ = window.jQuery = jQuery
 
@@ -57,14 +57,6 @@ new Vue({
     components: { App },
     template: '<App/>',
     created () {
-        firebase.initializeApp({
-            apiKey: 'AIzaSyBdOYlNz9Rdk1lDfbluFvIe-HostsmgyfU',
-            authDomain: 'socialriders-2ad62.firebaseapp.com',
-            databaseURL: 'https://socialriders-2ad62.firebaseio.com',
-            projectId: 'socialriders-2ad62',
-            storageBucket: 'socialriders-2ad62.appspot.com',
-        })
-
         firebase.auth().onAuthStateChanged(authUser => {
             if (authUser) {
                 this.$store.dispatch('autoSignIn', authUser)

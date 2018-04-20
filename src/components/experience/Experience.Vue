@@ -43,32 +43,32 @@
                     <v-card flat style="height: 100%;" class="noBackground">
                         <v-container fill-height>
                             <v-layout fill-height>
-                                <div v-if="tab == 0">
-                                    <div class="grid">
-                                        <div class="grid-sizer"></div>
-                                        <div class="grid-item grid-item--width2"></div>
-                                        <div class="grid-item grid-item--height2"></div>
-                                        <div class="grid-item"></div>
-                                        <div class="grid-item"></div>
-                                        <div class="grid-item grid-item--width2 grid-item--height2"></div>
-                                        <div class="grid-item grid-item--width2"></div>
-                                        <div class="grid-item grid-item--width2"></div>
-                                        <div class="grid-item grid-item--height2"></div>
-                                        <div class="grid-item"></div>
-                                        <div class="grid-item grid-item--width2"></div>
-                                        <div class="grid-item grid-item--height2"></div>
-                                        <div class="grid-item"></div>
-                                        <div class="grid-item"></div>
-                                    </div>
+                                <div v-show="tab === '0'">
+                                    <!--<div id="grid">-->
+                                        <!--<div class="grid-sizer"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;width2"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;height2"></div>-->
+                                        <!--<div class="grid-item"></div>-->
+                                        <!--<div class="grid-item"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;width2 grid-item&#45;&#45;height2"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;width2"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;width2"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;height2"></div>-->
+                                        <!--<div class="grid-item"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;width2"></div>-->
+                                        <!--<div class="grid-item grid-item&#45;&#45;height2"></div>-->
+                                        <!--<div class="grid-item"></div>-->
+                                        <!--<div class="grid-item"></div>-->
+                                    <!--</div>-->
                                 </div>
 
-                                <div v-if="tab == 1">
-                                    <router-link v-for="i in 40" :key="i" :to="{name: 'Profile', params: { uid: experience.owner.uid }}">
+                                <div v-show="tab === '1'">
+                                    <router-link v-for="(item, index) in experience.riders" :key="index" :to="{name: 'Profile', params: { uid: item.uid, profile: item }}">
                                         <v-chip class="scale" text-color="white" color="primary">
                                             <v-avatar>
-                                                <img :src="experience.owner.photoUrl" alt="experience.owner.name">
+                                                <img :src="item.photoUrl" alt="item.name">
                                             </v-avatar>
-                                            <strong>{{experience.owner.name}}</strong>
+                                            <strong>{{item.name}}</strong>
                                         </v-chip>
                                     </router-link>
                                 </div>
@@ -107,7 +107,7 @@
                     zoom: 7,
                     styles: mapStyles.retro,
                 },
-                tab: null,
+                tab: 0,
                 tabItems: [
                     'Media', 'Riders',
                 ]
@@ -125,9 +125,9 @@
         methods: {
             initMap () {
                 $(() => {
-                    this.map = new google.maps.Map(document.getElementById(this.id), this.options);
+                    this.map = mapFunctions.init(document.getElementById(this.id), this.options)
                 })
-            },
+            }
         },
         mounted () {
             let self = this
@@ -139,13 +139,15 @@
 
                 $(() => {
                     mapFunctions.calculateAndDisplayRoute(self.map, self.experience)
-                    $('.grid').isotope({
-                        itemSelector: '.grid-item',
-                        percentPosition: true,
-                        masonry: {
-                            columnWidth: '.grid-sizer'
-                        }
-                    });
+
+//                    let el = document.getElementById("grid")
+//                    el.isotope({
+//                        itemSelector: '.grid-item',
+//                        percentPosition: true,
+//                        masonry: {
+//                            columnWidth: '.grid-sizer'
+//                        }
+//                    });
                 })
             }, error => {
                 this.$store.dispatch('errorMessage', error.message)
@@ -186,12 +188,12 @@
 
     /* ---- grid ---- */
 
-    .grid {
+    #grid {
         background: #DDD;
     }
 
     /* clear fix */
-    .grid:after {
+    #grid:after {
         content: '';
         display: block;
         clear: both;

@@ -1,10 +1,10 @@
 <template>
     <v-snackbar
             :timeout="timeout"
-            :bottom="true"
-            :right="true"
-            :value="true"
-            :color="type"
+            bottom
+            right
+            value="true"
+            color="primary"
             fixed
             :multi-line="true"
     >
