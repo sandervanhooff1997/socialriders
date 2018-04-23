@@ -82,20 +82,20 @@
                                                     <v-text-field
                                                             :id="startPoint.id"
                                                             :placeholder="startPoint.placeholder"
-                                                            prepend-icon="nature_people"
-                                                            :value="startPoint.address"
+                                                            prepend-icon="location_on"
+                                                            v-model="startPoint.address"
                                                             class="noPadding"
                                                             clearable
                                                             autofocus
                                                     ></v-text-field>
 
                                                     <!--wayPoints-->
-                                                    <div v v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
+                                                    <div v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
                                                         <v-text-field
                                                                 :id="wayPoint.id"
                                                                 :placeholder="wayPoint.placeholder"
-                                                                prepend-icon="explore"
-                                                                :value="wayPoint.address"
+                                                                prepend-icon="add_location"
+                                                                v-model="wayPoint.address"
                                                                 clearable
                                                                 autofocus
                                                         ></v-text-field>
@@ -128,7 +128,7 @@
                                                             :id="endPoint.id"
                                                             :placeholder="endPoint.placeholder"
                                                             prepend-icon="flag"
-                                                            :value="endPoint.address"
+                                                            v-model="endPoint.address"
                                                             class="noPadding"
                                                             clearable
                                                     ></v-text-field>
@@ -316,6 +316,7 @@
                 endPoint: {id: 'endPoint', placeholder: 'Target destination', location: null, address: null},
                 wayPoints: [],
                 displayedWayPoints: [],
+                validRoute: false,
                 distance: null,
                 duration: null,
                 showInfoText: false,
@@ -495,12 +496,9 @@
                     this.wayPoints.push({})
                     this.wayPoints.splice(-1, 1)
 
-                    console.log(this.wayPoints)
                     this.calculateAndDisplayRoute()
                 }
             },
-            /** Step 3 */
-
             /** Step 4 */
             saveExplore () {
                 // transform waypoints to the right db format
@@ -583,6 +581,8 @@
                         avoidTolls: self.options.avoidTolls,
                     }, function(response, status) {
                         if (status === 'OK') {
+                            self.validRoute = true
+
                             self.directionsRenderer.setDirections(response)
                             const route = response.routes[0];
                             let distance = 0;
@@ -596,7 +596,8 @@
                             self.duration = duration
                         }
                         else {
-                            window.alert('Directions request failed due to ' + status);
+                            self.validRoute = false
+                            self.$store.dispatch('errorMessage', 'No Directions found');
                         }
                     });
                 }
@@ -604,42 +605,27 @@
         },
         computed: {
             stepCompleted () {
-                return this.step === 1 && this.step1Completed ||
+                return  this.step === 1 && this.step1Completed ||
                         this.step === 2 && this.step1Completed && this.step2Completed ||
                         this.step === 3 && this.step1Completed && this.step2Completed && this.step3Completed
 
             },
             step1Completed () {
                 return this.vehicle !== null
-                    && this.vehicle !== undefined
-                    && this.vehicle !== ''
             },
             step2Completed () {
                 return this.startPoint.location !== null
-                    && this.startPoint.location !== undefined
-                    && this.startPoint.location !== ''
                     && this.startPoint.address !== null
-                    && this.startPoint.address !== undefined
-                    && this.startPoint.address !== ''
                     && this.endPoint.location !== null
-                    && this.endPoint.location !== undefined
-                    && this.endPoint.location !== ''
                     && this.endPoint.address !== null
-                    && this.endPoint.address !== undefined
-                    && this.endPoint.address !== ''
+                    && this.validRoute !== false
             },
             step3Completed () {
                 return this.date !== null
-                    && this.date !== undefined
-                    && this.date !== ''
                     && this.time !== null
-                    && this.time !== undefined
-                    && this.time !== ''
             },
             step4Completed () {
                 return this.title !== null
-                    && this.title !== undefined
-                    && this.title !== ''
             },
             allStepsCompleted () {
                 return this.step1Completed

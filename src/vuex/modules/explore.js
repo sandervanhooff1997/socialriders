@@ -18,7 +18,6 @@ export default {
     actions: {
         getExplores ({commit}) {
             commit('setLoading', true)
-            commit('clearMessage')
 
             db.collection('/explores')
                 .where('date', '>', new Date())
@@ -37,6 +36,7 @@ export default {
                     commit('setExplores', explores)
                 }, (error) => {
                     commit('setLoading', false)
+                    commit('clearMessage')
                     commit('setMessage', {text:error.message, type: 'error'
                     })
                 })

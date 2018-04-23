@@ -31,34 +31,38 @@ export function initDirections() {
  * @returns {{lat: Number, lng: Number}}
  */
 export function getMyPosition (map) {
-    if (localStorage.getItem("lat") && localStorage.getItem("lng")) {
-        let myPosition = {
-            lat: parseFloat(localStorage.getItem("lat")),
-            lng: parseFloat(localStorage.getItem("lng"))
-        }
+    return new Promise((resolve, reject) => {
+        if (localStorage.getItem("lat") && localStorage.getItem("lng")) {
+            let myPosition = {
+                lat: parseFloat(localStorage.getItem("lat")),
+                lng: parseFloat(localStorage.getItem("lng"))
+            }
 
-        map.setCenter(myPosition)
-
-        return myPosition
-    } else {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                let myPosition = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                }
-
-                localStorage.setItem("lat", myPosition.lat)
-                localStorage.setItem("lng", myPosition.lng)
-
-                map.setCenter(myPosition)
-
-                return myPosition
-            });
+            map.setCenter(myPosition)
+            resolve(myPosition)
         } else {
-            console.log("Geolocation is not supported by your browser.")
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    let myPosition = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }
+
+                    localStorage.setItem("lat", myPosition.lat)
+                    localStorage.setItem("lng", myPosition.lng)
+
+                    map.setCenter(myPosition)
+                    resolve(myPosition)
+                }, error => {
+                    console.log('User dismissed location popup')
+                    reject()
+                });
+            } else {
+                console.log("Geolocation is not supported by your browser.")
+                reject()
+            }
         }
-    }
+    })
 }
 
 /**

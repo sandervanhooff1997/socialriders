@@ -6,16 +6,31 @@
             <div v-for="(item, index) in actions.items" :key="index" class="map-action">
                 <v-btn
                         class="scale"
-                        style="margin-left: 25px;"
+                        style="margin-left: 15px;"
                         round
                         dark
                         small
-                        color="primary"
+                        color="secondary"
+                        @click="item.action"
                 >
-                    {{item}}
+                    {{item.name}}
                 </v-btn>
             </div>
         </div>
+
+        <v-btn
+                id="location-btn"
+                v-show="myPosition"
+                color="secondary"
+                dark
+                fab
+                absolute
+                @click="center"
+                slot="activator"
+        >
+            <v-icon>location_on</v-icon>
+        </v-btn>
+
     </v-flex>
 </template>
 
@@ -47,15 +62,25 @@
                 directionsRenderer: mapFunctions.directionsRenderer,
                 actions: {
                     on: false,
-                    items: ['popular', 'recent', 'nearby']
+                    items: [
+                        { name: 'popular', action : this.getPopularExplores },
+                        { name: 'recent', action : this.getRecentExplores },
+                        { name: 'nearby', action : this.getNearbyExplores },
+                    ]
                 }
             }
         },
         methods: {
             initMap () {
+                let self = this
                 this.map = mapFunctions.init(document.getElementById(this.id), this.options)
-                this.myPosition = mapFunctions.getMyPosition(this.map)
                 this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("map-actions"))
+                this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById("location-btn"))
+
+                mapFunctions.getMyPosition(this.map).then(position => {
+                    self.myPosition = position
+                }, () => {})
+
                 mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
                 // Render explores
@@ -94,9 +119,33 @@
             hideRoute(){
                 this.$parent.clearSelectedExplore()
                 mapFunctions.clearRoute()
-                this.map.setZoom(7)
+                this.center()
             },
+            center () {
+                this.map.setZoom(7)
 
+                if (this.myPosition) {
+                    this.map.panTo(this.myPosition)
+                } else {
+                    this.map.panTo(this.options.center)
+                }
+            },
+            getPopularExplores () {
+                let explores = this.explores
+                let sorted = explores.sort((a,b) => {
+                        // sort explores based on joined riders count
+                        return (a.riders.length > b.riders.length) ? 1 : ((b.riders.length > a.riders.length) ? -1 : 0)
+                    })
+                let populars = sorted.slice(sorted.length - 5)
+
+                this.renderExplores(populars)
+            },
+            getRecentExplores () {
+
+            },
+            getNearbyExplores () {
+
+            }
         },
         computed: {
             selectedExplore() {
@@ -118,6 +167,9 @@
         background: gray;
     }
     #map-actions {
-        margin-top: 15px;
+        margin-top: 10px;
+    }
+    #location-btn {
+        margin: 10px;
     }
 </style>

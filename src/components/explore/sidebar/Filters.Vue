@@ -120,8 +120,8 @@
                             max: 12,
                         },
                         {
-                            text: 'Noon',
-                            value: 'noon',
+                            text: 'Afternoon',
+                            value: 'afternoon',
                             on: true,
                             min: 12,
                             max: 18,
@@ -235,7 +235,12 @@
                             explores.forEach(explore => {
                                 let hours = new Date(explore.date).getHours()
 
-                                if (hours >= daypart.min && hours < daypart.max) {
+                                // Midnight daypart requires some extra checks
+                                if (daypart.value === 'midnight') {
+                                    if (hours >= daypart.min && hours <= 23 || hours <= daypart.max && hours >= 0) {
+                                        tempExplores.push(explore)
+                                    }
+                                } else if (hours >= daypart.min && hours < daypart.max) {
                                     tempExplores.push(explore)
                                 }
                             })
