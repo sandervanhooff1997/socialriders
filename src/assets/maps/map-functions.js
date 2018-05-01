@@ -133,13 +133,12 @@ export function initSearchInput (map, input) {
     })
 }
 
-export function addMarker (map, pos) {
-    const marker = new google.maps.Marker({
+export function getMarker (map, pos) {
+    return new google.maps.Marker({
         position: new google.maps.LatLng(pos.lat, pos.lng),
         map: map,
         animation: google.maps.Animation.DROP
     })
-    return marker
 }
 
 /**

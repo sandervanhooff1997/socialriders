@@ -2,14 +2,14 @@
   <v-app dark>
       <div class="application-overlay">
           <!--Show app messages-->
-          <app-alert v-if="message" @dismissed="onDismissed" :text="message.text" :type="message.type"></app-alert>
+          <app-message v-if="message" @dismissed="onDismissed" :text="message.text" :type="message.type"></app-message>
 
           <!--Mobile Menu-->
           <v-navigation-drawer
                   v-if="$route.name !== 'signin'"
                   app
                   disable-resize-watcher
-                  class="overlay-background"
+                  class="background"
                   v-model="drawer">
               <div class="sidebar-overlay">
                   <v-list class="pt-0">
@@ -48,8 +48,8 @@
                         <v-avatar size="36px" slot="activator">
                             <img :src="user.photoUrl" :alt="user.name">
                         </v-avatar>
-                        <v-list subheader style="padding-bottom: 0;" class="overlay-background-small">
-                            <div class="profile-menu-overlay">
+                        <v-list subheader style="padding-bottom: 0;" class="background-small">
+                            <div class="orange-overlay">
                                 <v-list-tile avatar>
                                     <v-list-tile-avatar>
                                         <img :src="user.photoUrl" :alt="user.name">
@@ -123,9 +123,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .profile-menu-background {
-        background: rgba(0,0,0,0.8) !important;
-    }
-</style>

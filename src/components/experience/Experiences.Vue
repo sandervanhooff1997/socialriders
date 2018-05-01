@@ -12,11 +12,16 @@
                 </v-container>
             </v-jumbotron>
 
-            <v-container grid-list-md text-xs-center>
+            <v-container grid-list-md>
                 <v-layout row wrap>
-                    <v-flex xs12 sm6 md4 lg3 v-for="(experience, index) in experiences" :key="experience.title">
-                        <card :experience="experience"></card>
+                    <v-flex xs12 sm6 md4 v-for="(experience, index) in experiences" :key="experience.title">
+                        <v-card>
+                            <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
+                        </v-card>
                     </v-flex>
+                    <mugen-scroll v-if="!allLoaded" :handler="fetchData" :should-handle="!loading">
+                        <loader></loader>
+                    </mugen-scroll>
                 </v-layout>
             </v-container>
         </div>
@@ -25,21 +30,51 @@
 </template>
 
 <script>
-    import Card from '../shared/experience/Card.vue'
+    import TripDetails from '../shared/TripDetails.vue'
+    import MugenScroll from 'vue-mugen-scroll'
 
     export default {
         components: {
-            Card
+            TripDetails,
+            MugenScroll
+        },
+        data() {
+            // do not run handler when it's loading
+            return {
+                loading: false,
+                loaded: 0,
+                loadCount: 12,
+                experiences: null,
+            }
         },
         computed: {
-            experiences () {
+            allLoaded () {
+                if (this.experiences) {
+                    return this.loaded > (this.getAllExplores.length - this.loadCount)
+                }
+                return false
+            },
+            getAllExplores () {
                 return this.$store.getters.experiences
             }
         },
-        mounted () {
-            if (this.experiences === null) {
-                this.$store.dispatch('getExperiences')
+        methods: {
+            fetchData() {
+                // lazy load experiences
+                this.loading = true
+                let self = this
+
+                this.$store.dispatch('getExperiencesLimited', (this.loaded += this.loadCount)).then(experiences => {
+                    self.experiences = experiences
+                }, () => { })
+
+                this.loading = false
             }
+        },
+        mounted () {
+            this.$store.dispatch('getExperiences').then(() => {
+                this.fetchData()
+            }, () => {})
         },
     }
 </script>

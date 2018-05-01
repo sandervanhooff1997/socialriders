@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card-media height="100px" v-if="showOwner">
+        <v-card-media height="100px" v-if="!isOverview">
             <v-layout wrap align-center>
                 <v-flex class="text-xs-center">
                     <v-avatar>
@@ -12,23 +12,23 @@
                 </v-flex>
             </v-layout>
         </v-card-media>
-        <v-divider v-if="showOwner"></v-divider>
+        <v-divider v-if="!isOverview"></v-divider>
 
-        <v-tooltip right v-if="showTitle">
+        <v-tooltip right>
             <v-card-title primary-title slot="activator">
                 <div class="title">{{explore.title}}</div>
             </v-card-title>
             <span>{{explore.title}}</span>
         </v-tooltip>
 
-        <v-list style="background: none!important;" v-if="showMeta">
+        <v-list style="background: none!important;">
             <v-list-tile class="list-tile-explore">
                 <v-list-tile-content>
                     <v-tooltip right>
                         <v-list-tile-action slot="activator">
-                            <span>
-                                <v-icon>date_range</v-icon> {{explore.date | datetime}}
-                            </span>
+                        <span>
+                            <v-icon>date_range</v-icon> {{explore.date | datetime}}
+                        </span>
                         </v-list-tile-action>
                         <span>When</span>
                     </v-tooltip>
@@ -38,45 +38,45 @@
                 <v-list-tile-content>
                     <v-tooltip right>
                         <v-list-tile-action slot="activator">
-                            <span>
-                                <v-icon>flight_takeoff</v-icon> {{explore.startPoint.address}}
-                            </span>
+                        <span>
+                            <v-icon>location_on</v-icon> {{explore.startPoint.address}}
+                        </span>
                         </v-list-tile-action>
                         <span>Starting Location</span>
                     </v-tooltip>
                 </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile class="list-tile-explore">
+            <v-list-tile class="list-tile-explore" v-if="!isOverview">
                 <v-list-tile-content>
                     <v-tooltip right>
                         <v-list-tile-action slot="activator">
-                            <span>
-                                <v-icon>trending_flat</v-icon> {{explore.distance | distance}}
-                            </span>
+                        <span>
+                            <v-icon>trending_flat</v-icon> {{explore.distance | distance}}
+                        </span>
                         </v-list-tile-action>
                         <span>Total Distance</span>
                     </v-tooltip>
                 </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile class="list-tile-explore">
+            <v-list-tile class="list-tile-explore" v-if="!isOverview">
                 <v-list-tile-content>
                     <v-tooltip right>
                         <v-list-tile-action slot="activator">
-                            <span>
-                                <v-icon>motorcycle</v-icon> {{explore.vehicle | capitalize}}
-                            </span>
+                        <span>
+                            <v-icon>motorcycle</v-icon> {{explore.vehicle | capitalize}}
+                        </span>
                         </v-list-tile-action>
                         <span>Vehicle</span>
                     </v-tooltip>
                 </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile class="list-tile-explore" v-if="explore.riders.length">
+            <v-list-tile class="list-tile-explore" v-if="!isOverview && explore.riders.length">
                 <v-list-tile-content>
                     <v-tooltip right>
                         <v-list-tile-action slot="activator">
-                            <span>
-                                <v-icon>people</v-icon> {{explore.riders.length | riders }}
-                            </span>
+                        <span>
+                            <v-icon>people</v-icon> {{explore.riders.length | riders }}
+                        </span>
                         </v-list-tile-action>
                         <span>Riders</span>
                     </v-tooltip>
@@ -84,23 +84,26 @@
             </v-list-tile>
         </v-list>
 
-        <v-card-text v-if="showDescription">
+        <v-card-text v-if="!isOverview">
             <p class="discription text-xs-left">{{explore.description}}</p>
         </v-card-text>
-        <v-divider v-if="showDescription"></v-divider>
-        <br v-if="showDescription">
+        <v-divider v-if="!isOverview"></v-divider>
+        <br>
 
         <v-card-actions>
-            <v-btn round :loading="loading" color="primary" v-if="exploreJoinable" @click="joinExplore()">Join</v-btn>
-            <v-btn round :loading="loading" color="warning" v-if="exploreLeavable" @click="leaveExplore()">Leave</v-btn>
-            <v-btn round flat @click="hideRoute()" v-if="showHideRoute">Close</v-btn>
+            <v-btn round :loading="loading" color="primary" v-if="isExplore && exploreJoinable" @click="joinExplore()">Join</v-btn>
+            <v-btn round :loading="loading" color="warning" v-if="isExplore && exploreLeavable" @click="leaveExplore()">Leave</v-btn>
+            <v-btn round :loading="loading" color="primary" v-if="isExplore && isOverview" :to="{name: 'Explores', params: {selectedExplore: explore}}">View</v-btn>
+            <v-btn round flat @click="hideRoute()" v-if="isExplore && !isOverview">Close</v-btn>
+
+            <v-btn round :loading="loading" color="primary" v-if="!isExplore" :to="{name: 'Experience', params: {id: explore.id}}">View</v-btn>
         </v-card-actions>
     </div>
 </template>
 
 <script>
     export default {
-        props: ['explore', 'showDescription', 'showHideRoute', 'showTitle', 'showOwner', 'showMeta'],
+        props: ['explore', 'isExplore', 'isOverview'],
         computed: {
             user () {
                 return this.$store.getters.user

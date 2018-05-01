@@ -12,6 +12,10 @@
     background: rgba(255,255,255,0.2) !important;
 }
 
+.explorePicker {
+    background: rgba(0,0,0,0.7) !important;
+}
+
 .time-picker-clock--indeterminate>span.active {
     background: #1de9b6!important;
 }
@@ -19,12 +23,13 @@
 .noBackground,
 .tabs__bar,
 .list,
+.expansion-panel .expansion-panel__container,
 nav
 {
     background: none!important;
 }
 
-.stepper, .stepper__header {
+.stepper, .stepper__header, .expansion-panel {
     -webkit-box-shadow: none !important;
     -moz-box-shadow: none !important;
     box-shadow: none !important;
@@ -42,17 +47,17 @@ nav
     background: -webkit-linear-gradient(45deg, rgba(142, 36, 170, 0.9) 0%, rgba(255, 110, 64, 0.8) 100%);
     background: linear-gradient(45deg, rgba(142, 36, 170, 0.9) 0%, rgba(255, 110, 64, 0.8) 100%);
 }
-.profile-menu-overlay {
-    background: #8e24aa;
-    background: -webkit-linear-gradient(45deg, rgba(255, 110, 64, 0.8) 0%, rgba(142, 36, 170, 0.9) 100%);
-    background: linear-gradient(45deg, rgba(255, 110, 64, 0.8) 0%, rgba(142, 36, 170, 0.9) 100%);
+.orange-overlay {
+    background: rgba(255, 110, 64, 0.9);
+    background: -webkit-linear-gradient(45deg, rgba(228, 114, 109, 0.95) 0%, rgba(255, 110, 64, 0.85) 100%);
+    background: linear-gradient(45deg, rgba(228, 114, 109, 0.95) 0%, rgba(255, 110, 64, 0.85) 100%);
 }
-.overlay-background {
+.background {
     background: url('./../images/bg3.jpg') !important;
     background-size: cover;
     background-position: 50%;
 }
-.overlay-background-small {
+.background-small {
     background: url('./../images/bg3-small.jpg') !important;
     background-size: cover;
     background-position: 50%;

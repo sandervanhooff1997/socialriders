@@ -1,115 +1,125 @@
 <template>
-    <!--FILTERS-->
-    <v-card flat dark style="background: none!important;">
-        <v-text-field
-                clearable
-                solo-inverted
-                prepend-icon="explore"
-                id="search-input"
-                placeholder="Search explores"
-        ></v-text-field>
+    <v-card v-if="selectedExplore" flat class="noBackground">
+        <trip-details
+                :explore="selectedExplore"
+                :isExplore="true"
+                :isOverview="false"
+                @onHideRoute="hideRoute">
+        </trip-details>
+    </v-card>
 
-        <br>
-
-        <v-subheader class="filter-header">
-            <v-switch label="Max Distance" color="primary" hide-details v-model="filters.distance.on"></v-switch>
-        </v-subheader>
-        <v-slider class="pa-0"
-                  :min="filters.distance.min"
-                  :max="filters.distance.max"
-                  :label="filters.distance.value + ' km'"
-                  :disabled="!filters.distance.on"
-                  hide-details
-                  v-model="filters.distance.value"
-                  @mouseup="filterExplores()"
-                  @keyup="filterExplores()"
-        ></v-slider>
-
-        <br>
-
-        <v-subheader class="filter-header">
-            <v-switch label="Max Duration"  color="primary" hide-details v-model="filters.duration.on"></v-switch>
-        </v-subheader>
-        <v-slider class="pa-0"
-                  :min="filters.duration.min"
-                  :max="filters.duration.max"
-                  :label="filters.duration.value + ' hr'"
-                  :disabled="!filters.duration.on"
-                  hide-details
-                  v-model="filters.duration.value"
-                  @mouseup="filterExplores()"
-                  @keyup="filterExplores()"
-        ></v-slider>
-
-        <br>
-
-        <v-subheader class="filter-header">
-            <v-switch label="Date" color="primary" hide-details v-model="filters.date.on"></v-switch>
-        </v-subheader>
-        <v-menu
-                lazy
-                transition="scale-transition"
-                :nudge-right="40"
-                min-width="290px"
-                :disabled="!filters.date.on"
-        >
+    <v-card v-else flat class="noBackground">
+        <v-container fluid class="pb-0 pt-0">
             <v-text-field
-                    slot="activator"
-                    prepend-icon="event"
-                    readonly
-                    label="Choose a date"
-                    v-model="filters.date.value"
-                    :disabled="!filters.date.on"
+                    clearable
+                    prepend-icon="explore"
+                    id="search-input"
+                    placeholder="Search explores"
             ></v-text-field>
-            <v-date-picker
-                    no-title
-                    scrollable
-                    v-model="filters.date.value"
-                    :disabled="!filters.date.on"
-                    :min="today"></v-date-picker>
-        </v-menu>
+        </v-container>
 
-        <v-subheader class="filter-header">
-            <v-switch label="Part of the day" color="primary" hide-details v-model="filters.daypart.on"></v-switch>
-        </v-subheader>
-        <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
-            <v-checkbox
-                    v-for="item in filters.dayparts"
-                    :key="item.value"
-                    :label="item.text"
-                    :disabled="!filters.daypart.on"
-                    v-model="item.on"
-                    color="primary"
-                    hide-details
-            ></v-checkbox>
-        </v-radio-group>
+        <v-expansion-panel>
+            <v-expansion-panel-content>
+                <div slot="header">Filters</div>
+                <v-container fluid class="pt-1 pb-0">
+                    <span class="medium">Max Distance - {{filters.distance.value}} km</span>
+                    <v-slider class="pa-0"
+                              :min="filters.distance.min"
+                              :max="filters.distance.max"
+                              hide-details
+                              v-model="filters.distance.value"
+                              @mouseup="filterExplores()"
+                              @keyup="filterExplores()"
+                    ></v-slider>
+
+                    <span class="medium">Max Duration - {{filters.duration.value}} hr</span>
+                    <v-slider class="pa-0"
+                              :min="filters.duration.min"
+                              :max="filters.duration.max"
+                              hide-details
+                              v-model="filters.duration.value"
+                              @mouseup="filterExplores()"
+                              @keyup="filterExplores()"
+                    ></v-slider>
+
+                    <v-layout row wrap>
+                        <v-flex xs5 sm12>
+                            <span class="medium">Part of the day</span>
+                            <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
+                                <v-checkbox
+                                        v-for="item in filters.dayparts"
+                                        :key="item.value"
+                                        :label="item.text"
+                                        v-model="item.on"
+                                        color="primary"
+                                        hide-details
+                                ></v-checkbox>
+                            </v-radio-group>
+                        </v-flex>
+                        <v-flex xs7 sm12>
+                            <v-switch color="primary" hide-details v-model="filters.date.on"></v-switch>
+
+                            <v-menu
+                                    lazy
+                                    :close-on-content-click="true"
+                                    transition="scale-transition"
+                                    :disabled="!filters.date.on"
+                            >
+                                <v-text-field
+                                        :disabled="!filters.date.on"
+                                        slot="activator"
+                                        label="Specific date"
+                                        v-model="filters.date.value"
+                                        prepend-icon="event"
+                                        readonly
+                                ></v-text-field>
+                                <v-date-picker
+                                        :disabled="!filters.date.on"
+                                        class="explorePicker"
+                                        color="primary"
+                                        v-model="filters.date.value"
+                                        no-title
+                                        scrollable
+                                >
+                                </v-date-picker>
+                            </v-menu>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-expansion-panel-content>
+        </v-expansion-panel>
     </v-card>
 </template>
 
 <script>
+    import TripDetails from '@/components/shared/TripDetails'
+
     export default {
-        props: ['explores'],
+        props: ['selectedExplore', 'explores'],
+        components: {
+            TripDetails
+        },
         data () {
             return {
                 filters: {
                     distance: {
-                        value: 1000,
+                        value: 2500,
                         min: 1,
-                        max: 1000,
-                        on: false
+                        max: 2500,
+                        on: true
                     },
                     duration: {
-                        value: 12,
+                        value: 24,
                         min: 1,
-                        max: 12,
-                        on: false
+                        max: 24,
+                        on: true
                     },
                     date: {
                         value: null,
                         on: false
                     },
                     daypart: {
-                        on: false
+                        on: true
                     },
                     dayparts: [
                         {
@@ -146,10 +156,10 @@
         },
         computed: {
             today () {
-                var now = new Date();
-                var dd = now.getDate();
-                var mm = now.getMonth()+1; //January is 0!
-                var yyyy = now.getFullYear();
+                let now = new Date();
+                let dd = now.getDate();
+                let mm = now.getMonth()+1; //January is 0!
+                let yyyy = now.getFullYear();
 
                 if(dd<10) dd = '0'+dd
 
@@ -198,6 +208,16 @@
             filterDaypartsNightOn: 'filterExplores',
         },
         methods: {
+            hideRoute() {
+                this.$emit('onHideRoute')
+            },
+            renderExplores(explores) {
+                this.$emit('onRenderExplores', explores)
+            },
+            setBoundsExplores (explores) {
+                this.boundsExplores = explores
+                this.filterExplores()
+            },
             filterExplores() {
                 const self = this
 
@@ -258,17 +278,17 @@
                     explores = self.explores
                 }
 
-                self.$parent.renderExplores(explores)
+                self.$emit('onRenderExplores', explores)
             },
+            removeAllFilters () {
+                this.filters.distance.on = false
+                this.filters.duration.on = false
+                this.filters.date.on = false
+                this.filters.daypart.on = false
+            }
         },
         mounted () {
             this.filters.date.value = this.today
         }
     }
 </script>
-
-<style>
-    .filter-header {
-        height: auto;
-    }
-</style>

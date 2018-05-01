@@ -19,31 +19,35 @@ export default {
         getExplores ({commit}) {
             commit('setLoading', true)
 
-            db.collection('/explores')
-                .where('date', '>', new Date())
-                .onSnapshot((querySnapshot) => {
-                    commit('setLoading', false)
+            return new Promise((resolve, reject) => {
+                db.collection('/explores')
+                    .where('date', '>', new Date())
+                    .onSnapshot((querySnapshot) => {
+                        commit('setLoading', false)
 
-                    const explores = []
+                        const explores = []
 
-                    querySnapshot.forEach(function(doc) {
-                        let explore = doc.data()
-                        explore.id = doc.id
+                        querySnapshot.forEach(function (doc) {
+                            let explore = doc.data()
+                            explore.id = doc.id
 
-                        explores.push(explore)
-                    });
+                            explores.push(explore)
+                        });
 
-                    commit('setExplores', explores)
-                }, (error) => {
-                    commit('setLoading', false)
-                    commit('clearMessage')
-                    commit('setMessage', {text:error.message, type: 'error'
+                        commit('setExplores', explores)
+                        resolve(explores)
+                    }, error => {
+                        commit('setLoading', false)
+                        commit('clearMessage')
+                        commit('setMessage', {
+                            text: error.message, type: 'error'
+                        })
+                        reject()
                     })
-                })
+            })
         },
         getExploresByUser({commit}, uid) {
             commit('setLoading', true)
-            commit('clearMessage')
 
             return new Promise ((resolve, reject) => {
                 db.collection('/explores')
@@ -62,23 +66,61 @@ export default {
                         });
 
                         resolve(explores)
-                    }, (error) => {
+                    }, error => {
                         commit('setLoading', false)
+                        commit('clearMessage')
+                        reject(error.message)
+                    })
+            })
+        },
+        getExploresInBounds({commit}, bounds) {
+            commit('setLoading', true)
+
+            let NE = bounds.getNorthEast()
+            let SW = bounds.getSouthWest()
+
+            return new Promise ((resolve, reject) => {
+                db.collection('/explores')
+                    .where('date', '>', new Date())
+                    .where('startPoint.location.lat', '<=', NE.lat())
+                    .where('startPoint.location.lng', '<=', NE.lng())
+                    .where('startPoint.location.lat', '>=', SW.lat())
+                    .where('startPoint.location.lat', '>=', SW.lng())
+                    .onSnapshot((querySnapshot) => {
+                        console.log('123')
+                        commit('setLoading', false)
+
+                        const explores = []
+
+                        querySnapshot.forEach(function(doc) {
+                            let explore = doc.data()
+                            explore.id = doc.id
+
+                            explores.push(explore)
+                        });
+
+                        console.log(explores)
+                        resolve(explores)
+                    }, error => {
+                        console.log('123')
+                        commit('setLoading', false)
+                        commit('clearMessage')
                         reject(error.message)
                     })
             })
         },
         organizeExplore({commit}, explore) {
-            return new Promise((resolve, reject) => {
-                commit('setLoading', true)
-                commit('clearMessage')
+            commit('setLoading', true)
 
+            return new Promise((resolve, reject) => {
                 db.collection('/explores')
                     .add(explore)
                     .then(docRef => {
                         commit('setLoading', false)
+                        commit('clearMessage')
                         resolve(docRef);
                 }, error => {
+                    commit('clearMessage')
                     reject(error)
                 })
             })

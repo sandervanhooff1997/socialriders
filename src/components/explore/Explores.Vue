@@ -1,19 +1,29 @@
 <template>
     <div class="text-xs-center">
         <div v-if="loaded" class="fillHeight">
-            <v-layout fill-height>
-                <sidebar
-                        ref="sidebar"
-                        :explores="explores"
-                        :selectedExplore="selectedExplore">
-                </sidebar>
+            <v-layout fill-height row wrap>
+                <v-flex xs12 sm4 md3>
+                    <sidebar
+                            ref="sidebar"
+                            :explores="boundsExplores"
+                            :selectedExplore="selectedExplore"
+                            @onHideRoute="hideRoute"
+                            @onRenderExplores="renderExplores">
+                    </sidebar>
+                </v-flex>
 
-                <google-map
-                        ref="map"
-                        :explores="explores"
-                        :selectedExplore="selectedExplore">
-                    Error loading Google Maps
-                </google-map>
+                <v-flex xs12 sm8 md9>
+                    <google-map
+                            ref="map"
+                            :explores="explores"
+                            :selectedExplore="selectedExplore"
+                            @removeAllFilters="removeAllFilters"
+                            @onSetSelectedExplore="setSelectedExplore"
+                            @onClearSelectedExplore="clearSelectedExplore"
+                            @onSetBoundsExplores="setBoundsExplores">
+                        <loader></loader>
+                    </google-map>
+                </v-flex>
             </v-layout>
         </div>
         <loader v-else></loader>
@@ -21,8 +31,8 @@
 </template>
 
 <script>
-    import GoogleMap from './googlemap/GoogleMap.vue'
-    import Sidebar from './sidebar/Sidebar.vue'
+    import GoogleMap from './GoogleMap.vue'
+    import Sidebar from './Sidebar.vue'
 
     export default {
         components: {
@@ -33,29 +43,35 @@
             return {
                 loaded: false,
                 selectedExplore: null,
+                boundsExplores: []
             }
         },
         methods: {
             hideRoute() {
                 this.$refs.map.hideRoute()
             },
-            filterExplores () {
-                this.$refs.sidebar.filterExplores()
-            },
             renderExplores (explores) {
                 this.$refs.map.renderExplores(explores)
             },
-            setSelectedExplore (explore) {
+            setBoundsExplores (explores) {
+                this.boundsExplores = explores
+                this.$refs.sidebar.setBoundsExplores(explores)
+            },
+            removeAllFilters () {
+                this.$refs.sidebar.removeAllFilters()
+            },
+            clearSelectedExplore() {
+                this.selectedExplore = null
+            },
+            setSelectedExplore(explore) {
                 this.selectedExplore = explore
             },
-            clearSelectedExplore () {
-                this.selectedExplore = null
-            }
-        },
-        watch: {
-            explores (value) {
-                if (value) {
-                    this.loaded = true
+            load () {
+                // important to first set loaded!
+                this.loaded = true
+
+                if (this.$route.params.selectedExplore) {
+                    this.setSelectedExplore(this.$route.params.selectedExplore)
                 }
             }
         },
@@ -65,7 +81,13 @@
             },
         },
         mounted () {
-            this.$store.dispatch('getExplores')
+            if (this.explores) {
+                this.load()
+            } else {
+                this.$store.dispatch('getExplores').then(explores => {
+                    this.load()
+                }, error => { })
+            }
         },
     }
 </script>

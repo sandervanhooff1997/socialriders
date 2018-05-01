@@ -17,7 +17,7 @@
 
                     <div id="owner">
                         <span class="title white--text">Creator</span><br>
-                        <router-link :to="{name: 'Profile', params: { uid: experience.owner.uid }}">
+                        <router-link :to="{name: 'Profile', params: { uid: experience.owner.uid, profile: experience.owner }}">
                             <v-chip class="scale" text-color="white" color="primary">
                                 <v-avatar>
                                     <img :src="experience.owner.photoUrl" alt="experience.owner.name">

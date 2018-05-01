@@ -12,9 +12,10 @@ import router from './router/router'
 import Vuetify from 'vuetify'
 import { firebaseApp, firestore } from '@/assets/firebase/firebaseInit'
 import { store } from './vuex/vuex'
-import AlertCmp from './components/shared/Alert'
+import MessageCmp from './components/shared/Message'
 import LoaderCmp from './components/shared/Loader'
 import jQuery from 'jquery'
+import Overdrive from 'vue-overdrive'
 
 /**
  * Global usages
@@ -30,16 +31,19 @@ Vue.use(Vuetify, {
         warning: '#ff6e40'
     }
 })
+Vue.use(Overdrive)
 
 window.firebase = firebaseApp
 window.db = firestore
 window.Event = new Vue();
 window.$ = window.jQuery = jQuery
+window.screenWidth = window.innerWidth
+window.screenHeight = window.innerHeight
 
 /**
  * Global components
  */
-Vue.component('app-alert', AlertCmp)
+Vue.component('app-message', MessageCmp)
 Vue.component('loader', LoaderCmp)
 
 /**
@@ -62,5 +66,14 @@ new Vue({
                 this.$store.dispatch('autoSignIn', authUser)
             }
         });
+    },
+    mounted () {
+        // register screen size
+        this.$nextTick(function() {
+            window.addEventListener('resize', function(e) {
+                window.screenHeight = window.innerHeight
+                window.screenWidth = window.innerWidth
+            });
+        })
     }
 })

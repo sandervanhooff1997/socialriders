@@ -24,47 +24,46 @@
                     {{ item }}
                 </v-tab>
             </v-tabs>
-            <v-tabs-items v-model="tab" class="fillHeight">
+            <div class="topSpacing"></div>
+            <v-tabs-items v-model="tab" class="fillHeight bottomSpacing">
                 <v-tab-item class="fillHeight">
-                    <v-card flat class="fillHeight noBackground">
-                        <v-container fill-height grid-list-md text-xs-center>
-                            <v-layout>
-                                <loader v-if="!experiences"></loader>
-                                <v-flex xs12 sm6 md4 lg3
-                                        v-else
-                                        v-for="(experience, index) in experiences"
-                                        :key="index">
-                                    <experience-card :experience="experience"></experience-card>
-                                </v-flex>
-                            </v-layout>
-                        </v-container>
-                    </v-card>
+                    <v-container grid-list-md>
+                        <v-layout row wrap>
+                            <v-flex xs12 sm6 md4 v-if="experiences" v-for="(experience, index) in experiences" :key="index">
+                                <v-card>
+                                    <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
+                                </v-card>
+                            </v-flex>
+                            <loader v-else></loader>
+                        </v-layout>
+                    </v-container>
                 </v-tab-item>
                 <v-tab-item class="fillHeight">
-                    <v-card flat class="fillHeight noBackground">
-                        <v-container fill-height grid-list-md text-xs-center>
-                            <v-layout>
-                                <loader v-if="!explores"></loader>
-                                <v-flex xs12 sm6 md4 lg3
-                                         v-else
-                                         v-for="(explore, index) in explores"
-                                         :key="index">
-                                    <explore-card :explore="explore"></explore-card>
-                                </v-flex>
-                            </v-layout>
-                        </v-container>
-                    </v-card>
+                    <v-container grid-list-md>
+                        <v-layout row wrap>
+                            <v-flex
+                                    xs12 sm6 md4
+                                    v-if="explores"
+                                    v-for="(explore, index) in explores"
+                                    :key="index">
+                                <v-card>
+                                    <trip-details :explore="explore" :isExplore="true" :isOverview="true"></trip-details>
+                                </v-card>
+                            </v-flex>
+                            <loader v-else></loader>
+                        </v-layout>
+                    </v-container>
                 </v-tab-item>
                 <v-tab-item class="fillHeight">
-                    <v-card flat class="fillHeight noBackground">
-                        <v-container fill-height>
-                            <v-layout>
-                                <v-flex>
-                                    <v-card-text>3</v-card-text>
-                                </v-flex>
-                            </v-layout>
-                        </v-container>
-                    </v-card>
+                    <v-container fill-height>
+                        <v-layout>
+                            <v-flex>
+                                <v-card-text>
+                                    <!--todo: show media-->
+                                </v-card-text>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
                 </v-tab-item>
             </v-tabs-items>
         </div>
@@ -73,14 +72,12 @@
 </template>
 
 <script>
-    import ExperienceCard from '@/components/shared/experience/Card'
-    import ExploreCard from '@/components/shared/explore/Card'
+    import TripDetails from '@/components/shared/TripDetails'
     import Loader from '@/components/shared/Loader'
 
     export default {
         components: {
-            ExperienceCard,
-            ExploreCard,
+            TripDetails,
             Loader
         },
         data () {
@@ -102,13 +99,16 @@
             itsMe () {
                 return this.getUser.uid === this.uid
             },
+            loadError () {
+                this.$store.dispatch('errorMessage', 'Could not load profile')
+                this.$router.push('/')
+            }
         },
         mounted () {
             let profile = this.$route.params.profile;
 
-            if (!this.uid || !profile) {
-                this.$store.dispatch('errorMessage', 'Error loading profile')
-                this.$router.push('/')
+            if (!this.uid) {
+                this.loadError()
                 return
             }
 
@@ -117,6 +117,11 @@
                 this.user = this.getUser
             } else {
                 // user from route params
+                if (!profile) {
+                    this.loadError()
+                    return
+                }
+
                 this.user = profile
             }
 
@@ -143,5 +148,11 @@
     }
     .fillHeight {
         height: 100%;
+    }
+    .topSpacing {
+        padding-top: 10px;
+    }
+    .bottomSpacing {
+        padding-bottom: 50px;
     }
 </style>

@@ -17,29 +17,67 @@ export default {
 
     actions: {
         getExperiences({commit}) {
-            db.collection('/explores')
-                .where('date', '<', new Date())
-                .orderBy('date', 'desc')
-                .onSnapshot((querySnapshot) => {
-                    const experiences = []
+            commit('setLoading', true)
 
-                    querySnapshot.forEach(function(doc) {
-                        let experience = doc.data()
-                        experience.id = doc.id
+            return new Promise ((resolve, reject) => {
+                db.collection('/explores')
+                    .where('date', '<', new Date())
+                    .orderBy('date', 'desc')
+                    .onSnapshot((querySnapshot) => {
+                        commit('setLoading', false)
+                        const experiences = []
 
-                        experiences.push(experience)
-                    });
+                        querySnapshot.forEach(function (doc) {
+                            let experience = doc.data()
+                            experience.id = doc.id
 
-                    commit('setExperiences', experiences)
-                }, (error) => {
-                    commit('clearMessage')
-                    commit('setMessage', {text:error.message, type: 'error'
+                            experiences.push(experience)
+                        });
+
+                        commit('setExperiences', experiences)
+                        resolve()
+                    }, (error) => {
+                        commit('setLoading', false)
+                        commit('clearMessage')
+                        commit('setMessage', {
+                            text: error.message, type: 'error'
+                        })
+                        reject()
                     })
-                })
+            })
+        },
+        getExperiencesLimited({commit}, limit) {
+            commit('setLoading', true)
+
+            return new Promise ((resolve, reject) => {
+                db.collection('/explores')
+                    .where('date', '<', new Date())
+                    .orderBy('date', 'desc')
+                    .limit(limit)
+                    .onSnapshot((querySnapshot) => {
+                        commit('setLoading', false)
+                        const experiences = []
+
+                        querySnapshot.forEach(function (doc) {
+                            let experience = doc.data()
+                            experience.id = doc.id
+
+                            experiences.push(experience)
+                        });
+
+                        resolve(experiences)
+                    }, (error) => {
+                        commit('setLoading', false)
+                        commit('clearMessage')
+                        commit('setMessage', {
+                            text: error.message, type: 'error'
+                        })
+                        reject()
+                    })
+            })
         },
         getExperiencesByUser({commit}, uid) {
             commit('setLoading', true)
-            commit('clearMessage')
 
             return new Promise ((resolve, reject) => {
                 db.collection('/explores')
@@ -60,6 +98,7 @@ export default {
                         resolve(experiences)
                     }, (error) => {
                         commit('setLoading', false)
+                        commit('clearMessage')
                         reject(error.message)
                     })
             })

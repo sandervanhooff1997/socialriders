@@ -162,7 +162,9 @@
 
                                 <v-flex xs12 sm8>
                                     <v-container fluid>
-                                        <div class="google-map" :id="id">Error loading Google Maps</div>
+                                        <div class="google-map" :id="id">
+                                            <loader></loader>
+                                        </div>
                                     </v-container>
                                 </v-flex>
                             </v-layout>

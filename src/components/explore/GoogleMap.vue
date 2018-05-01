@@ -1,6 +1,8 @@
 <template>
-    <v-flex xs12 sm8 md9>
-        <div class="map" :id="id">Maps</div>
+    <div style="height: 100%;">
+        <div class="map" :id="id">
+            <loader></loader>
+        </div>
 
         <div id="map-actions">
             <div v-for="(item, index) in actions.items" :key="index" class="map-action">
@@ -12,6 +14,7 @@
                         small
                         color="secondary"
                         @click="item.action"
+                        v-show="item.showOnMyPosition && myPosition || !item.showOnMyPosition"
                 >
                     {{item.name}}
                 </v-btn>
@@ -30,8 +33,7 @@
         >
             <v-icon>location_on</v-icon>
         </v-btn>
-
-    </v-flex>
+    </div>
 </template>
 
 <script>
@@ -40,7 +42,7 @@
 
     export default {
         name: 'google-map',
-        props: ['explores'],
+        props: ['explores', 'selectedExplore'],
         data () {
             return {
                 map: null,
@@ -63,11 +65,19 @@
                 actions: {
                     on: false,
                     items: [
-                        { name: 'popular', action : this.getPopularExplores },
-                        { name: 'recent', action : this.getRecentExplores },
-                        { name: 'nearby', action : this.getNearbyExplores },
+                        { name: 'All', action : this.getAllExplores, showOnMyPosition: false },
+                        { name: 'Popular', action : this.getPopularExplores, showOnMyPosition: false },
+                        { name: 'Nearby', action : this.getNearbyExplores, showOnMyPosition: true },
                     ]
-                }
+                },
+                boundsExplores: [],
+                boundsChangedTimeout: null,
+                boundsChangedInterval: 1000
+            }
+        },
+        watch: {
+            boundsExplores () {
+                this.$emit('onSetBoundsExplores', this.boundsExplores)
             }
         },
         methods: {
@@ -83,26 +93,60 @@
 
                 mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
-                // Render explores
-                this.$parent.filterExplores()
+                if (this.selectedExplore) {
+                    this.showRoute(this.selectedExplore)
+                }
+
+                this.map.addListener('bounds_changed', () => {
+                    this.onBoundsChanged()
+                })
+            },
+            onBoundsChanged() {
+                if (this.map.getZoom() >= this.options.zoom) {
+                    let self = this
+                    let bounds = this.map.getBounds()
+                    let NE = bounds.getNorthEast()
+                    let SW = bounds.getSouthWest()
+
+                    // clear previous timer
+                    if (this.boundsChangedTimeout) {
+                        clearTimeout(this.boundsChangedTimeout)
+                    }
+
+                    // filter all explores within map bounds
+                    this.boundsChangedTimeout = setTimeout(function() {
+                        self.boundsExplores = self.explores.filter(explore => {
+                            return explore.startPoint.location.lat >= SW.lat()
+                                && explore.startPoint.location.lat <= NE.lat()
+                                && explore.startPoint.location.lng >= SW.lng()
+                                && explore.startPoint.location.lng <= NE.lng()
+                        })
+
+                        self.renderExplores(self.boundsExplores)
+                    }, this.boundsChangedInterval)
+                }
             },
             renderExplores (explores) {
                 const self = this
 
+                this.clearMarkers()
+                setTimeout(() => {
+                    explores.forEach(explore => {
+                        const marker = self.addMarker(explore.startPoint.location)
+                        self.addClickToShowRoute(marker, explore)
+                    })
+                }, 100)
+            },
+            clearMarkers () {
                 if (this.markers.length > 0) {
                     this.markers.forEach(marker => {
                         marker.setMap(null)
                     })
                     this.markers = []
                 }
-
-                explores.forEach(explore => {
-                    const marker = self.addMarker(explore.startPoint.location)
-                    self.addClickToShowRoute(marker, explore)
-                })
             },
             addMarker (pos) {
-                const marker = mapFunctions.addMarker(this.map, pos)
+                const marker = mapFunctions.getMarker(this.map, pos)
                 this.markers.push(marker)
                 return marker
             },
@@ -113,11 +157,11 @@
                 });
             },
             showRoute(explore) {
-                this.$parent.setSelectedExplore(explore)
+                this.$emit('onSetSelectedExplore', explore)
                 mapFunctions.calculateAndDisplayRoute(this.map, explore)
             },
             hideRoute(){
-                this.$parent.clearSelectedExplore()
+                this.$emit('onClearSelectedExplore')
                 mapFunctions.clearRoute()
                 this.center()
             },
@@ -130,6 +174,9 @@
                     this.map.panTo(this.options.center)
                 }
             },
+            getAllExplores () {
+                this.$emit('onRemoveAllFilters')
+            },
             getPopularExplores () {
                 let explores = this.explores
                 let sorted = explores.sort((a,b) => {
@@ -140,16 +187,8 @@
 
                 this.renderExplores(populars)
             },
-            getRecentExplores () {
-
-            },
             getNearbyExplores () {
 
-            }
-        },
-        computed: {
-            selectedExplore() {
-                return this.$parent.selectedExplore
             }
         },
         mounted () {
@@ -162,9 +201,7 @@
     .map {
         width: 100%;
         height: 100%;
-        min-height: 400px;
-        margin: 0 auto;
-        background: gray;
+        min-height: 500px;
     }
     #map-actions {
         margin-top: 10px;
