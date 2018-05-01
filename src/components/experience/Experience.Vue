@@ -17,14 +17,7 @@
 
                     <div id="owner">
                         <span class="title white--text">Creator</span><br>
-                        <router-link :to="{name: 'Profile', params: { uid: experience.owner.uid, profile: experience.owner }}">
-                            <v-chip class="scale" text-color="white" color="primary">
-                                <v-avatar>
-                                    <img :src="experience.owner.photoUrl" alt="experience.owner.name">
-                                </v-avatar>
-                                <strong>{{experience.owner.name}}</strong>
-                            </v-chip>
-                        </router-link>
+                        <profile-chip :user="experience.owner"></profile-chip>
                     </div>
                 </div>
             </div>
@@ -63,14 +56,15 @@
                                 </div>
 
                                 <div v-show="tab === '1'">
-                                    <router-link v-for="(item, index) in experience.riders" :key="index" :to="{name: 'Profile', params: { uid: item.uid, profile: item }}">
-                                        <v-chip class="scale" text-color="white" color="primary">
-                                            <v-avatar>
-                                                <img :src="item.photoUrl" alt="item.name">
-                                            </v-avatar>
-                                            <strong>{{item.name}}</strong>
-                                        </v-chip>
-                                    </router-link>
+                                    <div v-if="experience.riders.length > 0">
+                                        <p>Connect with all SocialRiders that experienced this amazing trip!</p>
+                                        <profile-chip
+                                                v-for="(item, index) in experience.riders"
+                                                :key="index"
+                                                :user="item">
+                                        </profile-chip>
+                                    </div>
+                                    <p v-else>It was a lonely ride...</p>
                                 </div>
                             </v-layout>
                         </v-container>
@@ -86,8 +80,12 @@
     import * as mapFunctions from '@/assets/maps/map-functions'
     import mapStyles from '@/assets/maps/map-styles'
     import Isotope from 'isotope-layout'
+    import ProfileChip from '@/components/shared/ProfileChip'
 
     export default {
+        components: {
+            ProfileChip
+        },
         data () {
             return {
                 experience: null,
@@ -108,9 +106,7 @@
                     styles: mapStyles.retro,
                 },
                 tab: 0,
-                tabItems: [
-                    'Media', 'Riders',
-                ]
+                tabItems: ['Media', 'Riders',]
             }
         },
         computed: {

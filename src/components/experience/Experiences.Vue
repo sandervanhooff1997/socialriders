@@ -13,7 +13,7 @@
             </v-jumbotron>
 
             <v-container grid-list-md>
-                <v-layout row wrap>
+                <v-layout row wrap class="mb-3">
                     <v-flex xs12 sm6 md4 v-for="(experience, index) in experiences" :key="experience.title">
                         <v-card>
                             <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>

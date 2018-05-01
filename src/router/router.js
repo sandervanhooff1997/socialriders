@@ -18,9 +18,9 @@ let router = new Router({
         {
             path: '/',
             redirect: {
-                name: 'Explores',
+                name: 'Experience',
                 params: {
-                    id: '8sZ9I854qffhSbsHzsBg'
+                    id: '2JScYcQf8zndptuC8HlG'
                 }
             }
         },
