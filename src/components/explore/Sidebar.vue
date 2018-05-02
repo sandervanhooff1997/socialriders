@@ -19,7 +19,7 @@
         </v-container>
 
         <v-expansion-panel>
-            <v-expansion-panel-content>
+            <v-expansion-panel-content value="true">
                 <div slot="header">Filters</div>
                 <v-container fluid class="pt-1 pb-0">
                     <span class="medium">Max Distance - {{filters.distance.value}} km</span>

@@ -91,35 +91,42 @@
 
                                                     <!--wayPoints-->
                                                     <div v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
-                                                        <v-text-field
-                                                                :id="wayPoint.id"
-                                                                :placeholder="wayPoint.placeholder"
-                                                                prepend-icon="add_location"
-                                                                v-model="wayPoint.address"
-                                                                clearable
-                                                                autofocus
-                                                        ></v-text-field>
-                                                        <v-btn
-                                                                style="z-index: 1"
-                                                                v-if="index !== (wayPoints.length -1)"
-                                                                @click="swapWayPoints(index)"
-                                                                absolute
-                                                                dark
-                                                                fab
-                                                                bottom
-                                                                small
-                                                                left
-                                                                color="primary"
-                                                        >
-                                                            <v-icon>swap_vert</v-icon>
-                                                        </v-btn>
+                                                        <div class="waypoint-left-container">
+                                                            <v-btn class="mt-3" flat icon color="white" @click="removeWayPoint(index)">
+                                                                <v-icon>clear</v-icon>
+                                                            </v-btn>
+                                                        </div>
+                                                        <div class="waypoint-right-container">
+                                                            <v-text-field
+                                                                    :id="wayPoint.id"
+                                                                    :placeholder="wayPoint.placeholder"
+                                                                    v-model="wayPoint.address"
+                                                                    autofocus
+                                                            ></v-text-field>
+                                                            <v-btn
+                                                                    style="z-index: 1"
+                                                                    v-if="index !== (wayPoints.length -1)"
+                                                                    @click="swapWayPoints(index)"
+                                                                    absolute
+                                                                    dark
+                                                                    fab
+                                                                    bottom
+                                                                    small
+                                                                    color="primary"
+                                                            >
+                                                                <v-icon>swap_vert</v-icon>
+                                                            </v-btn>
+                                                        </div>
+                                                        <div class="clearfix"></div>
                                                     </div>
 
-                                                    <v-btn @click="addWayPoint(getWayPointId(), 'waypoint ' + (wayPoints.length + 1))"
+                                                    <v-btn @click="addWayPoint(getWayPointId())"
+                                                           v-if="wayPoints.length < 8"
                                                            fab
                                                            dark
+                                                           small
                                                            color="primary"
-                                                           class="noMargin">
+                                                           class="mt-0 mb-3">
                                                         <v-icon dark>add</v-icon>
                                                     </v-btn>
 
@@ -297,7 +304,7 @@
     export default {
         data () {
             return {
-                step: 1,
+                step: 2,
                 initialized: false,
                 titles: {
                     step1: 'Vehicle',
@@ -314,8 +321,8 @@
                 /** Step 1 */
                 vehicle: null,
                 /** Step 2 */
-                startPoint: {id: 'startPoint', placeholder: 'Starting location', location: null, address: null},
-                endPoint: {id: 'endPoint', placeholder: 'Target destination', location: null, address: null},
+                startPoint: {id: 'startPoint', placeholder: 'Origin', location: null, address: null, marker: null},
+                endPoint: {id: 'endPoint', placeholder: 'Target destination', location: null, address: null, marker: null},
                 wayPoints: [],
                 displayedWayPoints: [],
                 validRoute: false,
@@ -342,7 +349,7 @@
                     avoidTolls: false,
                 },
                 directionsService: new google.maps.DirectionsService,
-                directionsRenderer: new google.maps.DirectionsRenderer,
+                directionsRenderer: new google.maps.DirectionsRenderer({draggable:true}),
                 /** Step 3 */
                 date: null,
                 time: null,
@@ -359,6 +366,9 @@
                 if (value === 2) {
                     this.initMap()
                 }
+            },
+            wayPoints () {
+
             }
         },
         methods: {
@@ -393,14 +403,17 @@
                     this.map = mapFunctions.init(document.getElementById(this.id), this.mapOptions)
                     this.addSearchBox(this.startPoint.id, this.startPoint.placeholder)
                     this.addSearchBox(this.endPoint.id, this.endPoint.placeholder)
+                    this.calculateAndDisplayRoute()
                 })
             },
             getWayPointId () {
                return 'waypoint' + this.wayPoints.length;
             },
-            addWayPoint (id, placeholder) {
-                this.wayPoints.push({location: null, address: null, id: id, placeholder: placeholder})
-                this.addSearchBox(id)
+            addWayPoint (id) {
+                if (this.wayPoints.length < 8) {
+                    this.wayPoints.push({location: null, address: null, id: id, placeholder: 'Choose a destination'})
+                    this.addSearchBox(id)
+                }
             },
             addSearchBox (inputId) {
                 const self = this;
@@ -421,11 +434,13 @@
                         if (places.length === 0) {
                             return;
                         }
+
                         // Clear out the old markers.
                         markers.forEach(function(marker) {
                             marker.setMap(null);
                         });
                         markers = [];
+
                         // For each place, get the icon, name and location.
                         let bounds = new google.maps.LatLngBounds();
                         places.forEach(function(place) {
@@ -433,6 +448,8 @@
                                 console.log("Returned place contains no geometry");
                                 return;
                             }
+
+                            // marker icon properties
                             const icon = {
                                 url: place.icon,
                                 size: new google.maps.Size(71, 71),
@@ -440,19 +457,22 @@
                                 anchor: new google.maps.Point(17, 34),
                                 scaledSize: new google.maps.Size(25, 25)
                             };
+
                             // Create a marker for each place.
-                            markers.push(new google.maps.Marker({
+                            let marker = new google.maps.Marker({
                                 map: self.map,
                                 icon: icon,
                                 title: place.name,
                                 position: place.geometry.location
-                            }));
+                            })
+                            markers.push(marker);
+
                             if (input.id === self.startPoint.id) {
-                                self.startPlaceFound(place)
+                                self.startPlaceFound(place, marker)
                             } else if (input.id === self.endPoint.id) {
-                                self.endPlaceFound(place)
+                                self.endPlaceFound(place, marker)
                             } else {
-                                self.wayPointPlaceFound(input, place)
+                                self.wayPointPlaceFound(input, place, marker)
                             }
                             if (place.geometry.viewport) {
                                 // Only geocodes have viewport.
@@ -465,17 +485,19 @@
                     });
                 })
             },
-            startPlaceFound(place) {
+            startPlaceFound(place, marker) {
                 this.startPoint.address = place.formatted_address
                 this.startPoint.location = place.geometry.location
+                this.startPoint.marker = marker
                 this.calculateAndDisplayRoute();
             },
-            endPlaceFound(place) {
+            endPlaceFound(place, marker) {
                 this.endPoint.address = place.formatted_address
                 this.endPoint.location = place.geometry.location
+                this.endPoint.marker = marker
                 this.calculateAndDisplayRoute();
             },
-            wayPointPlaceFound(input, place) {
+            wayPointPlaceFound(input, place, marker) {
                 let wayPoint = this.wayPoints.find((current) => {
                     return current.id === input.id
                 })
@@ -483,6 +505,7 @@
                 if (wayPoint !== undefined) {
                     wayPoint.address = place.formatted_address
                     wayPoint.location = place.geometry.location
+                    wayPoint.marker = marker
 
                     this.calculateAndDisplayRoute()
                 }
@@ -498,6 +521,16 @@
                     this.wayPoints.push({})
                     this.wayPoints.splice(-1, 1)
 
+                    this.calculateAndDisplayRoute()
+                }
+            },
+            removeWayPoint(index) {
+                if (this.wayPoints.length > 0 && this.wayPoints.length >= (index + 1)) {
+                    // if this wayPoint has a marker
+                    if (this.wayPoints[index].marker) {
+                        this.wayPoints[index].marker.setMap(null)
+                    }
+                    this.wayPoints.splice(index, 1)
                     this.calculateAndDisplayRoute()
                 }
             },
@@ -680,9 +713,6 @@
         margin: 0 auto;
         background: gray;
     }
-    .noMargin {
-        margin: 0!important;
-    }
     .noPadding {
         padding: 0!important;
     }
@@ -707,6 +737,20 @@
     }
     .expansion-panel li {
         background: rgba(255,255,255,0.2) !important;
+    }
+
+    .waypoint-left-container {
+        float: left;
+        width: 36px;
+    }
+    .waypoint-right-container {
+        float: left;
+        width: 80%;
+        width: calc(100% - 46px);
+        margin-left: 10px;
+    }
+    .clearfix {
+        clear: both;
     }
 
 </style>

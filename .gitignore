@@ -11,3 +11,5 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+*.Vue
+src/components/organize/Organize(old).Vue
