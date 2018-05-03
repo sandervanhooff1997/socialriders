@@ -70,14 +70,6 @@
                         { name: 'Nearby', action : this.getNearbyExplores, showOnMyPosition: true },
                     ]
                 },
-                boundsExplores: [],
-                boundsChangedTimeout: null,
-                boundsChangedInterval: 1000
-            }
-        },
-        watch: {
-            boundsExplores () {
-                this.$emit('onSetBoundsExplores', this.boundsExplores)
             }
         },
         methods: {
@@ -93,49 +85,19 @@
 
                 mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
+                this.renderExplores(this.explores)
                 if (this.selectedExplore) {
                     this.showRoute(this.selectedExplore)
-                }
-
-                this.map.addListener('bounds_changed', () => {
-                    this.onBoundsChanged()
-                })
-            },
-            onBoundsChanged() {
-                if (this.map.getZoom() >= this.options.zoom) {
-                    let self = this
-                    let bounds = this.map.getBounds()
-                    let NE = bounds.getNorthEast()
-                    let SW = bounds.getSouthWest()
-
-                    // clear previous timer
-                    if (this.boundsChangedTimeout) {
-                        clearTimeout(this.boundsChangedTimeout)
-                    }
-
-                    // filter all explores within map bounds
-                    this.boundsChangedTimeout = setTimeout(function() {
-                        self.boundsExplores = self.explores.filter(explore => {
-                            return explore.startPoint.location.lat >= SW.lat()
-                                && explore.startPoint.location.lat <= NE.lat()
-                                && explore.startPoint.location.lng >= SW.lng()
-                                && explore.startPoint.location.lng <= NE.lng()
-                        })
-
-                        self.renderExplores(self.boundsExplores)
-                    }, this.boundsChangedInterval)
                 }
             },
             renderExplores (explores) {
                 const self = this
 
                 this.clearMarkers()
-                setTimeout(() => {
-                    explores.forEach(explore => {
-                        const marker = self.addMarker(explore.startPoint.location)
-                        self.addClickToShowRoute(marker, explore)
-                    })
-                }, 100)
+                explores.forEach(explore => {
+                    const marker = self.addMarker(explore.origin.location)
+                    self.addClickToShowRoute(marker, explore)
+                })
             },
             clearMarkers () {
                 if (this.markers.length > 0) {

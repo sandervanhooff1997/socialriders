@@ -20,9 +20,9 @@
 
         <v-expansion-panel>
             <v-expansion-panel-content value="true">
-                <div slot="header">Filters</div>
+                <div slot="header" class="subheading"><b>Filters</b></div>
                 <v-container fluid class="pt-1 pb-0">
-                    <span class="medium">Max Distance - {{filters.distance.value}} km</span>
+                    <span class="subheading">Max Distance - {{filters.distance.value}} km</span>
                     <v-slider class="pa-0"
                               :min="filters.distance.min"
                               :max="filters.distance.max"
@@ -32,7 +32,7 @@
                               @keyup="filterExplores()"
                     ></v-slider>
 
-                    <span class="medium">Max Duration - {{filters.duration.value}} hr</span>
+                    <span class="subheading">Max Duration - {{filters.duration.value}} hr</span>
                     <v-slider class="pa-0"
                               :min="filters.duration.min"
                               :max="filters.duration.max"
@@ -44,20 +44,25 @@
 
                     <v-layout row wrap>
                         <v-flex xs5 sm12>
-                            <span class="medium">Part of the day</span>
-                            <v-radio-group v-model="filters.daypart.value" style="padding: 0;">
+                            <span class="subheading">Part of the day</span>
+                            <v-radio-group v-model="filters.daypart.value"
+                                           style="padding: 0;"
+                                           hide-details>
                                 <v-checkbox
                                         v-for="item in filters.dayparts"
                                         :key="item.value"
                                         :label="item.text"
                                         v-model="item.on"
                                         color="primary"
-                                        hide-details
                                 ></v-checkbox>
                             </v-radio-group>
                         </v-flex>
                         <v-flex xs7 sm12>
-                            <v-switch color="primary" hide-details v-model="filters.date.on"></v-switch>
+                            <v-switch color="primary"
+                                      label="Specific date"
+                                      hide-details
+                                      v-model="filters.date.on"
+                                      class="mt-2 explore-switch"></v-switch>
 
                             <v-menu
                                     lazy
@@ -68,7 +73,7 @@
                                 <v-text-field
                                         :disabled="!filters.date.on"
                                         slot="activator"
-                                        label="Specific date"
+                                        label="Select date"
                                         v-model="filters.date.value"
                                         prepend-icon="event"
                                         readonly

@@ -158,7 +158,7 @@ export function calculateAndDisplayRoute (map, explore) {
             if (explore.wayPoints[i].location) {
                 wayPoints.push({
                     location: explore.wayPoints[i].location,
-                    stopover: true
+                    stopover: explore.wayPoints[i].stopover
                 });
             }
         }
@@ -168,14 +168,14 @@ export function calculateAndDisplayRoute (map, explore) {
 
         // calculate and display route
         directionsService.route({
-            origin: explore.startPoint.location,
-            destination: explore.endPoint.location,
+            origin: explore.origin.location,
+            destination: explore.destination.location,
             waypoints: wayPoints,
             optimizeWaypoints: false,
             travelMode: travelMode,
-            avoidFerries: explore.options.avoidFerries,
-            avoidHighways: explore.options.avoidHighways,
-            avoidTolls: explore.options.avoidTolls,
+            avoidFerries: explore.routeOptions.avoidFerries,
+            avoidHighways: explore.routeOptions.avoidHighways,
+            avoidTolls: explore.routeOptions.avoidTolls,
         }, function(response, status) {
             if (status === 'OK') {
                 directionsRenderer.setMap(map);

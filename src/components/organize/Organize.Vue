@@ -61,7 +61,6 @@
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step2}}</p>
-                                <div></div>
                             </div>
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
@@ -78,39 +77,50 @@
                                             <div slot="header">Route</div>
                                             <v-card>
                                                 <v-card-text>
-                                                    <!--startpoint-->
+                                                    <!--origin-->
                                                     <v-text-field
-                                                            :id="startPoint.id"
-                                                            :placeholder="startPoint.placeholder"
+                                                            :id="origin.id"
+                                                            placeholder="Origin"
+                                                            :value="origin.address"
                                                             prepend-icon="location_on"
-                                                            v-model="startPoint.address"
-                                                            class="noPadding"
+                                                            class="pt-0 mb-2"
                                                             clearable
                                                             autofocus
+                                                            hide-details
                                                     ></v-text-field>
 
                                                     <!--wayPoints-->
-                                                    <div v-for="(wayPoint, index) in wayPoints" :key="index" style="position: relative;">
+                                                    <div v-for="(wayPoint, index) in wayPoints"
+                                                         :key="index"
+                                                         v-if="wayPoint.stopover"
+                                                         style="position: relative;">
                                                         <div class="waypoint-left-container">
-                                                            <v-btn class="mt-3" flat icon color="white" @click="removeWayPoint(index)">
+                                                            <v-btn class="mt-3"
+                                                                   flat
+                                                                   icon
+                                                                   color="white"
+                                                                   @click="removeWayPoint(index)">
                                                                 <v-icon>clear</v-icon>
                                                             </v-btn>
                                                         </div>
                                                         <div class="waypoint-right-container">
                                                             <v-text-field
                                                                     :id="wayPoint.id"
-                                                                    :placeholder="wayPoint.placeholder"
-                                                                    v-model="wayPoint.address"
+                                                                    :placeholder="wayPoint.address || 'Enter destination'"
+                                                                    :value="wayPoint.address"
+                                                                    class="pb-4 pt-3"
                                                                     autofocus
+                                                                    hide-details
                                                             ></v-text-field>
                                                             <v-btn
                                                                     style="z-index: 1"
-                                                                    v-if="index !== (wayPoints.length -1)"
+                                                                    v-if="wayPoint.canSwap"
                                                                     @click="swapWayPoints(index)"
                                                                     absolute
                                                                     dark
                                                                     fab
                                                                     bottom
+                                                                    left
                                                                     small
                                                                     color="primary"
                                                             >
@@ -120,46 +130,50 @@
                                                         <div class="clearfix"></div>
                                                     </div>
 
-                                                    <v-btn @click="addWayPoint(getWayPointId())"
-                                                           v-if="wayPoints.length < 8"
+                                                    <v-btn @click="addWayPoint"
+                                                           v-if="canAddWayPoint"
                                                            fab
                                                            dark
                                                            small
                                                            color="primary"
-                                                           class="mt-0 mb-3">
+                                                           class="mt-0 mb-0 ml-3">
                                                         <v-icon dark>add</v-icon>
                                                     </v-btn>
 
-                                                    <!--endpoint-->
+                                                    <!--destination-->
                                                     <v-text-field
-                                                            :id="endPoint.id"
-                                                            :placeholder="endPoint.placeholder"
+                                                            :id="destination.id"
+                                                            placeholder="Destination"
+                                                            :value="destination.address"
                                                             prepend-icon="flag"
-                                                            v-model="endPoint.address"
-                                                            class="noPadding"
+                                                            class="pt-0"
                                                             clearable
+                                                            hide-details
                                                     ></v-text-field>
                                                 </v-card-text>
                                             </v-card>
                                             </v-expansion-panel-content>
                                         <v-expansion-panel-content v-if="vehicle != 'bicycle'" class="transparent-background">
-                                            <div slot="header">Options</div>
+                                            <div slot="header">Route Options</div>
                                             <v-card>
                                                 <v-card-text>
                                                     <v-checkbox
                                                             color="primary"
                                                             label="Avoid Highways"
-                                                            v-model="options.avoidHighways"
+                                                            v-model="routeOptions.avoidHighways"
+                                                            hide-details
                                                     ></v-checkbox>
                                                     <v-checkbox
                                                             color="primary"
                                                             label="Avoid Ferries"
-                                                            v-model="options.avoidFerries"
+                                                            v-model="routeOptions.avoidFerries"
+                                                            hide-details
                                                     ></v-checkbox>
                                                     <v-checkbox
                                                             color="primary"
                                                             label="Avoid Tolls"
-                                                            v-model="options.avoidTolls"
+                                                            v-model="routeOptions.avoidTolls"
+                                                            hide-details
                                                     ></v-checkbox>
                                                 </v-card-text>
                                             </v-card>
@@ -174,6 +188,7 @@
                                         </div>
                                     </v-container>
                                 </v-flex>
+
                             </v-layout>
                         </v-container>
                     </v-card>
@@ -321,14 +336,6 @@
                 /** Step 1 */
                 vehicle: null,
                 /** Step 2 */
-                startPoint: {id: 'startPoint', placeholder: 'Origin', location: null, address: null, marker: null},
-                endPoint: {id: 'endPoint', placeholder: 'Target destination', location: null, address: null, marker: null},
-                wayPoints: [],
-                displayedWayPoints: [],
-                validRoute: false,
-                distance: null,
-                duration: null,
-                showInfoText: false,
                 map: null,
                 id: "map",
                 mapOptions: {
@@ -342,12 +349,22 @@
                     zoom: 7,
                     styles: mapStyles.retro
                 },
-                markers: [],
-                options: {
+                routeOptions: {
                     avoidFerries: false,
                     avoidHighways: false,
                     avoidTolls: false,
                 },
+                origin: {
+                    id: 'origin'
+                },
+                destination: {
+                    id: 'destination'
+                },
+                wayPoints: [],
+                maxWayPoints: 23,
+                markers: [],
+                distance: null,
+                duration: null,
                 directionsService: new google.maps.DirectionsService,
                 directionsRenderer: new google.maps.DirectionsRenderer({draggable:true}),
                 /** Step 3 */
@@ -359,17 +376,14 @@
             }
         },
         watch: {
-            'options.avoidHighways': 'calculateAndDisplayRoute',
-            'options.avoidTolls': 'calculateAndDisplayRoute',
-            'options.avoidFerries': 'calculateAndDisplayRoute',
+            'routeOptions.avoidHighways': 'calculateAndDisplayRoute',
+            'routeOptions.avoidTolls': 'calculateAndDisplayRoute',
+            'routeOptions.avoidFerries': 'calculateAndDisplayRoute',
             step (value) {
                 if (value === 2) {
                     this.initMap()
                 }
             },
-            wayPoints () {
-
-            }
         },
         methods: {
             back () {
@@ -400,20 +414,159 @@
             /** Step 2 */
             initMap () {
                 $(() => {
+                    // init a Google Maps map
                     this.map = mapFunctions.init(document.getElementById(this.id), this.mapOptions)
-                    this.addSearchBox(this.startPoint.id, this.startPoint.placeholder)
-                    this.addSearchBox(this.endPoint.id, this.endPoint.placeholder)
-                    this.calculateAndDisplayRoute()
+
+                    // add Places Search Boxes for origin & destination
+                    this.addSearchBox(this.origin.id)
+                    this.addSearchBox(this.destination.id)
+
+                    // update route points on directions_changed event
+                    google.maps.event.addListener(this.directionsRenderer, "directions_changed", () => {
+                        this.wayPoints = this.getWayPoints()
+                    })
                 })
             },
-            getWayPointId () {
-               return 'waypoint' + this.wayPoints.length;
-            },
-            addWayPoint (id) {
-                if (this.wayPoints.length < 8) {
-                    this.wayPoints.push({location: null, address: null, id: id, placeholder: 'Choose a destination'})
-                    this.addSearchBox(id)
+            addWayPoint () {
+                // if there is a route rendered, fetch all wayPoints
+                if (this.canAddWayPoint) {
+                    this.wayPoints.push({location: null, address: null, stopover: true, id: 'wayPoint' + (this.wayPoints.length+1)})
+                    this.addSearchBox('wayPoint' + this.wayPoints.length)
                 }
+            },
+            originPlaceFound(place) {
+                this.origin.address = place.formatted_address
+                this.origin.location = {
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng(),
+                }
+                this.calculateAndDisplayRoute()
+            },
+            destinationPlaceFound(place) {
+                this.destination.address = place.formatted_address
+                this.destination.location = {
+                    lat: place.geometry.location.lat(),
+                    lng: place.geometry.location.lng(),
+                }
+                this.calculateAndDisplayRoute()
+            },
+            wayPointPlaceFound(place, input) {
+                let oldWayPoint = this.wayPoints.filter(wayPoint => { return wayPoint.id === input.id })
+                let wayPoint = {
+                    id: input.id,
+                    address: place.formatted_address,
+                    location: {
+                        lat: place.geometry.location.lat(),
+                        lng: place.geometry.location.lng(),
+                    },
+                    stopover: true,
+                    canSwap: false
+                }
+
+                if (oldWayPoint.length > 0) {
+                    // replace the old one
+                    this.wayPoints[this.wayPoints.indexOf(oldWayPoint[0])] = wayPoint
+                } else {
+                    // add a new one
+                    this.wayPoints.push(wayPoint)
+                }
+
+//                this.addSearchBox(input.id)
+
+                this.calculateAndDisplayRoute()
+            },
+            clearMarkers () {
+                this.markers.forEach(function(marker) {
+                    marker.setMap(null);
+                });
+                this.markers = [];
+            },
+            swapWayPoints(index) {
+                let firstItem = this.wayPoints[index]
+                let nextItem = this.wayPoints.filter(wayPoint => {
+                    return wayPoint.stopover === true && this.wayPoints.indexOf(wayPoint) > index
+                })[0]
+
+                if (nextItem) {
+                    let nextIndex = this.wayPoints.indexOf(nextItem)
+                    this.wayPoints[index] = nextItem
+                    this.wayPoints[nextIndex] = firstItem
+                }
+
+                this.calculateAndDisplayRoute()
+            },
+            removeWayPoint(index) {
+                if (this.wayPoints.length > 0 && this.wayPoints.length >= (index + 1)) {
+                    this.wayPoints.splice(index, 1)
+                    this.calculateAndDisplayRoute()
+                }
+            },
+            // calculates origin, wayPoints and destination
+            getWayPoints() {
+                // can only work if there is a direction set
+                if (this.directionsRenderer.directions) {
+                    let wayPoints = []
+                    let legs = this.directionsRenderer.directions.routes[0].legs
+                    let lastLegIndex = this.directionsRenderer.directions.routes[0].legs.length-1
+
+                    // create all database ready route data
+                    let index = 0
+                    legs.forEach(leg => {
+                        // dragged wayPoints
+                        // this MUST happen BEFORE the actual stopover is added
+                        leg.via_waypoints.forEach(waypoint => {
+                            let tmp = {
+                                address: null,
+                                location: {
+                                    lat: waypoint.lat(),
+                                    lng: waypoint.lng(),
+                                },
+                                stopover: false
+                            }
+                            wayPoints.push(tmp)
+                        })
+
+                        // stopover wayPoint
+                        if (legs.length > 1 && index !== lastLegIndex) {
+                            // this wayPoint can be swapped with the next if it is not the last wayPoint on the map
+                            let canSwap = true
+                            if (index === (lastLegIndex - 1)) {
+                                canSwap = false
+                            }
+
+                            wayPoints.push({
+                                address: leg.end_address,
+                                location: {
+                                    lat: leg.end_location.lat(),
+                                    lng: leg.end_location.lng(),
+                                },
+                                stopover: true,
+                                canSwap: canSwap
+                            })
+                        }
+
+                        index++
+                    })
+
+                    for (let i = 0;i < wayPoints.length; i++) {
+                        wayPoints[i].id = 'wayPoint' + (i + 1)
+                    }
+                    console.log(wayPoints)
+                    return wayPoints
+                }
+
+                return null
+            },
+            canSwap (index) {
+                // if there is an wayPoint with stopover:true with a higher index
+                this.wayPoints.forEach(wayPoint => {
+//                    console.log(wayPoint.stopover + " -- " + index + " > " + this.wayPoints.indexOf(wayPoint))
+                    if (wayPoint.stopover && this.wayPoints.indexOf(wayPoint) > index) {
+                        return true
+                    }
+                })
+
+                return false
             },
             addSearchBox (inputId) {
                 const self = this;
@@ -436,10 +589,7 @@
                         }
 
                         // Clear out the old markers.
-                        markers.forEach(function(marker) {
-                            marker.setMap(null);
-                        });
-                        markers = [];
+                        self.clearMarkers()
 
                         // For each place, get the icon, name and location.
                         let bounds = new google.maps.LatLngBounds();
@@ -465,15 +615,16 @@
                                 title: place.name,
                                 position: place.geometry.location
                             })
-                            markers.push(marker);
+                            self.markers.push(marker);
 
-                            if (input.id === self.startPoint.id) {
-                                self.startPlaceFound(place, marker)
-                            } else if (input.id === self.endPoint.id) {
-                                self.endPlaceFound(place, marker)
+                            if (input.id === self.origin.id) {
+                                self.originPlaceFound(place)
+                            } else if (input.id === self.destination.id) {
+                                self.destinationPlaceFound(place)
                             } else {
-                                self.wayPointPlaceFound(input, place, marker)
+                                self.wayPointPlaceFound(place, input)
                             }
+
                             if (place.geometry.viewport) {
                                 // Only geocodes have viewport.
                                 bounds.union(place.geometry.viewport);
@@ -485,139 +636,40 @@
                     });
                 })
             },
-            startPlaceFound(place, marker) {
-                this.startPoint.address = place.formatted_address
-                this.startPoint.location = place.geometry.location
-                this.startPoint.marker = marker
-                this.calculateAndDisplayRoute();
-            },
-            endPlaceFound(place, marker) {
-                this.endPoint.address = place.formatted_address
-                this.endPoint.location = place.geometry.location
-                this.endPoint.marker = marker
-                this.calculateAndDisplayRoute();
-            },
-            wayPointPlaceFound(input, place, marker) {
-                let wayPoint = this.wayPoints.find((current) => {
-                    return current.id === input.id
-                })
-
-                if (wayPoint !== undefined) {
-                    wayPoint.address = place.formatted_address
-                    wayPoint.location = place.geometry.location
-                    wayPoint.marker = marker
-
-                    this.calculateAndDisplayRoute()
-                }
-            },
-            swapWayPoints(index) {
-                if ((this.wayPoints.length - 1) > index) {
-                    // swap 2 waypoints
-                    var topWayPoint = this.wayPoints[index];
-                    this.wayPoints[index] = this.wayPoints[(index + 1)];
-                    this.wayPoints[(index + 1)] = topWayPoint;
-
-                    // workaround for Vue to call updated()
-                    this.wayPoints.push({})
-                    this.wayPoints.splice(-1, 1)
-
-                    this.calculateAndDisplayRoute()
-                }
-            },
-            removeWayPoint(index) {
-                if (this.wayPoints.length > 0 && this.wayPoints.length >= (index + 1)) {
-                    // if this wayPoint has a marker
-                    if (this.wayPoints[index].marker) {
-                        this.wayPoints[index].marker.setMap(null)
-                    }
-                    this.wayPoints.splice(index, 1)
-                    this.calculateAndDisplayRoute()
-                }
-            },
-            /** Step 4 */
-            saveExplore () {
-                // transform waypoints to the right db format
-                let wayPoints = []
-                for (let i = 0;i < this.wayPoints.length; i++) {
-                    wayPoints.push({
-                        location: {
-                            lat: this.wayPoints[i].location.lat(),
-                            lng: this.wayPoints[i].location.lng()
-                        },
-                        address: this.wayPoints[i].address
-                    })
-                }
-
-                // create the db model
-                const explore = {
-                    vehicle: this.vehicle,
-                    startPoint: {
-                        location: {
-                            lat: this.startPoint.location.lat(),
-                            lng: this.startPoint.location.lng()
-                        },
-                        address: this.startPoint.address
-                    },
-                    endPoint: {
-                        location: {
-                            lat: this.endPoint.location.lat(),
-                            lng: this.endPoint.location.lng()
-                        },
-                        address: this.endPoint.address
-                    },
-                    options: this.options,
-                    wayPoints: wayPoints,
-                    distance: this.distance,
-                    duration: this.duration,
-                    date: new Date(this.date + ' ' + this.time),
-                    title: this.title,
-                    description: this.description,
-                    owner: this.$store.getters.user,
-                    riders: []
-                }
-
-                // add to db
-                this.$store.dispatch('organizeExplore', explore).then(response => {
-                    this.$store.dispatch('successMessage', 'Explore Organized!')
-                    this.$router.push({name: 'Explores'})
-                }, error => {
-                    this.$store.dispatch('errorMessage', error.message)
-                })
-            },
             calculateAndDisplayRoute() {
-                if (this.startPoint.location !== null
-                    && this.endPoint.location !== null)
-                {
+                if (this.origin.location && this.destination.location) {
                     const self = this;
                     this.directionsRenderer.setMap(null)
                     this.directionsRenderer.setMap(this.map);
+
                     this.distance = null
-                    // wayPoints
-                    self.displayedWayPoints = []
+                    this.duration = null
+
+                    let displayedWayPoints = []
                     for (let i = 0; i < this.wayPoints.length; i++) {
                         if (this.wayPoints[i].location) {
-                            self.displayedWayPoints.push({
+                            displayedWayPoints.push({
                                 location: this.wayPoints[i].location,
-                                stopover: true
+                                stopover: this.wayPoints[i].stopover
                             });
                         }
                     }
+
                     // determine the travelmode bases on the selected vehicle
                     let travelMode = this.vehicle === 'bicycle' ? 'BICYCLING' : 'DRIVING'
                     this.directionsService.route({
-                        origin: self.startPoint.location,
-                        destination: self.endPoint.location,
-                        waypoints: self.displayedWayPoints,
+                        origin: self.origin.location,
+                        destination: self.destination.location,
+                        waypoints: displayedWayPoints,
                         optimizeWaypoints: false,
                         travelMode: travelMode,
                         provideRouteAlternatives: false,
-                        avoidFerries: self.options.avoidFerries,
-                        avoidHighways: self.options.avoidHighways,
-                        avoidTolls: self.options.avoidTolls,
+                        avoidFerries: self.routeOptions.avoidFerries,
+                        avoidHighways: self.routeOptions.avoidHighways,
+                        avoidTolls: self.routeOptions.avoidTolls,
                     }, function(response, status) {
                         if (status === 'OK') {
-                            self.validRoute = true
-
+                            self.clearMarkers()
                             self.directionsRenderer.setDirections(response)
                             const route = response.routes[0];
                             let distance = 0;
@@ -631,10 +683,37 @@
                             self.duration = duration
                         }
                         else {
-                            self.validRoute = false
-                            self.$store.dispatch('errorMessage', 'No Directions found');
+                            self.$store.dispatch('errorMessage', 'Google Maps error: ' + status);
                         }
                     });
+                }
+            },
+            /** Step 4 */
+            saveExplore () {
+                if (this.allStepsCompleted) {
+                    // create the db model
+                    const explore = {
+                        vehicle: this.vehicle,
+                        origin: this.origin,
+                        destination: this.destination,
+                        wayPoints: this.wayPoints,
+                        routeOptions: this.routeOptions,
+                        distance: this.distance,
+                        duration: this.duration,
+                        date: new Date(this.date + ' ' + this.time),
+                        title: this.title,
+                        description: this.description,
+                        owner: this.$store.getters.user,
+                        riders: []
+                    }
+
+                    // add to db
+                    this.$store.dispatch('organizeExplore', explore).then(response => {
+                        this.$store.dispatch('successMessage', 'Explore Organized!')
+                        this.$router.push({name: 'Explores'})
+                    }, error => {
+                        this.$store.dispatch('errorMessage', error.message)
+                    })
                 }
             },
         },
@@ -649,11 +728,7 @@
                 return this.vehicle !== null
             },
             step2Completed () {
-                return this.startPoint.location !== null
-                    && this.startPoint.address !== null
-                    && this.endPoint.location !== null
-                    && this.endPoint.address !== null
-                    && this.validRoute !== false
+                return this.routeValid
             },
             step3Completed () {
                 return this.date !== null
@@ -682,7 +757,22 @@
             },
             loading () {
                 return this.$store.getters.loading
-            }
+            },
+            routeValid () {
+                return this.distance !== null && this.duration !== null
+            },
+            canAddWayPoint () {
+                // if every added waypoint has a place found
+                if (this.wayPoints.every(wayPoint => { return wayPoint.location })
+                    && this.origin.location && this.origin.address
+                    && this.destination.location && this.destination.address) {
+                    if (this.wayPoints.length < this.maxWayPoints) {
+                        return true
+                    }
+                }
+
+                return false
+            },
         },
         mounted () {
             if (this.step === 2) {
@@ -720,7 +810,6 @@
         text-align: center;
         top: auto;
         bottom: 0;
-        background: #fff;
     }
     .backBtn {
         width: 56px;

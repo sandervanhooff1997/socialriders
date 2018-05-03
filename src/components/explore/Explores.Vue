@@ -5,7 +5,7 @@
                 <v-flex xs12 sm4 md3>
                     <sidebar
                             ref="sidebar"
-                            :explores="boundsExplores"
+                            :explores="explores"
                             :selectedExplore="selectedExplore"
                             @onHideRoute="hideRoute"
                             @onRenderExplores="renderExplores">
@@ -19,8 +19,7 @@
                             :selectedExplore="selectedExplore"
                             @removeAllFilters="removeAllFilters"
                             @onSetSelectedExplore="setSelectedExplore"
-                            @onClearSelectedExplore="clearSelectedExplore"
-                            @onSetBoundsExplores="setBoundsExplores">
+                            @onClearSelectedExplore="clearSelectedExplore">
                         <loader></loader>
                     </google-map>
                 </v-flex>
@@ -43,7 +42,6 @@
             return {
                 loaded: false,
                 selectedExplore: null,
-                boundsExplores: []
             }
         },
         methods: {
@@ -52,10 +50,6 @@
             },
             renderExplores (explores) {
                 this.$refs.map.renderExplores(explores)
-            },
-            setBoundsExplores (explores) {
-                this.boundsExplores = explores
-                this.$refs.sidebar.setBoundsExplores(explores)
             },
             removeAllFilters () {
                 this.$refs.sidebar.removeAllFilters()

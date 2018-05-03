@@ -39,7 +39,7 @@
                     <v-tooltip right>
                         <v-list-tile-action slot="activator">
                         <span>
-                            <v-icon>location_on</v-icon> {{explore.startPoint.address}}
+                            <v-icon>location_on</v-icon> {{explore.origin.address}}
                         </span>
                         </v-list-tile-action>
                         <span>Starting Location</span>
@@ -148,7 +148,7 @@
         },
         methods: {
             hideRoute() {
-                this.$emit('hideRoute')
+                this.$emit('onHideRoute')
             },
             joinExplore() {
                 if (this.exploreJoinable) {
