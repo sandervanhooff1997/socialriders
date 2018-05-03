@@ -319,7 +319,7 @@
     export default {
         data () {
             return {
-                step: 2,
+                step: 1,
                 initialized: false,
                 titles: {
                     step1: 'Vehicle',
@@ -470,8 +470,6 @@
                     // add a new one
                     this.wayPoints.push(wayPoint)
                 }
-
-//                this.addSearchBox(input.id)
 
                 this.calculateAndDisplayRoute()
             },

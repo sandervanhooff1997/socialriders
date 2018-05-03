@@ -14,7 +14,14 @@
 
             <v-container grid-list-md>
                 <v-layout row wrap class="mb-3">
-                    <v-flex xs12 sm6 md4 v-for="(experience, index) in experiences" :key="experience.title">
+                    <p v-if="experiences.length === 0">
+                        We couldn't find any Experiences, be the first to
+                        <router-link :to="{name: 'Organize'}">organize a trip.</router-link>
+                    </p>
+                    <v-flex xs12 sm6 md4
+                            v-for="(experience, index) in experiences"
+                            v-else
+                            :key="experience.title">
                         <v-card>
                             <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
                         </v-card>

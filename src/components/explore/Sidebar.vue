@@ -45,7 +45,7 @@
                     <v-layout row wrap>
                         <v-flex xs6 sm12 class="mt-1">
                             <span class="subheading">Part of the day</span>
-                            <v-radio-group v-model="filters.selectedDayparts" hide-details>
+                            <v-radio-group v-model="filters.selectedDayparts" hide-details class="pt-0">
                                 <v-checkbox
                                         v-for="item in filters.dayparts"
                                         :key="item.value"
@@ -57,7 +57,7 @@
                         </v-flex>
                         <v-flex xs6 sm12 class="mt-1">
                             <span class="subheading">Vehicles</span>
-                            <v-radio-group v-model="filters.selectedVehicles" hide-details>
+                            <v-radio-group v-model="filters.selectedVehicles" hide-details class="pt-0">
                                 <v-checkbox
                                         v-for="item in filters.vehicles"
                                         :key="item.value"
