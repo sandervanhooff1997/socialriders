@@ -43,11 +43,9 @@
                     ></v-slider>
 
                     <v-layout row wrap>
-                        <v-flex xs5 sm12>
+                        <v-flex xs6 sm12 class="mt-1">
                             <span class="subheading">Part of the day</span>
-                            <v-radio-group v-model="filters.daypart.value"
-                                           style="padding: 0;"
-                                           hide-details>
+                            <v-radio-group v-model="filters.selectedDayparts" hide-details>
                                 <v-checkbox
                                         v-for="item in filters.dayparts"
                                         :key="item.value"
@@ -57,39 +55,49 @@
                                 ></v-checkbox>
                             </v-radio-group>
                         </v-flex>
-                        <v-flex xs7 sm12>
-                            <v-switch color="primary"
-                                      label="Specific date"
-                                      hide-details
-                                      v-model="filters.date.on"
-                                      class="mt-2 explore-switch"></v-switch>
-
-                            <v-menu
-                                    lazy
-                                    :close-on-content-click="true"
-                                    transition="scale-transition"
-                                    :disabled="!filters.date.on"
-                            >
-                                <v-text-field
-                                        :disabled="!filters.date.on"
-                                        slot="activator"
-                                        label="Select date"
-                                        v-model="filters.date.value"
-                                        prepend-icon="event"
-                                        readonly
-                                ></v-text-field>
-                                <v-date-picker
-                                        :disabled="!filters.date.on"
-                                        class="explorePicker"
+                        <v-flex xs6 sm12 class="mt-1">
+                            <span class="subheading">Vehicles</span>
+                            <v-radio-group v-model="filters.selectedVehicles" hide-details>
+                                <v-checkbox
+                                        v-for="item in filters.vehicles"
+                                        :key="item.value"
+                                        :label="item.text"
+                                        v-model="item.on"
                                         color="primary"
-                                        v-model="filters.date.value"
-                                        no-title
-                                        scrollable
-                                >
-                                </v-date-picker>
-                            </v-menu>
+                                ></v-checkbox>
+                            </v-radio-group>
                         </v-flex>
+                        <v-switch color="primary"
+                                  label="Specific date"
+                                  hide-details
+                                  v-model="filters.date.on"
+                                  class="mt-2 explore-switch">
+                        </v-switch>
                     </v-layout>
+                    <v-menu
+                            lazy
+                            :close-on-content-click="true"
+                            transition="scale-transition"
+                            :disabled="!filters.date.on"
+                    >
+                        <v-text-field
+                                :disabled="!filters.date.on"
+                                slot="activator"
+                                label="Select date"
+                                v-model="filters.date.value"
+                                prepend-icon="event"
+                                readonly
+                        ></v-text-field>
+                        <v-date-picker
+                                :disabled="!filters.date.on"
+                                class="explorePicker"
+                                color="primary"
+                                v-model="filters.date.value"
+                                no-title
+                                scrollable
+                        >
+                        </v-date-picker>
+                    </v-menu>
                 </v-container>
             </v-expansion-panel-content>
         </v-expansion-panel>
@@ -123,9 +131,7 @@
                         value: null,
                         on: false
                     },
-                    daypart: {
-                        on: true
-                    },
+                    selectedDayparts: null,
                     dayparts: [
                         {
                             text: 'Morning',
@@ -155,7 +161,25 @@
                             min: 22,
                             max: 6,
                         },
-                    ]
+                    ],
+                    selectedVehicles: null,
+                    vehicles: [
+                            {
+                                text: 'Motorcycle',
+                                value: 'motorcycle',
+                                on: true,
+                            },
+                            {
+                                text: 'Car',
+                                value: 'car',
+                                on: true,
+                            },
+                            {
+                                text: 'Bike',
+                                value: 'bike',
+                                on: true,
+                            },
+                        ]
                 },
             }
         },
@@ -172,45 +196,36 @@
 
                 return yyyy + '-' + mm + '-' + dd;
             },
-            filterDistanceOn () {
-                return this.filters.distance.on
-            },
-            filterDurationOn() {
-                return this.filters.duration.on
-            },
             filterDateOn() {
                 return this.filters.date.on
             },
             filterDateValue() {
                 return this.filters.date.value
             },
-            filterDaypartOn() {
-                return this.filters.daypart.on
+            filterDayPartsValue () {
+                let dayparts = []
+                this.filters.dayparts.forEach(daypart => {
+                    if (daypart.on) {
+                        dayparts.push(daypart)
+                    }
+                })
+                return dayparts
             },
-            filterDaypartsMorningOn() {
-                return this.filters.dayparts[0].on
-            },
-            filterDaypartsNoonOn() {
-                return this.filters.dayparts[1].on
-            },
-            filterDaypartsEveningOn() {
-                return this.filters.dayparts[2].on
-            },
-            filterDaypartNightOn() {
-                return this.filters.dayparts[3].on
+            filterVehiclesValue () {
+                let vehicles = []
+                this.filters.vehicles.forEach(vehicle => {
+                    if (vehicle.on) {
+                        vehicles.push(vehicle)
+                    }
+                })
+                return vehicles
             },
         },
         watch: {
-            filterDistanceOn: 'filterExplores',
-            filterDurationOn: 'filterExplores',
             filterDateOn: 'filterExplores',
             filterDateValue: 'filterExplores',
-            filterDaypartOn: 'filterExplores',
-            filterDaypartValue: 'filterExplores',
-            filterDaypartsMorningOn: 'filterExplores',
-            filterDaypartsNoonOn: 'filterExplores',
-            filterDaypartsEveningOn: 'filterExplores',
-            filterDaypartsNightOn: 'filterExplores',
+            filterDayPartsValue: 'filterExplores',
+            filterVehiclesValue: 'filterExplores'
         },
         methods: {
             hideRoute() {
@@ -219,26 +234,18 @@
             renderExplores(explores) {
                 this.$emit('onRenderExplores', explores)
             },
-            setBoundsExplores (explores) {
-                this.boundsExplores = explores
-                this.filterExplores()
-            },
             filterExplores() {
                 const self = this
 
                 let explores = self.explores
 
-                if (self.filters.distance.on) {
-                    explores = explores.filter(explore => {
-                        return explore.distance <= (self.filters.distance.value * 1000)
-                    })
-                }
+                explores = explores.filter(explore => {
+                    return explore.distance <= (self.filters.distance.value * 1000)
+                })
 
-                if (self.filters.duration.on) {
-                    explores = explores.filter(explore => {
-                        return explore.duration <= (self.filters.duration.value * 3600)
-                    })
-                }
+                explores = explores.filter(explore => {
+                    return explore.duration <= (self.filters.duration.value * 3600)
+                })
 
                 if (self.filters.date.on) {
                     explores = explores.filter(explore => {
@@ -252,28 +259,35 @@
                     })
                 }
 
-                if (self.filters.daypart.on) {
-                    let tempExplores = []
+                let tempExplores = []
+                self.filters.dayparts.forEach(daypart => {
+                    if (daypart.on) {
+                        explores.forEach(explore => {
+                            let hours = new Date(explore.date).getHours()
 
-                    self.filters.dayparts.forEach(daypart => {
-                        if (daypart.on) {
-                            explores.forEach(explore => {
-                                let hours = new Date(explore.date).getHours()
-
-                                // Midnight daypart requires some extra checks
-                                if (daypart.value === 'midnight') {
-                                    if (hours >= daypart.min && hours <= 23 || hours <= daypart.max && hours >= 0) {
-                                        tempExplores.push(explore)
-                                    }
-                                } else if (hours >= daypart.min && hours < daypart.max) {
+                            // Midnight daypart requires some extra checks
+                            if (daypart.value === 'midnight') {
+                                if (hours >= daypart.min && hours <= 23 || hours <= daypart.max && hours >= 0) {
                                     tempExplores.push(explore)
                                 }
-                            })
-                        }
-                    })
+                            } else if (hours >= daypart.min && hours < daypart.max) {
+                                tempExplores.push(explore)
+                            }
+                        })
+                    }
+                })
+                explores = tempExplores
 
-                    explores = tempExplores
-                }
+                this.filters.vehicles.forEach(vehicleFilter => {
+                    if (!vehicleFilter.on) {
+                        explores = explores.filter(explore => {
+                            return explore.vehicle !== vehicleFilter.value
+                        })
+                    }
+                })
+//                explores = explores.filter(explore => {
+//                    return explore.vehicle
+//                })
 
                 if (explores.length === 0
                     && !self.filters.distance.on
