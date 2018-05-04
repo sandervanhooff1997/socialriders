@@ -87,6 +87,7 @@
                                                             clearable
                                                             autofocus
                                                             hide-details
+                                                            :prefix="letters[0]"
                                                     ></v-text-field>
 
                                                     <!--wayPoints-->
@@ -111,6 +112,7 @@
                                                                     class="pb-4 pt-3"
                                                                     autofocus
                                                                     hide-details
+                                                                    :prefix="letters[index+1]"
                                                             ></v-text-field>
                                                             <v-btn
                                                                     style="z-index: 1"
@@ -149,6 +151,7 @@
                                                             class="pt-0"
                                                             clearable
                                                             hide-details
+                                                            :prefix="letters[wayPoints.length+1]"
                                                     ></v-text-field>
                                                 </v-card-text>
                                             </v-card>
@@ -319,7 +322,7 @@
     export default {
         data () {
             return {
-                step: 1,
+                step: 2,
                 initialized: false,
                 titles: {
                     step1: 'Vehicle',
@@ -367,6 +370,7 @@
                 duration: null,
                 directionsService: new google.maps.DirectionsService,
                 directionsRenderer: new google.maps.DirectionsRenderer({draggable:true}),
+                letters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
                 /** Step 3 */
                 date: null,
                 time: null,

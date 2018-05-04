@@ -38,7 +38,7 @@ export function getMyPosition (map) {
                 lng: parseFloat(localStorage.getItem("lng"))
             }
 
-            map.setCenter(myPosition)
+            map.panTo(myPosition)
             resolve(myPosition)
         } else {
             if (navigator.geolocation) {
@@ -51,7 +51,7 @@ export function getMyPosition (map) {
                     localStorage.setItem("lat", myPosition.lat)
                     localStorage.setItem("lng", myPosition.lng)
 
-                    map.setCenter(myPosition)
+                    map.panTo(myPosition)
                     resolve(myPosition)
                 }, error => {
                     console.log('User dismissed location popup')

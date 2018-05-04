@@ -30,6 +30,7 @@
           <!--Desktop menu-->
           <v-toolbar v-if="$route.name !== 'Signin'" class="toolbar" absolute>
             <v-toolbar-side-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-toolbar-side-icon>
+            <img width="40px" src="@/assets/images/logo-white64x64.png" class="ml-3 hidden-sm-and-down">
 
             <v-toolbar-title v-if="!drawer">
                 <span class="hidden-sm-and-down white--text">{{ title }}</span>
