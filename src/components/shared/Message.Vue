@@ -4,7 +4,7 @@
             bottom
             right
             value="true"
-            color="primary"
+            :color="className"
             fixed
             :multi-line="true"
     >
@@ -23,6 +23,14 @@
         methods: {
             onClose () {
                 this.$emit('dismissed')
+            }
+        },
+        computed: {
+            className () {
+                if (this.type === 'success') {
+                    return 'primary'
+                }
+                return 'error'
             }
         },
         props: ['text', 'type'],

@@ -3,5 +3,5 @@ export default {
     authDomain: 'socialriders-2ad62.firebaseapp.com',
     databaseURL: 'https://socialriders-2ad62.firebaseio.com',
     projectId: 'socialriders-2ad62',
-    storageBucket: 'socialriders-2ad62.appspot.com',
+    storageBucket: 'gs://socialriders-2ad62.appspot.com',
 }

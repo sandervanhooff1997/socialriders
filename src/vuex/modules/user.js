@@ -32,7 +32,9 @@ export default {
                 return
             }
 
-            firebase.auth().signInWithPopup(provider)
+            firebase
+                .auth()
+                .signInWithPopup(provider)
                 .then(function (result) {
                     commit('setLoading', false)
                     commit('clearMessage')

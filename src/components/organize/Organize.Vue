@@ -132,15 +132,17 @@
                                                         <div class="clearfix"></div>
                                                     </div>
 
-                                                    <v-btn @click="addWayPoint"
-                                                           v-if="canAddWayPoint"
-                                                           fab
-                                                           dark
-                                                           small
-                                                           color="primary"
-                                                           class="mt-0 mb-0 ml-3">
-                                                        <v-icon dark>add</v-icon>
-                                                    </v-btn>
+                                                    <v-fab-transition>
+                                                        <v-btn @click="addWayPoint"
+                                                               v-if="canAddWayPoint"
+                                                               fab
+                                                               dark
+                                                               small
+                                                               color="primary"
+                                                               class="mt-0 mb-0 ml-3">
+                                                            <v-icon dark>add</v-icon>
+                                                        </v-btn>
+                                                    </v-fab-transition>
 
                                                     <!--destination-->
                                                     <v-text-field
@@ -429,6 +431,7 @@
                     google.maps.event.addListener(this.directionsRenderer, "directions_changed", () => {
                         this.wayPoints = this.getWayPoints()
                     })
+                    this.calculateAndDisplayRoute()
                 })
             },
             addWayPoint () {
@@ -553,7 +556,6 @@
                     for (let i = 0;i < wayPoints.length; i++) {
                         wayPoints[i].id = 'wayPoint' + (i + 1)
                     }
-                    console.log(wayPoints)
                     return wayPoints
                 }
 
@@ -562,7 +564,6 @@
             canSwap (index) {
                 // if there is an wayPoint with stopover:true with a higher index
                 this.wayPoints.forEach(wayPoint => {
-//                    console.log(wayPoint.stopover + " -- " + index + " > " + this.wayPoints.indexOf(wayPoint))
                     if (wayPoint.stopover && this.wayPoints.indexOf(wayPoint) > index) {
                         return true
                     }

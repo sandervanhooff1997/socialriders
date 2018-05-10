@@ -137,7 +137,7 @@ export function getMarker (map, pos) {
     return new google.maps.Marker({
         position: new google.maps.LatLng(pos.lat, pos.lng),
         map: map,
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
     })
 }
 
