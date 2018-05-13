@@ -206,6 +206,7 @@ export default {
                             let experience = doc.data()
                             let mediaUploadData = {
                                 user: getters.user,
+                                postedAt: new Date(),
                                 mediaURLs: payload.mediaURLs
                             }
 

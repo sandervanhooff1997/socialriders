@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Moment from 'moment'
 
 Vue.filter('datetime', function (date) {
-    return Moment(date).format('MMMM Do YYYY - hh:mm') + 'u'
+    return Moment(date).format('MMMM Do YYYY - HH:mm') + 'u'
 })
 Vue.filter('date', function (date) {
     return Moment(date).format('MMMM Do YYYY')

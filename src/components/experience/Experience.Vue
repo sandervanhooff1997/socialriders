@@ -27,6 +27,9 @@
                     grow
             >
                 <v-tabs-slider color="primary"></v-tabs-slider>
+                <v-tab v-if="iJoinedThisExplore">
+                    Upload
+                </v-tab>
                 <v-tab>
                     Media
                 </v-tab>
@@ -35,39 +38,19 @@
                 </v-tab>
             </v-tabs>
             <v-tabs-items v-model="tab" style="height: 100%;">
+                <v-tab-item v-if="iJoinedThisExplore">
+                    <v-card flat style="height: 100%;" class="noBackground">
+                        <v-container>
+                            <span class="headline mt-3">Share your media of this Trip!</span>
+                            <media-upload :experience="experience"></media-upload>
+                        </v-container>
+                    </v-card>
+                </v-tab-item>
                 <v-tab-item>
                     <v-card flat style="height: 100%;" class="noBackground">
                         <v-container>
-                            <span>Share your photos of this trip with fellow SocialRiders!</span>
-                            <form onsubmit="return false">
-                                <v-btn
-                                        raised
-                                        class="primary"
-                                        round
-                                        v-if="!uploading"
-                                        @click="onPickMedia"
-                                >
-                                    Upload Media
-                                </v-btn>
-                                <input
-                                        type="file"
-                                        style="display: none;"
-                                        ref="fileInput"
-                                        accept="image/*"
-                                        @change="onMediaPicked"
-                                        multiple>
-                            </form>
-                            <p v-if="uploading">Uploading... <v-progress-circular indeterminate size="30" color="white"></v-progress-circular></p>
-                            <ul>
-                                <li>The trip owner can upload up to <b>10</b> images</li>
-                                <li>Each rider can upload up to <b>5</b> images</li>
-                                <li>Uploading <b>new</b> images will <b>delete all previously uploaded images</b></li>
-                            </ul>
-                            <!--<img v-for="(URL, index) in imageURLs"-->
-                                 <!--:key="index"-->
-                                 <!--v-if="imageURLs.length > 0"-->
-                                 <!--:src="URL"-->
-                                 <!--style="max-width: 150px; max-height: 150px;">-->
+                            <span class="headline mt-3">Media of all riders</span>
+                            <media-wall class="mt-3" :media="experience.mediaUploads"></media-wall>
                         </v-container>
                     </v-card>
                 </v-tab-item>
@@ -95,12 +78,13 @@
 <script>
     import * as mapFunctions from '@/assets/maps/map-functions'
     import mapStyles from '@/assets/maps/map-styles'
-    import Isotope from 'isotope-layout'
     import ProfileChip from '@/components/shared/ProfileChip'
+    import MediaUpload from './MediaUpload'
+    import MediaWall from './MediaWall'
 
     export default {
         components: {
-            ProfileChip
+            ProfileChip, MediaUpload, MediaWall
         },
         data () {
             return {
@@ -121,9 +105,6 @@
                     zoom: 7,
                     styles: mapStyles.retro,
                 },
-                imageURLs: [],
-                images: [],
-                uploading: false,
                 tab: 0,
             }
         },
@@ -135,8 +116,14 @@
                     return 0;
                 })
             },
-            loading () {
-                return this.$store.getters.loading
+            iJoinedThisExplore () {
+                if (this.experience.riders.filter(rider => {
+                    return rider.uid === this.user.uid
+                }).length > 0) {
+                    return true
+                }
+
+                return false
             },
             user () {
                 return this.$store.getters.user
@@ -148,81 +135,12 @@
                     this.map = mapFunctions.init(document.getElementById(this.id), this.options)
                 })
             },
-            onPickMedia () {
-                this.$refs.fileInput.click()
-            },
-            onMediaPicked (event) {
-                const files = event.target.files
-
-                if (files.length > 5) {
-                    this.clearUploadData()
-                    this.$store.dispatch('errorMessage', 'You can upload up to 5 images.')
-                    return
-                }
-
-                this.$store.commit('setLoading', true)
-
-                for (let i = 0;i < files.length; i++) {
-                    let filename = files[i].name
-
-                    // check for a file extension
-                    if (filename.lastIndexOf('.') <= 0) {
-                        this.$store.dispatch('errorMessage', 'A file without extension was found.')
-                        this.clearUploadData()
-                        return
-                    }
-
-                    this.uploading = true
-                    const fileReader = new FileReader()
-                    fileReader.addEventListener('load', () => {
-                        this.imageURLs.push(fileReader.result)
-                    })
-                    fileReader.readAsDataURL(files[i])
-                    this.images.push(files[i])
-                }
-
-                let payload = {
-                    id: this.$route.params.id,
-                    images: this.images,
-                    previousMediaURLs: []
-                }
-
-
-                // find previous media uploads by this user
-                if (this.experience.mediaUploads) {
-                    let mediaUpload = this.experience.mediaUploads.filter(mediaUpload => {
-                        return mediaUpload.user.uid === this.user.uid
-                    })[0]
-
-                    // if the user has uploaded media to this experience before
-                    if (mediaUpload) {
-                        payload.previousMediaURLs = mediaUpload.mediaURLs
-                    }
-                }
-
-                this.$store.dispatch('uploadMedia', payload).then(mediaUploads => {
-                    this.experience.mediaUploads = mediaUploads
-                    this.$store.dispatch('successMessage', 'Media Uploaded!')
-                    this.clearUploadData()
-                    this.$store.commit('setLoading', false)
-                    this.uploading = false
-                }, error => {
-                    this.$store.dispatch('errorMessage', error.message)
-                    this.$store.commit('setLoading', false)
-                    this.uploading = false
-                })
-            },
-            clearUploadData () {
-                this.imageURLs = []
-                this.images = []
-            }
         },
         mounted () {
             let self = this
 
             this.$store.dispatch('getExperience', this.$route.params.id).then(response => {
                 self.experience = response
-
                 self.initMap()
 
                 $(() => {

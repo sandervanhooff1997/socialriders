@@ -69,3 +69,14 @@ nav
 .navigation-drawer {
     padding: 0;
 }
+
+.jumbotron__image {
+    position: absolute !important;
+    left: auto !important;
+    min-height: 100% !important;
+    width: 100% !important;
+    -webkit-transform: translateY(-50%) !important;
+    min-width: 100% !important;
+    will-change: transform !important;
+    transition: inherit !important;
+}
