@@ -27,21 +27,30 @@
                     grow
             >
                 <v-tabs-slider color="primary"></v-tabs-slider>
-                <v-tab v-if="iJoinedThisExplore">
-                    Upload
-                </v-tab>
                 <v-tab>
                     Media
+                </v-tab>
+                <v-tab v-if="iJoinedThisExplore">
+                    Upload
                 </v-tab>
                 <v-tab>
                     Riders
                 </v-tab>
             </v-tabs>
             <v-tabs-items v-model="tab" style="height: 100%;">
+                <v-tab-item>
+                    <v-card flat style="height: 100%;" class="noBackground">
+                        <v-container>
+                            <span class="headline mt-3">Media of all SocialRiders</span>
+                            <p>See what other SocialRiders experienced during this trip.</p>
+                            <media-wall class="mt-3" :media="experience.mediaUploads"></media-wall>
+                        </v-container>
+                    </v-card>
+                </v-tab-item>
                 <v-tab-item v-if="iJoinedThisExplore">
                     <v-card flat style="height: 100%;" class="noBackground">
                         <v-container>
-                            <span class="headline mt-3">Share your media of this Trip!</span>
+                            <span class="headline mt-3">Share your media with other SocialRiders!</span>
                             <media-upload :experience="experience"></media-upload>
                         </v-container>
                     </v-card>
@@ -49,14 +58,7 @@
                 <v-tab-item>
                     <v-card flat style="height: 100%;" class="noBackground">
                         <v-container>
-                            <span class="headline mt-3">Media of all riders</span>
-                            <media-wall class="mt-3" :media="experience.mediaUploads"></media-wall>
-                        </v-container>
-                    </v-card>
-                </v-tab-item>
-                <v-tab-item>
-                    <v-card flat style="height: 100%;" class="noBackground">
-                        <v-container>
+                            <span class="headline mt-3">SocialRiders that joined this trip</span>
                             <div v-if="experience.riders.length > 0">
                                 <p>Connect with all SocialRiders that experienced this amazing trip!</p>
                                 <profile-chip
