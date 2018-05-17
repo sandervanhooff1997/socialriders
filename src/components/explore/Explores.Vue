@@ -204,8 +204,8 @@
     }
 
     #sidebar.active.mobile .fab-menu {
-        top: 15px;
-        right: 15px;
+        top: 10px;
+        right: 10px;
     }
     #sidebar.active.mobile .fab-menu, #sidebar.active.mobile .fab-menu * {
         opacity: 1 !important;

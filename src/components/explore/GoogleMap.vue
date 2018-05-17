@@ -33,7 +33,7 @@
                     slot="activator"
                     v-model="fab"
                     color="warning"
-                    dark
+                    style="margin: 0;"
                     fab
             >
                 <v-icon>menu</v-icon>
@@ -100,8 +100,8 @@
                 this.map = mapFunctions.init(document.getElementById(this.id), this.options)
 
                 this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("map-actions"))
-                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("search-input"))
-                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("fab-menu"))
+                this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById("fab-menu"))
+                this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById("search-input"))
 
                 mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
@@ -192,12 +192,15 @@
     #map-actions {
         margin-top: 10px;
     }
+    #fab-menu {
+        margin: 10px 0 0 10px;
+    }
     /*#location-btn {*/
         /*margin: 10px;*/
     /*}*/
     #search-input {
-        margin-top: 15px;
-        margin-left: 15px;
+        margin-top: 20px;
+        margin-left: 10px;
         padding: 10px;
         border: 0;
         /*background: rgba(0,0,0,0.4);*/
@@ -233,8 +236,8 @@
 
     @media screen and (max-width: 960px) {
         #search-input {
-            width: 90%;
-            width: calc(100% - 100px);
+            width: 80%;
+            width: calc(100% - 152px);
         }
     }
 </style>

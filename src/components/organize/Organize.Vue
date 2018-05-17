@@ -327,7 +327,7 @@
     export default {
         data () {
             return {
-                step: 4,
+                step: 1,
                 initialized: false,
                 titles: {
                     step1: 'Vehicle',
