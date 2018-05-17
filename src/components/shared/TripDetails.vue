@@ -75,7 +75,15 @@
                     <v-tooltip right>
                         <v-list-tile-action slot="activator">
                         <span>
-                            <v-icon>people</v-icon> {{explore.riders.length | riders }}
+                            <v-icon>people</v-icon>
+                            <v-menu open-on-hover bottom offset-y>
+                                <span slot="activator">{{explore.riders.length | riders }}</span>
+                                <v-list class="riderList">
+                                    <v-list-tile v-for="rider in explore.riders" :key="rider.uid">
+                                      <v-list-tile-title>{{ rider.name }}</v-list-tile-title>
+                                    </v-list-tile>
+                                </v-list>
+                            </v-menu>
                         </span>
                         </v-list-tile-action>
                         <span>Riders</span>

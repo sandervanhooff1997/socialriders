@@ -16,10 +16,6 @@
     color: #fff !important;
 }
 
-.explorePicker {
-    background: rgba(0,0,0,0.7) !important;
-}
-
 .time-picker-clock--indeterminate>span.active {
     background: #1de9b6!important;
 }
@@ -51,10 +47,10 @@ nav
     background: -webkit-linear-gradient(45deg, rgba(142, 36, 170, 0.9) 0%, rgba(255, 110, 64, 0.8) 100%);
     background: linear-gradient(45deg, rgba(142, 36, 170, 0.9) 0%, rgba(255, 110, 64, 0.8) 100%);
 }
-.orange-overlay {
-    background: rgba(255, 110, 64, 0.9);
-    background: -webkit-linear-gradient(45deg, rgba(228, 114, 109, 0.95) 0%, rgba(255, 110, 64, 0.85) 100%);
-    background: linear-gradient(45deg, rgba(228, 114, 109, 0.95) 0%, rgba(255, 110, 64, 0.85) 100%);
+.search-box-overlay {
+    background: #8e24aa;
+    background: -webkit-linear-gradient(45deg, rgba(196, 84, 107, 0.9) 0%, rgba(255, 107, 108, 0.8) 100%);
+    background: linear-gradient(45deg, rgba(196, 84, 107, 0.9) 0%, rgba(255, 107, 108, 0.8) 100%);
 }
 .background {
     background: url('./../images/bg3.jpg') !important;
@@ -79,4 +75,8 @@ nav
     min-width: 100% !important;
     will-change: transform !important;
     transition: inherit !important;
+}
+
+.explorePicker, .riderList {
+    background: rgba(0,0,0,0.7) !important;
 }

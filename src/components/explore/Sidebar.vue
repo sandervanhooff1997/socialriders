@@ -1,5 +1,5 @@
 <template>
-    <v-card v-if="selectedExplore" flat class="noBackground">
+    <v-card v-if="selectedExplore" flat class="menu-item noBackground">
         <trip-details
                 :explore="selectedExplore"
                 :isExplore="true"
@@ -8,14 +8,31 @@
         </trip-details>
     </v-card>
 
-    <v-card v-else flat class="noBackground">
+    <v-card v-else flat class="menu-item noBackground">
         <v-container fluid class="pb-0 pt-0">
             <v-text-field
-                    clearable
-                    prepend-icon="explore"
-                    id="search-input"
-                    placeholder="Search explores"
-            ></v-text-field>
+                clearable
+                prepend-icon="explore"
+                id="explores-input"
+                placeholder="Search explores"
+                @keyup="searchExplores"
+        ></v-text-field>
+            <v-list
+                    subheader
+                    two-line
+                    v-if="searchedExplores.length > 0 && searchedExplores.length !== explores.length"
+                    style="max-height: 200px; overflow: hidden; overflow-y: scroll;">
+                <v-subheader>Explores found</v-subheader>
+                <v-list-tile v-for="(item, index) in searchedExplores" :key="index" avatar @click="">
+                    <v-list-tile-avatar>
+                        <img :src="item.owner.photoUrl">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                        <v-list-tile-sub-title>{{ item.date | datetime }}</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+            </v-list>
         </v-container>
 
         <v-expansion-panel>
@@ -179,8 +196,10 @@
                                 value: 'bike',
                                 on: true,
                             },
-                        ]
+                        ],
                 },
+                searchedExplores: [],
+                searchDelayTimer: null
             }
         },
         computed: {
@@ -285,9 +304,6 @@
                         })
                     }
                 })
-//                explores = explores.filter(explore => {
-//                    return explore.vehicle
-//                })
 
                 if (explores.length === 0
                     && !self.filters.distance.on
@@ -304,6 +320,17 @@
                 this.filters.duration.on = false
                 this.filters.date.on = false
                 this.filters.daypart.on = false
+            },
+            searchExplores (event) {
+                let text = event.target.value
+                let self = this
+
+                clearTimeout(this.searchDelayTimer)
+                this.searchDelayTimer = setTimeout(function() {
+                    self.searchedExplores = self.explores.filter(explore => {
+                        return explore.title.toLowerCase().includes(text.toLowerCase())
+                    })
+                }, 500);
             }
         },
         mounted () {
@@ -311,3 +338,10 @@
         }
     }
 </script>
+
+<style scoped>
+    .menu-item {
+        width: 100%;
+        height: 100%;
+    }
+</style>

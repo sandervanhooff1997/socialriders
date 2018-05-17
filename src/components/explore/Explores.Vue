@@ -1,8 +1,8 @@
 <template>
     <div class="text-xs-center">
-        <div v-if="loaded" class="fillHeight">
+        <div v-if="loaded" class="fillHeight" style="position: relative;">
             <v-layout fill-height row wrap>
-                <v-flex xs12 sm4 md3>
+                <div id="sidebar" class="sidebar-overlay-inverse" v-resize="onResize" :class="{active: !menu, mobile: mobile}">
                     <sidebar
                             ref="sidebar"
                             :explores="explores"
@@ -10,9 +10,36 @@
                             @onHideRoute="hideRoute"
                             @onRenderExplores="renderExplores">
                     </sidebar>
-                </v-flex>
+                    <v-btn
+                            color="warning"
+                            @click="menu = !menu"
+                            class="fab-menu hidden-xs-only"
+                            dark
+                            absolute
+                            bottom
+                            right
+                            fab
+                    >
+                        <v-icon v-if="menu">keyboard_arrow_left</v-icon>
+                        <v-icon v-else>keyboard_arrow_right</v-icon>
+                    </v-btn>
 
-                <v-flex xs12 sm8 md9>
+                    <v-btn
+                            color="warning"
+                            @click="menu = !menu"
+                            class="fab-menu mobile hidden-sm-and-up"
+                            dark
+                            absolute
+                            bottom
+                            right
+                            fab
+                    >
+                        <v-icon v-if="menu">keyboard_arrow_up</v-icon>
+                        <v-icon v-else>keyboard_arrow_down</v-icon>
+                    </v-btn>
+                </div>
+
+                <div id="google-map" :class="{active: !menu, mobile: mobile}">
                     <google-map
                             ref="map"
                             :explores="explores"
@@ -22,7 +49,7 @@
                             @onClearSelectedExplore="clearSelectedExplore">
                         <loader></loader>
                     </google-map>
-                </v-flex>
+                </div>
             </v-layout>
         </div>
         <loader v-else></loader>
@@ -42,6 +69,8 @@
             return {
                 loaded: false,
                 selectedExplore: null,
+                menu: true,
+                mobile: false
             }
         },
         methods: {
@@ -67,6 +96,9 @@
                 if (this.$route.params.selectedExplore) {
                     this.setSelectedExplore(this.$route.params.selectedExplore)
                 }
+            },
+            onResize () {
+                this.mobile = window.innerWidth < 600
             }
         },
         computed: {
@@ -89,5 +121,118 @@
 <style scoped>
     .fillHeight {
         height: 100%;
+    }
+
+    #sidebar, #google-map {
+        position: relative;
+        -webkit-transition: all .35s ease-in-out;
+        -moz-transition: all .35s ease-in-out;
+        -ms-transition: all .35s ease-in-out;
+        -o-transition: all .35s ease-in-out;
+        transition: all .35s ease-in-out;
+    }
+
+    #google-map.mobile{
+        width: 100%;
+        height: 100%;
+    }
+    #sidebar.mobile {
+        height: auto;
+        width: 100%;
+    }
+
+    #sidebar.active {
+        width: 0px!important;
+    }
+    #sidebar.active.mobile {
+        width: 100%!important;
+        height: 0px;
+    }
+
+    #sidebar.active * {
+        opacity: 0;
+        -webkit-transition: all .35s ease-in-out;
+        -moz-transition: all .35s ease-in-out;
+        -ms-transition: all .35s ease-in-out;
+        -o-transition: all .35s ease-in-out;
+        transition: all .35s ease-in-out;
+    }
+    #sidebar.active.mobile * {
+        -webkit-transition: none;
+        -moz-transition: none;
+        -ms-transition: none;
+        -o-transition: none;
+        transition: none;
+    }
+
+
+    #sidebar.active .fab-menu {
+        right: -71px;
+    }
+    #sidebar.active .fab-menu, #sidebar.active .fab-menu * {
+        opacity: 1 !important;
+    }
+
+    #sidebar.active.mobile .fab-menu {
+        top: 15px;
+        right: 15px;
+    }
+    #sidebar.active.mobile .fab-menu, #sidebar.active.mobile .fab-menu * {
+        opacity: 1 !important;
+    }
+
+    #google-map.active {
+        width: 100% !important;
+    }
+
+    .fab-menu {
+        bottom: 10px;
+        right: -28px;
+    }
+    .fab-menu.mobile {
+        bottom: -28px;
+        right: 15px;
+    }
+
+    @media screen and (min-width: 960px) {
+        #google-map{
+            float: left;
+            width: calc(100% - 400px);
+            height: 100%;
+        }
+        #sidebar {
+            float: left;
+            height: 100%;
+            width: 400px;
+            z-index: 1;
+        }
+    }
+
+    @media screen and (max-width: 960px) and (min-width: 600px) {
+        #google-map{
+            float: left;
+            width: calc(100% - 250px);
+            height: 100%;
+        }
+        #sidebar {
+            float: left;
+            height: 100%;
+            width: 250px;
+            z-index: 1;
+        }
+    }
+
+    @media screen and (max-width: 600px) {
+        #google-map{
+            float: left;
+            width: 100%;
+            height: 100%;
+        }
+        #sidebar {
+            float: left;
+            height: auto;
+            width: 100%;
+            z-index: 1;
+        }
     }
 </style>

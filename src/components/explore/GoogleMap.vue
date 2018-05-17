@@ -1,30 +1,32 @@
 <template>
-    <div style="height: 100%;">
+    <div style="height: 100%; width: 100%;">
         <div class="map" :id="id">
             <loader></loader>
         </div>
 
-        <div id="map-actions">
-            <div v-for="(item, index) in actions.items" :key="index" class="map-action">
-                <v-btn
-                        class="scale"
-                        style="margin-left: 15px;"
-                        round
-                        dark
-                        small
-                        color="secondary"
-                        @click="item.action"
-                        v-show="item.showOnMyPosition && myPosition || !item.showOnMyPosition"
-                >
-                    {{item.name}}
-                </v-btn>
-            </div>
-        </div>
+        <input type="text" id="search-input" class="search-box-overlay" placeholder="Search a Place">
+
+        <!--<div id="map-actions">-->
+            <!--<div v-for="(item, index) in actions.items" :key="index" class="map-action">-->
+                <!--<v-btn-->
+                        <!--class="scale"-->
+                        <!--style="margin-left: 15px;"-->
+                        <!--round-->
+                        <!--dark-->
+                        <!--small-->
+                        <!--color="secondary"-->
+                        <!--@click="item.action"-->
+                        <!--v-show="item.showOnMyPosition && myPosition || !item.showOnMyPosition"-->
+                <!--&gt;-->
+                    <!--{{item.name}}-->
+                <!--</v-btn>-->
+            <!--</div>-->
+        <!--</div>-->
 
         <v-btn
                 id="location-btn"
                 v-show="myPosition"
-                color="secondary"
+                color="warning"
                 dark
                 fab
                 absolute
@@ -76,14 +78,16 @@
             initMap () {
                 let self = this
                 this.map = mapFunctions.init(document.getElementById(this.id), this.options)
+
                 this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("map-actions"))
-                this.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById("location-btn"))
+                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("search-input"))
+                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("location-btn"))
+
+                mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
                 mapFunctions.getMyPosition(this.map).then(position => {
                     self.myPosition = position
                 }, () => {})
-
-                mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
                 this.renderExplores(this.explores)
                 if (this.selectedExplore) {
@@ -151,7 +155,7 @@
             },
             getNearbyExplores () {
 
-            }
+            },
         },
         mounted () {
             this.initMap()
@@ -170,5 +174,47 @@
     }
     #location-btn {
         margin: 10px;
+    }
+    #search-input {
+        margin-top: 15px;
+        margin-left: 15px;
+        padding: 10px;
+        border: 0;
+        /*background: rgba(0,0,0,0.4);*/
+        font-family: 'Poppins', sans-serif!important;
+        width: 300px;
+        max-width: 300px;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        outline: none;
+        color: #f7f7f7;
+        -webkit-transition: all .35s ease-in-out;
+        -moz-transition: all .35s ease-in-out;
+        -ms-transition: all .35s ease-in-out;
+        -o-transition: all .35s ease-in-out;
+        transition: all .35s ease-in-out;
+    }
+    #search-input::placeholder {
+        color: #f7f7f7;
+        -webkit-transition: all .35s ease-in-out;
+        -moz-transition: all .35s ease-in-out;
+        -ms-transition: all .35s ease-in-out;
+        -o-transition: all .35s ease-in-out;
+        transition: all .35s ease-in-out;
+    }
+
+    #search-input:focus::placeholder {
+        color: #fff;
+    }
+    #search-input:focus {
+        color: #fff;
+    }
+
+
+    @media screen and (max-width: 960px) {
+        #search-input {
+            width: 90%;
+            width: calc(100% - 100px);
+        }
     }
 </style>
