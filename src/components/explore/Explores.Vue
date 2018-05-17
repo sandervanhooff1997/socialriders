@@ -99,20 +99,46 @@
             },
             onResize () {
                 this.mobile = window.innerWidth < 600
-            }
+            },
         },
         computed: {
             explores () {
                 return this.$store.getters.explores
             },
+            maxDistance () {
+                return this.$store.getters.maxDistance
+            },
+            maxDuration () {
+                return this.$store.getters.maxDuration
+            }
         },
         mounted () {
+            let self = this
+
             if (this.explores) {
                 this.load()
             } else {
                 this.$store.dispatch('getExplores').then(explores => {
                     this.load()
                 }, error => { })
+            }
+
+            // select the highest distance of all explores to be the max slider value
+            if (!this.maxDistance){
+                this.$store.dispatch('getMaxDistance').then(distance => {
+                    self.$refs.sidebar.setMaxDistance(distance)
+                }).catch(error => {
+                    this.$store.dispatch('errorMessage', error.message)
+                })
+            }
+
+            // select the highest duration of all explores to be the max slider value
+            if (!this.maxDuration){
+                this.$store.dispatch('getMaxDuration').then(duration => {
+                    self.$refs.sidebar.setMaxDuration(duration)
+                }).catch(error => {
+                    this.$store.dispatch('errorMessage', error.message)
+                })
             }
         },
     }

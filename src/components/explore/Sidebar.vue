@@ -331,6 +331,14 @@
                         return explore.title.toLowerCase().includes(text.toLowerCase())
                     })
                 }, 500);
+            },
+            setMaxDistance(distance) {
+                this.filters.distance.max = distance
+                this.filters.distance.value = distance
+            },
+            setMaxDuration(duration) {
+                this.filters.duration.max = duration
+                this.filters.duration.value = duration
             }
         },
         mounted () {

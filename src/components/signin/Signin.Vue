@@ -9,8 +9,8 @@
         >
             <v-spacer></v-spacer>
             <v-toolbar-items style="margin: 0;">
-                <v-btn flat round @click="toggle('privacy')">{{info.privacy.title}}</v-btn>
-                <v-btn flat round @click="toggle('about')">{{info.about.title}}</v-btn>
+                <v-btn flat @click="toggle('privacy')">{{info.privacy.title}}</v-btn>
+                <v-btn flat @click="toggle('about')">{{info.about.title}}</v-btn>
             </v-toolbar-items>
         </v-toolbar>
 
@@ -182,9 +182,9 @@
         /*-webkit-border-radius: 30px;*/
         /*-moz-border-radius: 30px;*/
         /*border-radius: 30px;*/
-        -webkit-box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);
-        -moz-box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);
-        box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);
+        /*-webkit-box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);*/
+        /*-moz-box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);*/
+        /*box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);*/
     }
     .item-wrapper {
         width: 100%;
@@ -205,13 +205,15 @@
 
     @media screen and (min-width: 960px) {
         .logo {
-            max-width: 400px;
+            max-width: 100%;
+            max-height: 400px;
         }
     }
 
     @media screen and (max-width: 960px) and (min-width: 600px) {
         .logo {
-            max-width: 300px;
+            max-width: 100%;
+            max-height: 400px;
         }
     }
 

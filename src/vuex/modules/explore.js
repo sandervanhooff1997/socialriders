@@ -1,18 +1,32 @@
 export default {
     state: {
         explores: null,
+        maxDistance: null,
+        maxDuration: null
     },
 
     getters: {
         explores (state) {
             return state.explores
         },
+        maxDistance(state) {
+            return state.maxDistance
+        },
+        maxDuration(state) {
+            return state.maxDuration
+        }
     },
 
     mutations: {
         setExplores (state, explores) {
             state.explores = explores
         },
+        setMaxDistance (state, maxDistance) {
+            state.maxDistance = maxDistance
+        },
+        setMaxDuration (state, maxDuration) {
+            state.maxDuration = maxDuration
+        }
     },
 
     actions: {
@@ -148,6 +162,49 @@ export default {
                 }).catch(function (error) {
                     reject('Failed to LEave Explore: ' + error)
 
+                })
+            })
+        },
+        getMaxDistance ({commit}) {
+            return new Promise ((resolve, reject) => {
+                db.collection('explores')
+                    .orderBy('distance', 'desc')
+                    .limit(1)
+                    .get()
+                    .then(querySnapshot => {
+                        if (querySnapshot.empty) {
+                            reject({message: 'No Explores found'})
+                        }
+
+                        let maxDistance = querySnapshot.docs[0].data().distance
+                        maxDistance = (Math.round((maxDistance/1000) * 10 ) / 10).toFixed(1)
+
+                        commit('setMaxDistance', maxDistance)
+                        resolve(maxDistance)
+                    }).catch(error => {
+                        reject(error)
+                    })
+            })
+        },
+        getMaxDuration ({commit}) {
+            return new Promise ((resolve, reject) => {
+                db.collection('explores')
+                    .orderBy('duration', 'desc')
+                    .limit(1)
+                    .get()
+                    .then(querySnapshot => {
+                        if (querySnapshot.empty) {
+                            reject({message: 'No Explores found'})
+                        }
+
+                        let maxDuration = querySnapshot.docs[0].data().duration
+                        maxDuration = parseInt(maxDuration, 10)
+                        maxDuration = Math.floor(maxDuration / 3600)
+
+                        commit('setMaxDuration', maxDuration)
+                        resolve(maxDuration)
+                    }).catch(error => {
+                    reject(error)
                 })
             })
         }
