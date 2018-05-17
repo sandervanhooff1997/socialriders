@@ -50,7 +50,7 @@
                             <img :src="user.photoUrl" :alt="user.name">
                         </v-avatar>
                         <v-list subheader style="padding-bottom: 0;" class="background-small">
-                            <div class="orange-overlay">
+                            <div class="profile-menu-overlay">
                                 <v-list-tile avatar>
                                     <v-list-tile-avatar>
                                         <img :src="user.photoUrl" :alt="user.name">

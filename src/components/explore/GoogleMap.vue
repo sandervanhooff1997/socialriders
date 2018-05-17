@@ -23,18 +23,37 @@
             <!--</div>-->
         <!--</div>-->
 
-        <v-btn
-                id="location-btn"
-                v-show="myPosition"
-                color="warning"
-                dark
-                fab
-                absolute
-                @click="center"
-                slot="activator"
+        <v-speed-dial
+                v-model="fab"
+                id="fab-menu"
+                direction="bottom"
+                transition="slide-y-reverse-transition"
         >
-            <v-icon>location_on</v-icon>
-        </v-btn>
+            <v-btn
+                    slot="activator"
+                    v-model="fab"
+                    color="warning"
+                    dark
+                    fab
+            >
+                <v-icon>menu</v-icon>
+                <v-icon>close</v-icon>
+            </v-btn>
+            <v-tooltip right>
+                <v-btn
+                        slot="activator"
+                        id="location-btn"
+                        v-show="myPosition"
+                        color="warning"
+                        small
+                        fab
+                        @click="center"
+                >
+                    <v-icon>gps_fixed</v-icon>
+                </v-btn>
+                <span>Move to my location</span>
+            </v-tooltip>
+        </v-speed-dial>
     </div>
 </template>
 
@@ -72,6 +91,7 @@
                         { name: 'Nearby', action : this.getNearbyExplores, showOnMyPosition: true },
                     ]
                 },
+                fab: false
             }
         },
         methods: {
@@ -81,7 +101,7 @@
 
                 this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("map-actions"))
                 this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("search-input"))
-                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("location-btn"))
+                this.map.controls[google.maps.ControlPosition.LEFT_TOP].push(document.getElementById("fab-menu"))
 
                 mapFunctions.initSearchInput(this.map, document.getElementById('search-input'))
 
@@ -172,9 +192,9 @@
     #map-actions {
         margin-top: 10px;
     }
-    #location-btn {
-        margin: 10px;
-    }
+    /*#location-btn {*/
+        /*margin: 10px;*/
+    /*}*/
     #search-input {
         margin-top: 15px;
         margin-left: 15px;

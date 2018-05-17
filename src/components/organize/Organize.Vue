@@ -16,7 +16,7 @@
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step1}}</p>
-                                <div>{{subtitles.step1}}</div>
+                                <div v-html="subtitles.step1"></div>
                             </div>
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
@@ -61,129 +61,132 @@
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step2}}</p>
+                                <div v-html="subtitles.step2"></div>
                             </div>
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
                             <v-layout row wrap v-if="step == 2">
                                 <v-flex xs12 sm4>
-                                    <v-list>
-                                        <v-list-tile-sub-title>
-                                            Configure
-                                            <span v-if="distance && duration"> ({{distance | distance}} - {{duration | duration}}) </span>
-                                        </v-list-tile-sub-title>
-                                    </v-list>
-                                    <v-expansion-panel>
-                                        <v-expansion-panel-content value="true" class="transparent-background">
-                                            <div slot="header">Route</div>
-                                            <v-card>
-                                                <v-card-text>
-                                                    <!--origin-->
-                                                    <v-text-field
-                                                            :id="origin.id"
-                                                            placeholder="Origin"
-                                                            :value="origin.address"
-                                                            prepend-icon="location_on"
-                                                            class="pt-0 mb-2"
-                                                            clearable
-                                                            autofocus
-                                                            hide-details
-                                                            :prefix="letters[0]"
-                                                    ></v-text-field>
+                                    <v-container fluid>
+                                        <v-list>
+                                            <v-list-tile-sub-title>
+                                                Configure
+                                                <span v-if="distance && duration"> ({{distance | distance}} - {{duration | duration}}) </span>
+                                            </v-list-tile-sub-title>
+                                        </v-list>
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-content value="true" class="transparent-background">
+                                                <div slot="header">Route</div>
+                                                <v-card>
+                                                    <v-card-text>
+                                                        <!--origin-->
+                                                        <v-text-field
+                                                                :id="origin.id"
+                                                                placeholder="Origin"
+                                                                :value="origin.address"
+                                                                prepend-icon="location_on"
+                                                                class="pt-0 mb-2"
+                                                                clearable
+                                                                autofocus
+                                                                hide-details
+                                                                :prefix="letters[0]"
+                                                        ></v-text-field>
 
-                                                    <!--wayPoints-->
-                                                    <div v-for="(wayPoint, index) in wayPoints"
-                                                         :key="index"
-                                                         v-if="wayPoint.stopover"
-                                                         style="position: relative;">
-                                                        <div class="waypoint-left-container">
-                                                            <v-btn class="mt-3"
-                                                                   flat
-                                                                   icon
-                                                                   color="white"
-                                                                   @click="removeWayPoint(index)">
-                                                                <v-icon>clear</v-icon>
-                                                            </v-btn>
+                                                        <!--wayPoints-->
+                                                        <div v-for="(wayPoint, index) in wayPoints"
+                                                             :key="index"
+                                                             v-if="wayPoint.stopover"
+                                                             style="position: relative;">
+                                                            <div class="waypoint-left-container">
+                                                                <v-btn class="mt-3"
+                                                                       flat
+                                                                       icon
+                                                                       color="white"
+                                                                       @click="removeWayPoint(index)">
+                                                                    <v-icon>clear</v-icon>
+                                                                </v-btn>
+                                                            </div>
+                                                            <div class="waypoint-right-container">
+                                                                <v-text-field
+                                                                        :id="wayPoint.id"
+                                                                        :placeholder="wayPoint.address || 'Enter destination'"
+                                                                        :value="wayPoint.address"
+                                                                        class="pb-4 pt-3"
+                                                                        autofocus
+                                                                        hide-details
+                                                                        :prefix="letters[index+1]"
+                                                                ></v-text-field>
+                                                                <v-btn
+                                                                        style="z-index: 1"
+                                                                        v-if="wayPoint.canSwap"
+                                                                        @click="swapWayPoints(index)"
+                                                                        absolute
+                                                                        dark
+                                                                        fab
+                                                                        bottom
+                                                                        left
+                                                                        small
+                                                                        color="primary"
+                                                                >
+                                                                    <v-icon>swap_vert</v-icon>
+                                                                </v-btn>
+                                                            </div>
+                                                            <div class="clearfix"></div>
                                                         </div>
-                                                        <div class="waypoint-right-container">
-                                                            <v-text-field
-                                                                    :id="wayPoint.id"
-                                                                    :placeholder="wayPoint.address || 'Enter destination'"
-                                                                    :value="wayPoint.address"
-                                                                    class="pb-4 pt-3"
-                                                                    autofocus
-                                                                    hide-details
-                                                                    :prefix="letters[index+1]"
-                                                            ></v-text-field>
-                                                            <v-btn
-                                                                    style="z-index: 1"
-                                                                    v-if="wayPoint.canSwap"
-                                                                    @click="swapWayPoints(index)"
-                                                                    absolute
-                                                                    dark
-                                                                    fab
-                                                                    bottom
-                                                                    left
-                                                                    small
-                                                                    color="primary"
-                                                            >
-                                                                <v-icon>swap_vert</v-icon>
+
+                                                        <v-fab-transition>
+                                                            <v-btn @click="addWayPoint"
+                                                                   v-if="canAddWayPoint"
+                                                                   fab
+                                                                   dark
+                                                                   small
+                                                                   color="primary"
+                                                                   class="mt-0 mb-0 ml-3">
+                                                                <v-icon dark>add</v-icon>
                                                             </v-btn>
-                                                        </div>
-                                                        <div class="clearfix"></div>
-                                                    </div>
+                                                        </v-fab-transition>
 
-                                                    <v-fab-transition>
-                                                        <v-btn @click="addWayPoint"
-                                                               v-if="canAddWayPoint"
-                                                               fab
-                                                               dark
-                                                               small
-                                                               color="primary"
-                                                               class="mt-0 mb-0 ml-3">
-                                                            <v-icon dark>add</v-icon>
-                                                        </v-btn>
-                                                    </v-fab-transition>
-
-                                                    <!--destination-->
-                                                    <v-text-field
-                                                            :id="destination.id"
-                                                            placeholder="Destination"
-                                                            :value="destination.address"
-                                                            prepend-icon="flag"
-                                                            class="pt-0"
-                                                            clearable
-                                                            hide-details
-                                                            :prefix="letters[wayPoints.length+1]"
-                                                    ></v-text-field>
-                                                </v-card-text>
-                                            </v-card>
+                                                        <!--destination-->
+                                                        <v-text-field
+                                                                :id="destination.id"
+                                                                placeholder="Destination"
+                                                                :value="destination.address"
+                                                                prepend-icon="flag"
+                                                                class="pt-0"
+                                                                clearable
+                                                                hide-details
+                                                                :prefix="letters[wayPoints.length+1]"
+                                                        ></v-text-field>
+                                                    </v-card-text>
+                                                </v-card>
+                                                </v-expansion-panel-content>
+                                            <v-expansion-panel-content v-if="vehicle != 'bicycle'" class="transparent-background">
+                                                <div slot="header">Route Options</div>
+                                                <v-card>
+                                                    <v-card-text>
+                                                        <v-checkbox
+                                                                color="primary"
+                                                                label="Avoid Highways"
+                                                                v-model="routeOptions.avoidHighways"
+                                                                hide-details
+                                                        ></v-checkbox>
+                                                        <v-checkbox
+                                                                color="primary"
+                                                                label="Avoid Ferries"
+                                                                v-model="routeOptions.avoidFerries"
+                                                                hide-details
+                                                        ></v-checkbox>
+                                                        <v-checkbox
+                                                                color="primary"
+                                                                label="Avoid Tolls"
+                                                                v-model="routeOptions.avoidTolls"
+                                                                hide-details
+                                                        ></v-checkbox>
+                                                    </v-card-text>
+                                                </v-card>
                                             </v-expansion-panel-content>
-                                        <v-expansion-panel-content v-if="vehicle != 'bicycle'" class="transparent-background">
-                                            <div slot="header">Route Options</div>
-                                            <v-card>
-                                                <v-card-text>
-                                                    <v-checkbox
-                                                            color="primary"
-                                                            label="Avoid Highways"
-                                                            v-model="routeOptions.avoidHighways"
-                                                            hide-details
-                                                    ></v-checkbox>
-                                                    <v-checkbox
-                                                            color="primary"
-                                                            label="Avoid Ferries"
-                                                            v-model="routeOptions.avoidFerries"
-                                                            hide-details
-                                                    ></v-checkbox>
-                                                    <v-checkbox
-                                                            color="primary"
-                                                            label="Avoid Tolls"
-                                                            v-model="routeOptions.avoidTolls"
-                                                            hide-details
-                                                    ></v-checkbox>
-                                                </v-card-text>
-                                            </v-card>
-                                        </v-expansion-panel-content>
-                                    </v-expansion-panel>
+                                        </v-expansion-panel>
+                                    </v-container>
                                 </v-flex>
 
                                 <v-flex xs12 sm8>
@@ -204,7 +207,7 @@
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step3}}</p>
-                                <div>{{subtitles.step3}}</div>
+                                <div v-html="subtitles.step3"></div>
                             </div>
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
@@ -239,7 +242,7 @@
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>
                                 <p class="display-1 stepTitle">{{titles.step4}}</p>
-                                <div>{{subtitles.step4}}</div>
+                                <div v-html="subtitles.step4"></div>
                             </div>
                         </v-card-text>
                         <v-container grid-list-md text-xs-center>
@@ -252,7 +255,7 @@
                                             v-model="title"
                                     ></v-text-field>
                                     <v-text-field
-                                            label="Description"
+                                            label="Extra information"
                                             multi-line
                                             v-model="description"
                                     ></v-text-field>
@@ -324,7 +327,7 @@
     export default {
         data () {
             return {
-                step: 2,
+                step: 4,
                 initialized: false,
                 titles: {
                     step1: 'Vehicle',
@@ -333,10 +336,13 @@
                     step4: 'Additionals'
                 },
                 subtitles: {
-                    step1: 'Please choose the type of vehicle',
-                    step2: '',
-                    step3: 'Choose when you plan on taking this trip',
-                    step4: 'Enter any additional information about the trip'
+                    step1: 'With SocialRiders you can organize trips for different types of vehicles.<br>' +
+                            'Choose your desired vehicle below!',
+                    step2: 'Here you can create your route with Google Maps.<br>' +
+                            'On the left you can select an origin and destination with the desired way points.<br>' +
+                            'You can also further customize your route under the Route Options section.',
+                    step3: 'Choose when you plan on taking this trip.',
+                    step4: 'Finally you can give your trip a meaningful title<br> and write down some extra information.'
                 },
                 /** Step 1 */
                 vehicle: null,

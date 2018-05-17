@@ -15,14 +15,13 @@
         </v-toolbar>
 
         <div class="content-wrapper">
-            <v-container fluid fill-height>
-                <v-layout justify-center align-center>
-                    <v-flex xs12 >
-                        <img width="400" height="400" src="@/assets/images/logo.png" class="logo" align="Logo">
-                    </v-flex>
-                    <v-flex xs12 >
-                        <div v-if="!about && !privacy">
-                            <h3 class="display-3 signin-title black--text">Welcome!</h3>
+            <v-container fluid fill-height style="display: block;">
+                        <div class="item-wrapper">
+                            <img src="@/assets/images/logo.png" class="logo" align="Logo">
+                        </div>
+
+                        <div v-if="!about && !privacy" class="item-wrapper">
+                            <!--<h3 class="display-4 signin-title">welcome!</h3>-->
                             <v-btn  @click="signin('google')"
                                     class="signinBtn grey--text text--darken-2"
                                     large
@@ -62,17 +61,15 @@
                         </div>
 
                         <div v-else-if="about">
-                            <h3 class="display-3 signin-title black--text">{{info.about.title}}</h3>
+                            <h3 class="display-3 signin-title">{{info.about.title}}</h3>
                             <p class="signin-text" v-html="info.about.text"></p>
                         </div>
                         <div v-else-if="privacy">
-                            <h3 class="display-3 signin-title black--text">{{info.privacy.title}}</h3>
+                            <h3 class="display-3 signin-title">{{info.privacy.title}}</h3>
                             <p class="signin-text" v-html="info.privacy.text"></p>
                         </div>
-                        <v-btn round flat color="primary" v-if="about || privacy" @click="privacy = false; about = false">Close</v-btn>
+                        <v-btn round flat v-if="about || privacy" @click="privacy = false; about = false">Close</v-btn>
 
-                    </v-flex>
-                </v-layout>
             </v-container>
         </div>
     </div>
@@ -143,7 +140,7 @@
     .signinBtn {
         width: 280px;
         margin-bottom: 20px;
-        background-color: #f3f3f3!important;
+        background-color: #f7f7f7!important;
     }
     .signinBtn > div{
         padding-left: 24px !important;
@@ -159,6 +156,7 @@
         background: none!important;
     }
     .signin-title {
+        text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
         margin-bottom: 50px;
         font-weight: lighter!important;
     }
@@ -167,25 +165,70 @@
         height: 94% !important;
         margin-left: 8%;
         padding-top: 4%;
+        margin-bottom: 4%;
     }
     .content-wrapper {
-        background: #fff;
+        background: rgba(255,255,255,0.7);
+        text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        color: #fff;
         width: 100%;
-        height: 100%;
-        -webkit-border-radius: 10px;
-        -moz-border-radius: 10px;
-        border-radius: 10px;
-        -webkit-box-shadow: 0px 3px 15px 0px rgba(0, 0, 0, 0.4);
-        -moz-box-shadow:    0px 3px 15px 0px rgba(0, 0, 0, 0.4);
-        box-shadow:         0px 3px 15px 0px rgba(0, 0, 0, 0.4);
+        min-height: 100%;
+        -webkit-border-top-left-radius: 30px;
+        -moz-border-top-left-radius: 30px;
+        border-top-left-radius: 30px;
+        -webkit-border-bottom-right-radius: 30px;
+        -moz-border-bottom-right-radius: 30px;
+        border-bottom-right-radius: 30px;
+        /*-webkit-border-radius: 30px;*/
+        /*-moz-border-radius: 30px;*/
+        /*border-radius: 30px;*/
+        -webkit-box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);
+        box-shadow: 0px 3px 30px 0px rgba(0,0,0,0.75);
+    }
+    .item-wrapper {
+        width: 100%;
     }
     .text-muted {
-        color: gray;
         font-style: italic;
         cursor: pointer;
     }
     .signin-text {
+        text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
         padding: 0 20px;
-        color: gray;
+    }
+
+    .logo {
+        display: block;
+        margin: 0 auto;
+    }
+
+    @media screen and (min-width: 960px) {
+        .logo {
+            max-width: 400px;
+        }
+    }
+
+    @media screen and (max-width: 960px) and (min-width: 600px) {
+        .logo {
+            max-width: 300px;
+        }
+    }
+
+    @media screen and (max-width: 600px) {
+        .logo {
+            max-width: 100%;
+        }
+        .signinBtn {
+            width: 100%;
+            font-size: 11px;
+        }
+        .signinBtn > div{
+            padding-left: 10px !important;
+            text-transform: none !important;
+        }
+        .signinIcon {
+            margin-right: 10px !important;
+        }
     }
 </style>
