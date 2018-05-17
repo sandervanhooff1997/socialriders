@@ -8,6 +8,7 @@
                             :explores="explores"
                             :selectedExplore="selectedExplore"
                             @onHideRoute="hideRoute"
+                            @onShowRoute="showRoute"
                             @onRenderExplores="renderExplores">
                     </sidebar>
                     <v-btn
@@ -74,6 +75,9 @@
             }
         },
         methods: {
+            showRoute(explore) {
+                this.$refs.map.showRoute(explore)
+            },
             hideRoute() {
                 this.$refs.map.hideRoute()
             },
@@ -237,13 +241,13 @@
     @media screen and (max-width: 960px) and (min-width: 600px) {
         #google-map{
             float: left;
-            width: calc(100% - 250px);
+            width: calc(100% - 300px);
             height: 100%;
         }
         #sidebar {
             float: left;
             height: 100%;
-            width: 250px;
+            width: 300px;
             z-index: 1;
         }
     }

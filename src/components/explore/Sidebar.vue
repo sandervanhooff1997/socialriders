@@ -11,7 +11,6 @@
     <v-card v-else flat class="menu-item noBackground">
         <v-container fluid class="pb-0 pt-0">
             <v-text-field
-                clearable
                 prepend-icon="explore"
                 id="explores-input"
                 placeholder="Search explores"
@@ -23,7 +22,7 @@
                     v-if="searchedExplores.length > 0 && searchedExplores.length !== explores.length"
                     style="max-height: 200px; overflow: hidden; overflow-y: scroll;">
                 <v-subheader>Explores found</v-subheader>
-                <v-list-tile v-for="(item, index) in searchedExplores" :key="index" avatar @click="">
+                <v-list-tile v-for="(item, index) in searchedExplores" :key="index" avatar @click="showRoute(item)">
                     <v-list-tile-avatar>
                         <img :src="item.owner.photoUrl">
                     </v-list-tile-avatar>
@@ -339,6 +338,14 @@
             setMaxDuration(duration) {
                 this.filters.duration.max = duration
                 this.filters.duration.value = duration
+            },
+            showRoute(explore) {
+                this.clearSearchedExplores()
+                this.$emit('onShowRoute', explore)
+            },
+            clearSearchedExplores () {
+                console.log('123 clear')
+                this.searchedExplores = []
             }
         },
         mounted () {
