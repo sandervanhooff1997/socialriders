@@ -16,7 +16,7 @@
                     </v-container>
 
                     <div id="owner">
-                        <span class="title white--text">Creator</span><br>
+                        <span class="title white--text">Hosted by</span><br>
                         <profile-chip :user="experience.owner"></profile-chip>
                     </div>
                 </div>
@@ -42,7 +42,8 @@
                     <v-card flat style="height: 100%;" class="noBackground">
                         <v-container>
                             <span class="headline mt-3">Media of all SocialRiders</span>
-                            <p>See what other SocialRiders experienced during this trip.</p>
+                            <p v-if="experience.mediaUploads && experience.mediaUploads.length > 0">See what other SocialRiders experienced during this trip.</p>
+                            <p v-else>No media uploads where found for this Experience.</p>
                             <media-wall class="mt-3" :media="experience.mediaUploads"></media-wall>
                         </v-container>
                     </v-card>

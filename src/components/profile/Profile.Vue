@@ -29,12 +29,17 @@
                 <v-tab-item class="fillHeight">
                     <v-container grid-list-md>
                         <v-layout row wrap>
-                            <v-flex xs12 sm6 md4 v-if="experiences" v-for="(experience, index) in experiences" :key="index">
+                            <v-flex
+                                    xs12 sm6 md4
+                                    v-if="experiences"
+                                    v-for="(experience, index) in experiences"
+                                    :key="index">
                                 <v-card>
                                     <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
                                 </v-card>
                             </v-flex>
                             <loader v-else></loader>
+                            <p v-if="experiences && experiences.length === 0">{{user.name}} has not driven any rides yet.</p>
                         </v-layout>
                     </v-container>
                 </v-tab-item>
@@ -51,17 +56,7 @@
                                 </v-card>
                             </v-flex>
                             <loader v-else></loader>
-                        </v-layout>
-                    </v-container>
-                </v-tab-item>
-                <v-tab-item class="fillHeight">
-                    <v-container fill-height>
-                        <v-layout>
-                            <v-flex>
-                                <v-card-text>
-                                    <!--todo: show media-->
-                                </v-card-text>
-                            </v-flex>
+                            <p v-if="explores && explores.length === 0">{{user.name}} has no planned rides yet.</p>
                         </v-layout>
                     </v-container>
                 </v-tab-item>
@@ -88,7 +83,7 @@
                 explores: null,
                 tab: null,
                 items: [
-                    'experiences', 'explores', 'social media'
+                    'experiences', 'explores'
                 ],
             }
         },
