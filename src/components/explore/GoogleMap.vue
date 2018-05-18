@@ -195,9 +195,7 @@
     #fab-menu {
         margin: 10px 0 0 10px;
     }
-    /*#location-btn {*/
-        /*margin: 10px;*/
-    /*}*/
+
     #search-input {
         margin-top: 20px;
         margin-left: 10px;
@@ -240,4 +238,10 @@
             width: calc(100% - 152px);
         }
     }
+
+    /*@media screen and (max-width: 600px) {*/
+        /*#search-input {*/
+            /*display: none;*/
+        /*}*/
+    /*}*/
 </style>

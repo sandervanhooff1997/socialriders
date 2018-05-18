@@ -3,8 +3,7 @@
  */
 import 'vuetify/dist/vuetify.min.css'
 import '@/assets/css/style.css'
-import '@/assets/css/theme.css'
-import '@/assets/css/theme-overrides.css'
+import '@/assets/css/themes.css'
 import '@/assets/filters/filters'
 import Vue from 'vue'
 import App from './App'

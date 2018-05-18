@@ -344,7 +344,6 @@
                 this.$emit('onShowRoute', explore)
             },
             clearSearchedExplores () {
-                console.log('123 clear')
                 this.searchedExplores = []
             }
         },
