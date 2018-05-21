@@ -266,7 +266,7 @@
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
-        <v-toolbar fixed flat class="bottomToolbar">
+        <v-toolbar fixed flat class="bottomToolbar" v-if="step1Completed">
             <v-toolbar-items style="width: 100%;" >
                 <v-fab-transition>
                     <v-btn
@@ -293,7 +293,7 @@
                     top
                     right
                     @click="forward()"
-                    class="backBtn"
+                    class="backBtn pulse-animation"
                     v-show="stepCompleted"
                     >
                     <v-icon>keyboard_arrow_right</v-icon>
@@ -309,7 +309,7 @@
                             top
                             right
                             @click="saveExplore()"
-                            class="backBtn"
+                            class="backBtn pulse-animation"
                             v-show="allStepsCompleted"
                     >
                         <v-icon>send</v-icon>
@@ -358,7 +358,7 @@
                     fullscreenControl: false,
                     center: {lat: 52.379189, lng: 4.899431},
                     zoom: 7,
-                    styles: mapStyles.retro
+                    styles: mapStyles.default
                 },
                 routeOptions: {
                     avoidFerries: false,
@@ -794,11 +794,11 @@
 <style scoped>
     .faIcon {
         font-size: 100px!important;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255,255,255,0.7);
         cursor: pointer;
     }
     .faIcon:hover, .iconWrapper.active .faIcon {
-        color: #1de9b6;
+        color: #F7A000;
     }
     .stepTitle {
         margin-bottom: 8px;
@@ -849,6 +849,9 @@
     }
     .clearfix {
         clear: both;
+    }
+    .noBackground {
+
     }
 
 </style>

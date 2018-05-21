@@ -133,11 +133,16 @@ export function initSearchInput (map, input) {
     })
 }
 
+import markerURL from '@/assets/maps/marker.png'
 export function getMarker (map, pos) {
     return new google.maps.Marker({
         position: new google.maps.LatLng(pos.lat, pos.lng),
         map: map,
         animation: google.maps.Animation.DROP,
+        icon: {
+            url: markerURL,
+            scaledSize: new google.maps.Size(40, 40)
+        }
     })
 }
 

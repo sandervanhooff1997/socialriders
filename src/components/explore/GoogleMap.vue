@@ -4,7 +4,7 @@
             <loader></loader>
         </div>
 
-        <input type="text" id="search-input" class="search-box-overlay" placeholder="Search a Place">
+        <input type="text" id="search-input" class="" placeholder="Search a Place">
 
         <!--<div id="map-actions">-->
             <!--<div v-for="(item, index) in actions.items" :key="index" class="map-action">-->
@@ -32,7 +32,7 @@
             <v-btn
                     slot="activator"
                     v-model="fab"
-                    color="warning"
+                    color="primary"
                     style="margin: 0;"
                     fab
             >
@@ -44,7 +44,7 @@
                         slot="activator"
                         id="location-btn"
                         v-show="myPosition"
-                        color="warning"
+                        color="primary"
                         small
                         fab
                         @click="center"
@@ -71,7 +71,7 @@
                 options: {
                     center: {lat: 	52.379189, lng: 4.899431},
                     zoom: 7,
-                    styles: mapStyles.retro,
+                    styles: mapStyles.default,
                     zoomControl: true,
                     mapTypeControl: false,
                     scaleControl: false,
@@ -199,16 +199,16 @@
     #search-input {
         margin-top: 20px;
         margin-left: 10px;
+        background: #fff;
         padding: 10px;
         border: 0;
-        /*background: rgba(0,0,0,0.4);*/
+        color: #888888;
         font-family: 'Poppins', sans-serif!important;
         width: 300px;
         max-width: 300px;
         font-size: 15px;
         text-overflow: ellipsis;
         outline: none;
-        color: #f7f7f7;
         -webkit-transition: all .35s ease-in-out;
         -moz-transition: all .35s ease-in-out;
         -ms-transition: all .35s ease-in-out;
@@ -216,21 +216,16 @@
         transition: all .35s ease-in-out;
     }
     #search-input::placeholder {
-        color: #f7f7f7;
+        color: #888888;
         -webkit-transition: all .35s ease-in-out;
         -moz-transition: all .35s ease-in-out;
         -ms-transition: all .35s ease-in-out;
         -o-transition: all .35s ease-in-out;
         transition: all .35s ease-in-out;
     }
-
-    #search-input:focus::placeholder {
-        color: #fff;
+    #search-input:focus, #search-input:focus::placeholder {
+        color: #000;
     }
-    #search-input:focus {
-        color: #fff;
-    }
-
 
     @media screen and (max-width: 960px) {
         #search-input {

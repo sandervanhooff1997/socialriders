@@ -5,6 +5,7 @@
                 <div id="sidebar" class="sidebar-overlay-inverse" :class="{hidden: !menu}">
                     <sidebar
                             class="sidebar-content"
+                            style="background: none;"
                             ref="sidebar"
                             :explores="explores"
                             :selectedExplore="selectedExplore"
@@ -13,7 +14,7 @@
                             @onRenderExplores="renderExplores">
                     </sidebar>
                     <v-btn
-                            color="warning"
+                            color="primary"
                             @click="menu = !menu"
                             class="menu-toggler"
                             dark
@@ -97,7 +98,19 @@
             },
             maxDuration () {
                 return this.$store.getters.maxDuration
-            }
+            },
+            today () {
+                var now = new Date();
+                var dd = now.getDate();
+                var mm = now.getMonth()+1; //January is 0!
+                var yyyy = now.getFullYear();
+
+                if(dd<10) dd = '0'+dd
+
+                if(mm<10)  mm = '0'+mm
+
+                return yyyy + '-' + mm + '-' + dd;
+            },
         },
         mounted () {
             let self = this
@@ -115,7 +128,7 @@
                 this.$store.dispatch('getMaxDistance').then(distance => {
                     self.$refs.sidebar.setMaxDistance(distance)
                 }).catch(error => {
-                    this.$store.dispatch('errorMessage', error.message)
+                    console.log(error.message)
                 })
             }
 
@@ -124,7 +137,7 @@
                 this.$store.dispatch('getMaxDuration').then(duration => {
                     self.$refs.sidebar.setMaxDuration(duration)
                 }).catch(error => {
-                    this.$store.dispatch('errorMessage', error.message)
+                    console.log(error.message)
                 })
             }
         },

@@ -1,11 +1,11 @@
 <template>
     <div>
         <div v-if="user">
-            <v-jumbotron dark style="height: 200px;">
+            <v-jumbotron dark style="height: 220px;">
                 <v-container fill-height>
                     <v-layout align-center>
                         <v-flex text-xs-center>
-                            <v-avatar size="120" class="grey lighten-4">
+                            <v-avatar size="90" class="grey lighten-4">
                                 <img :src="user.photoUrl" :alt="user.name">
                             </v-avatar>
                             <h3 class="display-3 thinText">{{user.name}}</h3>
@@ -27,14 +27,14 @@
             <div class="topSpacing"></div>
             <v-tabs-items v-model="tab" class="fillHeight bottomSpacing">
                 <v-tab-item class="fillHeight">
-                    <v-container grid-list-md>
+                    <v-container grid-list-lg>
                         <v-layout row wrap>
                             <v-flex
                                     xs12 sm6 md4
                                     v-if="experiences"
                                     v-for="(experience, index) in experiences"
                                     :key="index">
-                                <v-card>
+                                <v-card class="light-card">
                                     <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
                                 </v-card>
                             </v-flex>
@@ -44,14 +44,14 @@
                     </v-container>
                 </v-tab-item>
                 <v-tab-item class="fillHeight">
-                    <v-container grid-list-md>
+                    <v-container grid-list-lg>
                         <v-layout row wrap>
                             <v-flex
                                     xs12 sm6 md4
                                     v-if="explores"
                                     v-for="(explore, index) in explores"
                                     :key="index">
-                                <v-card>
+                                <v-card class="light-card">
                                     <trip-details :explore="explore" :isExplore="true" :isOverview="true"></trip-details>
                                 </v-card>
                             </v-flex>

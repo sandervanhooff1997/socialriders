@@ -1,5 +1,5 @@
 <template>
-    <v-card v-if="selectedExplore" flat class="menu-item noBackground">
+    <v-card v-if="selectedExplore" flat class="menu-item ">
         <trip-details
                 :explore="selectedExplore"
                 :isExplore="true"
@@ -8,7 +8,7 @@
         </trip-details>
     </v-card>
 
-    <v-card v-else flat class="menu-item noBackground">
+    <v-card v-else flat class="menu-item">
         <v-container fluid class="pb-0 pt-0">
             <v-text-field
                 prepend-icon="explore"
@@ -34,9 +34,9 @@
             </v-list>
         </v-container>
 
-        <v-expansion-panel>
-            <v-expansion-panel-content value="true">
-                <div slot="header" class="subheading"><b>Filters</b></div>
+        <v-expansion-panel style="box-shadow: none;">
+            <v-expansion-panel-content value="true" style="background: none;">
+                <div slot="header" class="subheading">Filters</div>
                 <v-container fluid class="pt-1 pb-0">
                     <span class="subheading">Max Distance - {{filters.distance.value}} km</span>
                     <v-slider class="pa-0"
@@ -106,6 +106,7 @@
                         ></v-text-field>
                         <v-date-picker
                                 :disabled="!filters.date.on"
+                                :min="today"
                                 class="explorePicker"
                                 color="primary"
                                 v-model="filters.date.value"

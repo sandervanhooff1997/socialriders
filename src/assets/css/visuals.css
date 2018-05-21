@@ -1,0 +1,107 @@
+.white-overlay.on-signin-page,
+.colored-overlay{
+    background: #3D668B;
+    background: -webkit-linear-gradient(45deg, #3D668B 0%, #4b7dab 100%);
+    background: linear-gradient(45deg, #3D668B 0%, #4b7dab 100%);
+}
+
+.noBackground,
+.tabs__bar,
+.list,
+.sidebar-content
+{
+    background: none!important;
+}
+
+nav,
+.noBackground,
+.tabs__bar,
+.list,
+.sidebar-content{
+    -webkit-box-shadow: none!important;
+    -moz-box-shadow: none!important;
+    box-shadow: none!important;
+}
+
+.sidebar-overlay,
+.riderList,
+.bottomToolbar{
+    background: rgba(61,102,139,0.9) !important;
+}
+
+.time-picker-clock--indeterminate>span.active, .picker .date-picker-header {
+    background: #F7A000!important;
+}
+.picker__body {
+    background: #fff;
+}
+.picker__body .btn__content{
+    color: rgba(0,0,0,.38);
+}
+.picker__body .btn--disabled .btn__content {
+    color: rgba(0,0,0,.18) !important;
+}
+.picker__body .btn--active .btn__content {
+    color: #fff !important;
+}
+.date-picker-header__value .primary--text {
+    color: #fff!important;
+}
+
+.transparent-background,
+/*.card,*/
+.time-picker-clock,
+.white-overlay{
+    background: rgba(61,102,139,0.75);
+}
+
+.picker .picker__body {
+    background: #fff;
+}
+
+.time-picker-clock {
+    background: #d0d0d0 !important;
+}
+
+.card, .stepper, .stepper__header, .expansion-panel, #search-input {
+    -webkit-box-shadow: 0 1px 4px 0 rgba(0,0,0,.14);
+    -moz-box-shadow: 0 1px 4px 0 rgba(0,0,0,.14);
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,.14);
+}
+
+.light-card {
+    background: rgba(255,255,255,0.9) !important;
+}
+.light-card *, .light-card .icon {
+    color: rgba(0,0,0,.87) !important;
+}
+
+.light-card .btn__content {
+    color: #fff !important;
+}
+
+.text-shadow {
+    text-shadow: 0px 0px 2px rgba(150, 150, 150, 1);
+}
+
+
+
+.pulse-animation {
+    -webkit-animation: pulse 1.25s cubic-bezier(0.66, 0, 0, 1);
+    -moz-animation: pulse 1.25s cubic-bezier(0.66, 0, 0, 1);
+    -ms-animation: pulse 1.25s cubic-bezier(0.66, 0, 0, 1);
+    animation: pulse 1.25s cubic-bezier(0.66, 0, 0, 1);
+    -webkit-animation-iteration-count: 3;
+    -moz-animation-iteration-count: 3;
+    -o-animation-iteration-count: 3;
+    animation-iteration-count: 3;
+}
+.pulse-animation:hover
+{
+    -webkit-animation: none;-moz-animation: none;-ms-animation: none;animation: none;
+}
+
+@-webkit-keyframes pulse {to {box-shadow: 0 0 0 20px rgba(247, 160, 0, 0);}}
+@-moz-keyframes pulse {to {box-shadow: 0 0 0 20px rgba(247, 160, 0, 0);}}
+@-ms-keyframes pulse {to {box-shadow: 0 0 0 20px rgba(247, 160, 0, 0);}}
+@keyframes pulse {to {box-shadow: 0 0 0 20px rgba(247, 160, 0, 0);}}

@@ -3,7 +3,7 @@
  */
 import 'vuetify/dist/vuetify.min.css'
 import '@/assets/css/style.css'
-import '@/assets/css/themes.css'
+import '@/assets/css/visuals.css'
 import '@/assets/filters/filters'
 import Vue from 'vue'
 import App from './App'
@@ -21,13 +21,13 @@ import Overdrive from 'vue-overdrive'
  */
 Vue.use(Vuetify, {
     theme: {
-        primary: '#1de9b6',
-        secondary: '#8e24aa',
+        primary: '#F7A000',
+        secondary: '#F7A000',
         accent: '#8093FA',
-        error: '#FF5252',
+        error: '#FF5816',
         info: '#0288d1',
         success: '#43A047',
-        warning: '#ff6e40'
+        warning: '#FF5816'
     }
 })
 Vue.use(Overdrive)

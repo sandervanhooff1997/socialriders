@@ -106,7 +106,7 @@
                     disableDoubleClickZoom: true,
                     center: {lat: 	52.379189, lng: 4.899431},
                     zoom: 7,
-                    styles: mapStyles.retro,
+                    styles: mapStyles.default,
                 },
                 tab: 0,
             }
@@ -163,14 +163,14 @@
         position: relative;
     }
     .map-overlay {
-        text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.7);
+        text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
         width: 100%;
         height: 100%;
         position: absolute;
         text-align: center;
-        background: #8e24aa!important;
-        background: -webkit-linear-gradient(100deg, rgba(142,36,170,0.5) 0%, rgba(255,110,64,0.5) 100%)!important;
-        background: linear-gradient(100deg, rgba(142,36,170,0.5) 0%, rgba(255,110,64,0.5) 100%)!important;
+        background: none!important;
+        background: -webkit-linear-gradient(100deg, rgba(61,102,139,0.5) 0%, rgba(75,125,171,0.5) 100%)!important;
+        background: linear-gradient(100deg, rgba(61,102,139,0.5) 0%, rgba(75,125,171,0.5) 100%)!important;
     }
     #map {
         position: absolute;
@@ -185,37 +185,5 @@
         left: 20px;
         bottom: 20px;
     }
-
-    /* ---- grid ---- */
-
-    #grid {
-        background: #DDD;
-    }
-
-    /* clear fix */
-    #grid:after {
-        content: '';
-        display: block;
-        clear: both;
-    }
-
-    /* ---- .element-item ---- */
-
-    /* 5 columns, percentage width */
-    .grid-item,
-    .grid-sizer {
-        width: 20%;
-    }
-
-    .grid-item {
-        float: left;
-        height: 100px;
-        background: #0D8;
-        border: 2px solid #333;
-        border-color: hsla(0, 0%, 0%, 0.7);
-    }
-
-    .grid-item--width2 { width: 40%; }
-    .grid-item--height2 { height: 200px; }
 
 </style>

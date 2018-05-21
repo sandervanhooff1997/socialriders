@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="experiences">
-            <v-jumbotron dark style="height: 200px;">
+            <v-jumbotron dark style="height: 220px;">
                 <v-container fill-height>
                     <v-layout align-center>
                         <v-flex text-xs-center>
@@ -12,7 +12,7 @@
                 </v-container>
             </v-jumbotron>
 
-            <v-container grid-list-md>
+            <v-container grid-list-lg>
                 <v-layout row wrap class="mb-3">
                     <p v-if="experiences.length === 0">
                         We couldn't find any Experiences, be the first to
@@ -22,7 +22,7 @@
                             v-for="(experience, index) in experiences"
                             v-else
                             :key="experience.title">
-                        <v-card>
+                        <v-card class="light-card">
                             <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
                         </v-card>
                     </v-flex>

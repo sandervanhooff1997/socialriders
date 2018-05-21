@@ -3,16 +3,21 @@
         <v-card-media height="100px" v-if="!isOverview">
             <v-layout wrap align-center>
                 <v-flex class="text-xs-center">
-                    <v-avatar>
-                        <router-link :to="{ name: 'Profile', params: { uid: explore.owner.uid, profile: explore.owner }}">
-                            <img  :src="explore.owner.photoUrl" :alt="explore.owner.name">
-                        </router-link>
-                    </v-avatar>
-                    <div class="subheading white--text">{{explore.owner.name}}</div>
+                    <v-list subheader>
+                        <v-subheader>Hosted by</v-subheader>
+                        <v-list-tile  avatar :to="{name: 'Profile' , params:{ uid: explore.owner.uid, profile: explore.owner }}">
+                            <v-list-tile-avatar>
+                                <img :src="explore.owner.photoUrl">
+                            </v-list-tile-avatar>
+                            <v-list-tile-content>
+                                <v-list-tile-title v-html="explore.owner.name"></v-list-tile-title>
+                                <!--<v-list-tile-sub-title>{{ item.date | datetime }}</v-list-tile-sub-title>-->
+                            </v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
                 </v-flex>
             </v-layout>
         </v-card-media>
-        <v-divider v-if="!isOverview"></v-divider>
 
         <v-tooltip right>
             <v-card-title primary-title slot="activator">
@@ -42,7 +47,7 @@
                             <v-icon>location_on</v-icon> {{explore.origin.address}}
                         </span>
                         </v-list-tile-action>
-                        <span>Starting Location</span>
+                        <span>Origin</span>
                     </v-tooltip>
                 </v-list-tile-content>
             </v-list-tile>
@@ -55,6 +60,18 @@
                         </span>
                         </v-list-tile-action>
                         <span>Total Distance</span>
+                    </v-tooltip>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile class="list-tile-explore" v-if="!isOverview">
+                <v-list-tile-content>
+                    <v-tooltip right>
+                        <v-list-tile-action slot="activator">
+                        <span>
+                            <v-icon>access_time</v-icon> {{explore.duration | duration}}
+                        </span>
+                        </v-list-tile-action>
+                        <span>Total Duration</span>
                     </v-tooltip>
                 </v-list-tile-content>
             </v-list-tile>
@@ -78,9 +95,21 @@
                             <v-icon>people</v-icon>
                             <v-menu open-on-hover bottom offset-y>
                                 <span slot="activator">{{explore.riders.length | riders }}</span>
-                                <v-list class="riderList">
-                                    <v-list-tile v-for="rider in explore.riders" :key="rider.uid">
-                                      <v-list-tile-title>{{ rider.name }}</v-list-tile-title>
+                                <v-list class="riderList"
+                                        subheader
+                                        style="max-height: 200px; overflow: hidden; overflow-y: scroll;">
+                                    <v-subheader>Riders</v-subheader>
+                                    <v-list-tile
+                                            v-for="(item, index) in explore.riders"
+                                            :key="index"
+                                            avatar
+                                            :to="{name: 'Profile' , params:{ uid: item.uid, profile: item }}">
+                                        <v-list-tile-avatar>
+                                            <img :src="item.photoUrl">
+                                        </v-list-tile-avatar>
+                                        <v-list-tile-content>
+                                            <v-list-tile-title v-html="item.name"></v-list-tile-title>
+                                        </v-list-tile-content>
                                     </v-list-tile>
                                 </v-list>
                             </v-menu>
