@@ -26,6 +26,9 @@ export default {
         },
         setMaxDuration (state, maxDuration) {
             state.maxDuration = maxDuration
+        },
+        deleteExplore(state, explore) {
+            state.explores.splice(explore, 1)
         }
     },
 
@@ -128,6 +131,7 @@ export default {
                 }).then(function () {
                     resolve('Joined Explore!')
                 }).catch(function (error) {
+                    commit('setLoading', false)
                     reject('Failed to Join Explore: ' + error)
 
                 })
@@ -160,9 +164,30 @@ export default {
                 }).then(function () {
                     resolve('Left Explore!')
                 }).catch(function (error) {
+                    commit('setLoading', false)
                     reject('Failed to LEave Explore: ' + error)
 
                 })
+            })
+        },
+        deleteExplore({commit}, explore) {
+            commit('setLoading', true)
+            commit('clearMessage')
+
+            return new Promise((resolve, reject) => {
+                firebase.firestore()
+                    .collection('explores')
+                    .doc(explore.id)
+                    .delete()
+                    .then(() => {
+                        commit('setLoading', false)
+                        commit('deleteExplore', explore)
+                        resolve()
+                    })
+                    .catch(error => {
+                        commit('setLoading', false)
+                        reject(error)
+                    })
             })
         },
         getMaxDistance ({commit}) {

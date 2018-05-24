@@ -63,16 +63,24 @@
         },
         methods: {
             showRoute(explore) {
-                this.$refs.map.showRoute(explore)
+                if (this.$refs.map) {
+                    this.$refs.map.showRoute(explore)
+                }
             },
             hideRoute() {
-                this.$refs.map.hideRoute()
+                if (this.$refs.map) {
+                    this.$refs.map.hideRoute()
+                }
             },
             renderExplores (explores) {
-                this.$refs.map.renderExplores(explores)
+                if (this.$refs.map) {
+                    this.$refs.map.renderExplores(explores)
+                }
             },
             removeAllFilters () {
-                this.$refs.sidebar.removeAllFilters()
+                if (this.$refs.sidebar) {
+                    this.$refs.sidebar.removeAllFilters()
+                }
             },
             clearSelectedExplore() {
                 this.selectedExplore = null
@@ -111,6 +119,12 @@
 
                 return yyyy + '-' + mm + '-' + dd;
             },
+        },
+        watch: {
+            explores () {
+                this.hideRoute()
+                this.renderExplores(this.explores)
+            }
         },
         mounted () {
             let self = this

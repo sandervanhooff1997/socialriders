@@ -56,7 +56,7 @@
                         </v-container>
                     </v-card>
                 </v-stepper-content>
-                <v-stepper-content step="2">
+                <v-stepper-content step="2" class="px-0 pt-3">
                     <v-card class="mb-3 stepperContent noBackground" flat>
                         <v-card-text class="text-xs-center stepTitleWrapper">
                             <div>

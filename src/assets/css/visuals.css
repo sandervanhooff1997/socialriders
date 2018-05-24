@@ -1,4 +1,4 @@
-.white-overlay.on-signin-page,
+/*.white-overlay.on-signin-page,*/
 .colored-overlay{
     background: #3D668B;
     background: -webkit-linear-gradient(45deg, #3D668B 0%, #4b7dab 100%);
@@ -29,14 +29,15 @@ nav,
     background: rgba(61,102,139,0.9) !important;
 }
 
+/*PICKERS*/
 .time-picker-clock--indeterminate>span.active, .picker .date-picker-header {
     background: #F7A000!important;
 }
 .picker__body {
-    background: #fff;
+    background: #fff !important;
 }
-.picker__body .btn__content{
-    color: rgba(0,0,0,.38);
+.picker__body .btn__content, .date-picker-table th{
+    color: rgba(0,0,0,.38) !important;
 }
 .picker__body .btn--disabled .btn__content {
     color: rgba(0,0,0,.18) !important;
@@ -49,7 +50,6 @@ nav,
 }
 
 .transparent-background,
-/*.card,*/
 .time-picker-clock,
 .white-overlay{
     background: rgba(61,102,139,0.75);
@@ -63,7 +63,7 @@ nav,
     background: #d0d0d0 !important;
 }
 
-.card, .stepper, .stepper__header, .expansion-panel, #search-input {
+.card, .stepper, .stepper__header, .expansion-panel, #search-input, .content-wrapper {
     -webkit-box-shadow: 0 1px 4px 0 rgba(0,0,0,.14);
     -moz-box-shadow: 0 1px 4px 0 rgba(0,0,0,.14);
     box-shadow: 0 1px 4px 0 rgba(0,0,0,.14);

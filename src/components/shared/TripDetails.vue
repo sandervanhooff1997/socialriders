@@ -131,6 +131,7 @@
             <v-btn round :loading="loading" color="primary" v-if="isExplore && exploreJoinable" @click="joinExplore()">Join</v-btn>
             <v-btn round :loading="loading" color="warning" v-if="isExplore && exploreLeavable" @click="leaveExplore()">Leave</v-btn>
             <v-btn round :loading="loading" color="primary" v-if="isExplore && isOverview" :to="{name: 'Explores', params: {selectedExplore: explore}}">View</v-btn>
+            <v-btn round :loading="loading" color="warning" v-if="isExplore && exploreDeletable" @click="deleteExplore()">Delete</v-btn>
             <v-btn round flat @click="hideRoute()" v-if="isExplore && !isOverview">Close</v-btn>
 
             <v-btn round :loading="loading" color="primary" v-if="!isExplore" :to="{name: 'Experience', params: {id: explore.id}}">View</v-btn>
@@ -178,6 +179,9 @@
 
                 // owner or not joined route
                 return false
+            },
+            exploreDeletable() {
+                return this.explore.owner.uid === this.user.uid
             },
             loading () {
                 return this.$store.getters.loading
@@ -228,6 +232,15 @@
                     })
                 } else {
                     this.$store.dispatch('errorMessage', 'Error leaving this route')
+                }
+            },
+            deleteExplore () {
+                if (this.exploreDeletable) {
+                    this.$store.dispatch('deleteExplore', this.explore).then(() => {
+                        this.$store.dispatch('successMessage', 'Explore Deleted!')
+                    }, error => {
+                        this.$store.dispatch('errorMessage', error)
+                    })
                 }
             }
         }

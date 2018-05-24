@@ -87,6 +87,12 @@
                 ],
             }
         },
+        watch: {
+            exploresFromStore () {
+                this.getMyExplores()
+                this.getMyExperiences()
+            }
+        },
         computed: {
             getUser () {
                 return this.$store.getters.user
@@ -97,6 +103,26 @@
             loadError () {
                 this.$store.dispatch('errorMessage', 'Could not load profile')
                 this.$router.push('/')
+            },
+            exploresFromStore () {
+                return this.$store.getters.explores
+            }
+        },
+        methods: {
+            getMyExplores () {
+                this.$store.dispatch('getExploresByUser', this.uid).then(explores => {
+                    this.explores = explores
+                }, error => {
+                    this.$store.dispatch('errorMessage', error)
+                })
+
+            },
+            getMyExperiences () {
+                this.$store.dispatch('getExperiencesByUser', this.uid).then(experiences => {
+                    this.experiences = experiences
+                }, error => {
+                    this.$store.dispatch('errorMessage', error)
+                })
             }
         },
         mounted () {
@@ -120,17 +146,8 @@
                 this.user = profile
             }
 
-            this.$store.dispatch('getExploresByUser', this.uid).then(explores => {
-                this.explores = explores
-            }, error => {
-                this.$store.dispatch('errorMessage', error)
-            })
-
-            this.$store.dispatch('getExperiencesByUser', this.uid).then(experiences => {
-                this.experiences = experiences
-            }, error => {
-                this.$store.dispatch('errorMessage', error)
-            })
+            this.getMyExplores()
+            this.getMyExperiences()
         }
     }
 </script>
