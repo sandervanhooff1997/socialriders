@@ -70,9 +70,12 @@ nav,
 }
 
 .light-card {
-    background: rgba(255,255,255,0.9) !important;
+    background: #fff !important;
 }
-.light-card *, .light-card .icon {
+
+.light-card .card__title,
+.light-card .list__tile__action,
+.light-card .list__tile__action i {
     color: rgba(0,0,0,.87) !important;
 }
 

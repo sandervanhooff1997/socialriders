@@ -27,7 +27,7 @@
             <div class="topSpacing"></div>
             <v-tabs-items v-model="tab" class="fillHeight bottomSpacing">
                 <v-tab-item class="fillHeight">
-                    <v-container grid-list-lg>
+                    <v-container grid-list-xl>
                         <v-layout row wrap>
                             <v-flex
                                     xs12 sm6 md4
@@ -44,7 +44,7 @@
                     </v-container>
                 </v-tab-item>
                 <v-tab-item class="fillHeight">
-                    <v-container grid-list-lg>
+                    <v-container grid-list-xl>
                         <v-layout row wrap>
                             <v-flex
                                     xs12 sm6 md4

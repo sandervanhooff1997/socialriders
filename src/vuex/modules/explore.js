@@ -193,6 +193,8 @@ export default {
         getMaxDistance ({commit}) {
             return new Promise ((resolve, reject) => {
                 db.collection('explores')
+                    .where('date', '>', new Date())
+                    .orderBy('date', 'desc')
                     .orderBy('distance', 'desc')
                     .limit(1)
                     .get()
@@ -214,6 +216,8 @@ export default {
         getMaxDuration ({commit}) {
             return new Promise ((resolve, reject) => {
                 db.collection('explores')
+                    .where('date', '>', new Date())
+                    .orderBy('date', 'desc')
                     .orderBy('duration', 'desc')
                     .limit(1)
                     .get()

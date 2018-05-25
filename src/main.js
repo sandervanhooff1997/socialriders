@@ -14,7 +14,6 @@ import { store } from './vuex/vuex'
 import MessageCmp from './components/shared/Message'
 import LoaderCmp from './components/shared/Loader'
 import jQuery from 'jquery'
-import Overdrive from 'vue-overdrive'
 
 /**
  * Global usages
@@ -30,7 +29,6 @@ Vue.use(Vuetify, {
         warning: '#FF5816'
     }
 })
-Vue.use(Overdrive)
 
 window.firebase = firebaseApp
 window.db = firestore

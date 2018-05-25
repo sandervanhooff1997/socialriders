@@ -41,11 +41,11 @@
     height: 34px;
 }
 
-.card, .stepper, .stepper__header, .expansion-panel {
-    -webkit-border-radius: 10px !important;
-    -moz-border-radius: 10px !important;
-    border-radius: 10px !important;
-}
+/*.card, .stepper, .stepper__header, .expansion-panel {*/
+    /*-webkit-border-radius: 10px !important;*/
+    /*-moz-border-radius: 10px !important;*/
+    /*border-radius: 10px !important;*/
+/*}*/
 
 .application-overlay, .sidebar-overlay {
     width: 100%;

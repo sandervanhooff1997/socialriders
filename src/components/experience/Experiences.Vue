@@ -12,7 +12,7 @@
                 </v-container>
             </v-jumbotron>
 
-            <v-container grid-list-lg>
+            <v-container grid-list-xl>
                 <v-layout row wrap class="mb-3">
                     <p v-if="experiences.length === 0">
                         We couldn't find any Experiences, be the first to
@@ -21,7 +21,7 @@
                     <v-flex xs12 sm6 md4
                             v-for="(experience, index) in experiences"
                             v-else
-                            :key="experience.title">
+                            :key="experience.title + index">
                         <v-card class="light-card">
                             <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
                         </v-card>
@@ -50,7 +50,7 @@
             return {
                 loading: false,
                 loaded: 0,
-                loadCount: 12,
+                loadCount: 4,
                 experiences: null,
             }
         },
