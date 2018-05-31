@@ -233,6 +233,8 @@
                                             color="primary"
                                     ></v-time-picker>
                                 </v-flex>
+                                {{date}}<br>
+                                {{time}}
                             </v-layout>
                         </v-container>
                     </v-card>
@@ -310,7 +312,7 @@
                             right
                             @click="saveExplore()"
                             class="backBtn pulse-animation"
-                            v-show="allStepsCompleted"
+                            v-show="allStepsCompleted && step === 4"
                     >
                         <v-icon>send</v-icon>
                     </v-btn>
@@ -329,6 +331,8 @@
             return {
                 step: 1,
                 initialized: false,
+                editMode: false,
+                exploreId: null,
                 titles: {
                     step1: 'Vehicle',
                     step2: 'Route',
@@ -404,14 +408,12 @@
                 }
             },
             forward () {
-                if (this.step < 4) {
-                    if (this.step === 1 && this.step1Completed ||
-                        this.step === 2 && this.step1Completed && this.step2Completed ||
-                        this.step === 3 && this.step1Completed && this.step2Completed && this.step3Completed ||
-                        this.step === 4 && this.allStepsCompleted)
-                    {
+                if (this.step < 4 &&
+                    this.step === 1 && this.step1Completed ||
+                    this.step === 2 && this.step1Completed && this.step2Completed ||
+                    this.step === 3 && this.step1Completed && this.step2Completed && this.step3Completed ||
+                    this.step === 4 && this.allStepsCompleted) {
                         this.step++
-                    }
                 }
             },
             /** Step 1 */
@@ -692,7 +694,11 @@
                             self.duration = duration
                         }
                         else {
-                            self.$store.dispatch('errorMessage', 'Google Maps error: ' + status);
+                            if (status === 'ZERO_RESULTS') {
+                                self.$store.dispatch('errorMessage', 'This route is not possible for a ' + self.vehicle)
+                            } else {
+                                self.$store.dispatch('errorMessage', 'Google Maps error: ' + status)
+                            }
                         }
                     });
                 }
@@ -716,13 +722,24 @@
                         riders: []
                     }
 
-                    // add to db
-                    this.$store.dispatch('organizeExplore', explore).then(response => {
-                        this.$store.dispatch('successMessage', 'Explore Organized!')
-                        this.$router.push({name: 'Explores'})
-                    }, error => {
-                        this.$store.dispatch('errorMessage', error.message)
-                    })
+                    if (!this.editMode) {
+                        // add to db
+                        this.$store.dispatch('organizeExplore', explore).then(response => {
+                            this.$store.dispatch('successMessage', 'Explore Organized!')
+                            this.$router.push({name: 'Explores'})
+                        }, error => {
+                            this.$store.dispatch('errorMessage', error.message)
+                        })
+                    } else {
+                        explore.id = this.exploreId
+                        // add to db
+                        this.$store.dispatch('editExplore', explore).then(response => {
+                            this.$store.dispatch('successMessage', 'Explore Updated!')
+                            this.$router.push({name: 'Explores'})
+                        }, error => {
+                            this.$store.dispatch('errorMessage', error.message)
+                        })
+                    }
                 }
             },
         },
@@ -784,6 +801,32 @@
             },
         },
         mounted () {
+            // edit explore from route param
+            let explore = this.$route.params.explore
+            if (explore) {
+                // set the editMode to tell the save function over overwrite on the existing explore id
+                this.editMode = true
+                this.exploreId = explore.id
+
+                // set all trip parameters
+                this.vehicle = explore.vehicle
+                this.origin.address = explore.origin.address
+                this.origin.location = explore.origin.location
+                explore.wayPoints.forEach(wayPoint => {
+                    this.wayPoints.push(wayPoint)
+                })
+                this.destination.address = explore.destination.address
+                this.destination.location = explore.destination.location
+                this.routeOptions.avoidFerries = explore.routeOptions.avoidFerries
+                this.routeOptions.avoidHighways = explore.routeOptions.avoidHighways
+                this.routeOptions.avoidTolls = explore.routeOptions.avoidTolls
+                this.date = explore.date.toISOString()
+                this.date = this.date.substr(0, this.date.indexOf("T"))
+                this.time = explore.date.getHours() + ":" + (explore.date.getMinutes()<10?'0':'') + explore.date.getMinutes()
+                this.title = explore.title
+                this.description = explore.description
+            }
+
             if (this.step === 2) {
                 this.initMap()
             }

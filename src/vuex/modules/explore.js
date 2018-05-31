@@ -106,6 +106,23 @@ export default {
                 })
             })
         },
+        editExplore({commit}, explore) {
+            commit('setLoading', true)
+
+            return new Promise((resolve, reject) => {
+                db.collection('/explores')
+                    .doc(explore.id)
+                    .set(explore)
+                    .then(docRef => {
+                        commit('setLoading', false)
+                        commit('clearMessage')
+                        resolve(docRef);
+                }, error => {
+                    commit('clearMessage')
+                    reject(error)
+                })
+            })
+        },
         joinExplore({commit}, payload) {
             let docRef = firebase.firestore().collection('explores').doc(payload.id)
             commit('setLoading', true)
