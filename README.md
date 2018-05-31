@@ -2,20 +2,13 @@
 
 > A social media platform where riders ride together.
 
-## Build Setup
+## Built With
 
-``` bash
-# install dependencies
-npm install
+* [Vue.js](https://vuejs.org/) - Progressive javascript framework
+* [Google firebase](https://firebase.google.com/) - Backend database, authorization & storage
+* [Google Maps](https://cloud.google.com/maps-platform/) - Maps provider
 
-# serve with hot reload at localhost:8080
-npm run dev
 
-# build for production with minification
-npm run build
+## Author
 
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+* **Sander van hooff** - [github](https://github.com/SanderVanHooff)
