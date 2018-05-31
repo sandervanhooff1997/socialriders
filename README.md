@@ -12,4 +12,4 @@
 
 ## Author
 
-* **Sander van hooff** - [github](https://github.com/sandervanhooff1997)
+* **[Sander van hooff](https://github.com/sandervanhooff1997)**
