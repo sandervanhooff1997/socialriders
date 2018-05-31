@@ -4,6 +4,8 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+}
+.application, .pac-item {
     font-family: 'Poppins', sans-serif!important;
 }
 .material-icons {

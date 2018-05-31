@@ -13,7 +13,7 @@
             <v-text-field
                 prepend-icon="explore"
                 id="explores-input"
-                placeholder="Search explores"
+                placeholder="Search Explores by Title"
                 @keyup="searchExplores"
         ></v-text-field>
             <v-list

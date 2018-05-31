@@ -101,6 +101,9 @@
             explores () {
                 return this.$store.getters.explores
             },
+            exploresLength () {
+                return this.explores ? this.explores.length : 0
+            },
             maxDistance () {
                 return this.$store.getters.maxDistance
             },
@@ -121,7 +124,7 @@
             },
         },
         watch: {
-            explores () {
+            exploresLength () {
                 this.hideRoute()
                 this.renderExplores(this.explores)
             }

@@ -4,7 +4,7 @@
             <loader></loader>
         </div>
 
-        <input type="text" id="search-input" class="" placeholder="Search a Place">
+        <input type="text" id="search-input" class="" placeholder="Search Google Maps">
 
         <!--<div id="map-actions">-->
             <!--<div v-for="(item, index) in actions.items" :key="index" class="map-action">-->
@@ -149,11 +149,13 @@
             hideRoute(){
                 this.$emit('onClearSelectedExplore')
                 mapFunctions.clearRoute()
-                this.center()
+                this.resetZoom()
+            },
+            resetZoom() {
+                this.map.setZoom(this.options.zoom)
             },
             center () {
-                this.map.setZoom(7)
-
+                this.resetZoom()
                 if (this.myPosition) {
                     this.map.panTo(this.myPosition)
                 } else {

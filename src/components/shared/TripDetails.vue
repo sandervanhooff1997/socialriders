@@ -131,9 +131,9 @@
             <v-btn fab :loading="loading" color="warning" v-if="isExplore && myExplore" @click="deleteExplore()">
                 <v-icon>delete</v-icon>
             </v-btn>
-            <v-btn fab :loading="loading" color="primary" v-if="isExplore && myExplore" @click="editExplore()">
-                <v-icon>edit</v-icon>
-            </v-btn>
+            <!--<v-btn fab :loading="loading" color="primary" v-if="isExplore && myExplore" @click="editExplore()">-->
+                <!--<v-icon>edit</v-icon>-->
+            <!--</v-btn>-->
 
             <v-spacer v-if="myExplore && isExplore"></v-spacer>
 
@@ -242,7 +242,7 @@
                 }
             },
             deleteExplore () {
-                if (this.exploreDeletable) {
+                if (this.myExplore) {
                     this.$store.dispatch('deleteExplore', this.explore).then(() => {
                         this.$store.dispatch('successMessage', 'Explore Deleted!')
                     }, error => {
