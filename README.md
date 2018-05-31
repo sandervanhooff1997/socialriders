@@ -1,6 +1,7 @@
 # SocialRiders
 
 > A social media platform where riders ride together.
+> Build as a school project on Fontys University in Tilburg.
 
 ## Built With
 
@@ -11,4 +12,4 @@
 
 ## Author
 
-* **Sander van hooff** - [github](https://github.com/SanderVanHooff)
+* **Sander van hooff** (Student ICT & Software Engineering @FontysTilburg) - [github](https://github.com/sandervanhooff1997)
