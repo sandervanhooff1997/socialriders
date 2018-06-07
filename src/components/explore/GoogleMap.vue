@@ -118,10 +118,12 @@
                 const self = this
 
                 this.clearMarkers()
-                explores.forEach(explore => {
-                    const marker = self.addMarker(explore.origin.location)
-                    self.addClickToShowRoute(marker, explore)
-                })
+                if (explores) {
+                    explores.forEach(explore => {
+                        const marker = self.addMarker(explore.origin.location)
+                        self.addClickToShowRoute(marker, explore)
+                    })
+                }
             },
             clearMarkers () {
                 if (this.markers.length > 0) {

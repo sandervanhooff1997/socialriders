@@ -133,13 +133,13 @@
             return {
                 filters: {
                     distance: {
-                        value: 2500,
+                        value: 10000,
                         min: 1,
                         max: 2500,
                         on: true
                     },
                     duration: {
-                        value: 24,
+                        value: 96,
                         min: 1,
                         max: 24,
                         on: true
@@ -257,6 +257,10 @@
                 const self = this
 
                 let explores = self.explores
+
+                if (!explores) {
+                    return
+                }
 
                 explores = explores.filter(explore => {
                     return explore.distance <= (self.filters.distance.value * 1000)

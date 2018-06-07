@@ -1,6 +1,6 @@
 <template>
     <div class="text-xs-center">
-        <div v-if="loaded" class="fillHeight" style="position: relative;">
+        <div class="fillHeight" style="position: relative;">
             <v-layout fill-height row wrap>
                 <div id="sidebar" class="sidebar-overlay-inverse" :class="{hidden: !menu}">
                     <sidebar
@@ -41,7 +41,6 @@
                 </div>
             </v-layout>
         </div>
-        <loader v-else></loader>
     </div>
 </template>
 
@@ -56,31 +55,22 @@
         },
         data() {
             return {
-                loaded: false,
                 selectedExplore: null,
                 menu: true,
             }
         },
         methods: {
             showRoute(explore) {
-                if (this.$refs.map) {
-                    this.$refs.map.showRoute(explore)
-                }
+                this.$refs.map.showRoute(explore)
             },
             hideRoute() {
-                if (this.$refs.map) {
-                    this.$refs.map.hideRoute()
-                }
+                this.$refs.map.hideRoute()
             },
             renderExplores (explores) {
-                if (this.$refs.map) {
-                    this.$refs.map.renderExplores(explores)
-                }
+                this.$refs.map.renderExplores(explores)
             },
             removeAllFilters () {
-                if (this.$refs.sidebar) {
-                    this.$refs.sidebar.removeAllFilters()
-                }
+                this.$refs.sidebar.removeAllFilters()
             },
             clearSelectedExplore() {
                 this.selectedExplore = null
@@ -88,14 +78,33 @@
             setSelectedExplore(explore) {
                 this.selectedExplore = explore
             },
-            load () {
-                // important to first set loaded!
-                this.loaded = true
-
-                if (this.$route.params.selectedExplore) {
-                    this.setSelectedExplore(this.$route.params.selectedExplore)
+            getMaxDistanceFromStore() {
+                let self = this
+                // select the highest distance of all explores to be the max slider value
+                if (!this.maxDistance){
+                    console.log('1 ')
+                    this.$store.dispatch('getMaxDistance').then(distance => {
+                        self.$refs.sidebar.setMaxDistance(distance)
+                    }).catch(error => {
+                        console.log(error.message)
+                    })
+                } else {
+                    self.$refs.sidebar.setMaxDistance(this.maxDistance)
                 }
             },
+            getMaxDurationFromStore() {
+                let self = this
+                // select the highest duration of all explores to be the max slider value
+                if (!this.maxDuration){
+                    this.$store.dispatch('getMaxDuration').then(duration => {
+                        self.$refs.sidebar.setMaxDuration(duration)
+                    }).catch(error => {
+                        console.log(error.message)
+                    })
+                } else {
+                    self.$refs.sidebar.setMaxDuration(this.maxDuration)
+                }
+            }
         },
         computed: {
             explores () {
@@ -130,33 +139,16 @@
             }
         },
         mounted () {
-            let self = this
-
-            if (this.explores) {
-                this.load()
-            } else {
-                this.$store.dispatch('getExplores').then(explores => {
-                    this.load()
-                }, error => { })
+            if (!this.explores) {
+                this.$store.dispatch('getExplores').then(explores => {}, error => { })
             }
 
-            // select the highest distance of all explores to be the max slider value
-            if (!this.maxDistance){
-                this.$store.dispatch('getMaxDistance').then(distance => {
-                    self.$refs.sidebar.setMaxDistance(distance)
-                }).catch(error => {
-                    console.log(error.message)
-                })
+            if (this.$route.params.selectedExplore) {
+                this.setSelectedExplore(this.$route.params.selectedExplore)
             }
 
-            // select the highest duration of all explores to be the max slider value
-            if (!this.maxDuration){
-                this.$store.dispatch('getMaxDuration').then(duration => {
-                    self.$refs.sidebar.setMaxDuration(duration)
-                }).catch(error => {
-                    console.log(error.message)
-                })
-            }
+            this.getMaxDistanceFromStore()
+            this.getMaxDurationFromStore()
         },
     }
 </script>
