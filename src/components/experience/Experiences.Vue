@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="experiences">
-            <v-jumbotron dark style="height: 220px;">
+            <v-jumbotron dark style="height: 160px;">
                 <v-container fill-height>
                     <v-layout align-center>
                         <v-flex text-xs-center>

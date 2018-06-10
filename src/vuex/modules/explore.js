@@ -137,7 +137,7 @@ export default {
                             commit('setLoading', false)
 
                             if (!doc.exists) {
-                                reject('Explore does not exists')
+                                reject('Trip does not exists')
                             }
 
                             let riders = doc.data().riders
@@ -146,10 +146,10 @@ export default {
                             transaction.update(docRef, {riders: riders})
                         });
                 }).then(function () {
-                    resolve('Joined Explore!')
+                    resolve('Joined trip!')
                 }).catch(function (error) {
                     commit('setLoading', false)
-                    reject('Failed to Join Explore: ' + error)
+                    reject('Failed to join trip: ' + error)
 
                 })
             })
@@ -168,7 +168,7 @@ export default {
                             commit('setLoading', false)
 
                             if (!doc.exists) {
-                                reject('Explore does not exists')
+                                reject('Trip does not exists')
                             }
 
                             let riders = doc.data().riders
@@ -179,10 +179,10 @@ export default {
                             transaction.update(docRef, {riders: riders})
                         });
                 }).then(function () {
-                    resolve('Left Explore!')
+                    resolve('You left this trip!')
                 }).catch(function (error) {
                     commit('setLoading', false)
-                    reject('Failed to LEave Explore: ' + error)
+                    reject('Failed to leave trip: ' + error)
 
                 })
             })
@@ -215,7 +215,7 @@ export default {
                     .get()
                     .then(querySnapshot => {
                         if (querySnapshot.empty) {
-                            reject({message: 'No Explores found'})
+                            reject({message: 'No trips found'})
                         }
 
                         let maxDistance = querySnapshot.docs[0].data().distance
@@ -236,7 +236,7 @@ export default {
                     .get()
                     .then(querySnapshot => {
                         if (querySnapshot.empty) {
-                            reject({message: 'No Explores found'})
+                            reject({message: 'No trips found'})
                         }
 
                         let maxDuration = querySnapshot.docs[0].data().duration

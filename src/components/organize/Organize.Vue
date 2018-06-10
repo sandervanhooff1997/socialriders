@@ -725,7 +725,7 @@
                     if (!this.editMode) {
                         // add to db
                         this.$store.dispatch('organizeExplore', explore).then(response => {
-                            this.$store.dispatch('successMessage', 'Trip Organized!')
+                            this.$store.dispatch('successMessage', 'Trip organized!')
                             this.$router.push({name: 'Explores'})
                         }, error => {
                             this.$store.dispatch('errorMessage', error.message)
@@ -734,7 +734,7 @@
                         explore.id = this.exploreId
                         // add to db
                         this.$store.dispatch('editExplore', explore).then(response => {
-                            this.$store.dispatch('successMessage', 'Trip Updated!')
+                            this.$store.dispatch('successMessage', 'Trip updated!')
                             this.$router.push({name: 'Explores'})
                         }, error => {
                             this.$store.dispatch('errorMessage', error.message)

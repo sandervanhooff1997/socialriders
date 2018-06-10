@@ -199,7 +199,7 @@ export default {
                         .get(docRef)
                         .then(function (doc) {
                             if (!doc.exists) {
-                                reject('Experience does not exists')
+                                reject('Trip does not exists')
                             }
 
                             // create the data model

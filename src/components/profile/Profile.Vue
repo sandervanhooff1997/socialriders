@@ -101,7 +101,7 @@
                 return this.getUser.uid === this.uid
             },
             loadError () {
-                this.$store.dispatch('errorMessage', 'Could not load profile')
+                this.$store.dispatch('errorMessage', 'Error loading profile')
                 this.$router.push('/')
             },
             exploresFromStore () {

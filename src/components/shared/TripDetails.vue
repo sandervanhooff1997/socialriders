@@ -120,7 +120,7 @@
             </v-list-tile>
         </v-list>
 
-        <v-card-text v-if="!isOverview">
+        <v-card-text v-if="!isOverview && explore.description">
             <div class="text-xs-left">Description</div>
             <p class="discription thinText text-xs-left">{{explore.description}}</p>
         </v-card-text>
@@ -172,7 +172,7 @@
                 </v-tooltip>
             </v-speed-dial>
 
-            <v-spacer v-if="myExplore && isExplore"></v-spacer>
+            <v-spacer></v-spacer>
 
             <v-btn round :loading="loading" color="primary" v-if="isExplore && exploreJoinable" @click="joinExplore()">Join</v-btn>
             <v-btn round :loading="loading" color="warning" v-if="isExplore && exploreLeavable" @click="leaveExplore()">Leave</v-btn>
@@ -260,7 +260,7 @@
                         this.$store.dispatch('errorMessage', error)
                     })
                 } else {
-                    this.$store.dispatch('errorMessage', 'Error joining this route')
+                    this.$store.dispatch('errorMessage', 'Error joining this trip')
                 }
             },
             leaveExplore() {
@@ -280,13 +280,13 @@
                         this.$store.dispatch('errorMessage', error)
                     })
                 } else {
-                    this.$store.dispatch('errorMessage', 'Error leaving this route')
+                    this.$store.dispatch('errorMessage', 'Error leaving this trip')
                 }
             },
             deleteExplore () {
                 if (this.myExplore) {
                     this.$store.dispatch('deleteExplore', this.explore).then(() => {
-                        this.$store.dispatch('successMessage', 'Explore Deleted!')
+                        this.$store.dispatch('successMessage', 'Trip deleted!')
                     }, error => {
                         this.$store.dispatch('errorMessage', error)
                     })
