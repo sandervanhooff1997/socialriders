@@ -1,17 +1,16 @@
 <template>
     <div>
-        <v-card-media height="100px" v-if="!isOverview">
+        <v-card-media height="56px" v-if="!isOverview">
             <v-layout wrap align-center>
                 <v-flex class="text-xs-center">
-                    <v-list subheader>
-                        <v-subheader>Hosted by</v-subheader>
+                    <v-list>
                         <v-list-tile  avatar :to="{name: 'Profile' , params:{ uid: explore.owner.uid, profile: explore.owner }}">
                             <v-list-tile-avatar>
                                 <img :src="explore.owner.photoUrl">
                             </v-list-tile-avatar>
                             <v-list-tile-content>
                                 <v-list-tile-title v-html="explore.owner.name"></v-list-tile-title>
-                                <!--<v-list-tile-sub-title>{{ item.date | datetime }}</v-list-tile-sub-title>-->
+                                <v-list-tile-sub-title>Host</v-list-tile-sub-title>
                             </v-list-tile-content>
                         </v-list-tile>
                     </v-list>
@@ -19,14 +18,14 @@
             </v-layout>
         </v-card-media>
 
-        <v-tooltip bottom>
-            <v-card-title primary-title slot="activator">
-                <div class="title thinText">{{explore.title}}</div>
-            </v-card-title>
-            <span>{{explore.title}}</span>
-        </v-tooltip>
+        <v-divider></v-divider>
 
         <v-list style="background: none!important;">
+
+            <v-list-tile class="list-tile-explore">
+                <div v-if="isOverview" class="title black--text text-xs-left">{{explore.title}}</div>
+                <div v-if="!isOverview" class="title text-xs-left">{{explore.title}}</div>
+            </v-list-tile>
             <v-list-tile class="list-tile-explore">
                 <v-list-tile-content>
                     <v-tooltip bottom>
@@ -122,18 +121,56 @@
         </v-list>
 
         <v-card-text v-if="!isOverview">
+            <div class="text-xs-left">Description</div>
             <p class="discription thinText text-xs-left">{{explore.description}}</p>
         </v-card-text>
         <v-divider v-if="!isOverview"></v-divider>
         <br>
 
         <v-card-actions>
-            <v-btn fab :loading="loading" color="warning" v-if="isExplore && myExplore" @click="deleteExplore()">
-                <v-icon>delete</v-icon>
-            </v-btn>
-            <v-btn fab :loading="loading" color="primary" v-if="isExplore && myExplore" @click="editExplore()">
-                <v-icon>edit</v-icon>
-            </v-btn>
+
+            <v-speed-dial
+                    v-model="fab"
+                    direction="top"
+                    transition="slide-y-reverse-transition"
+            >
+                <v-btn
+                        slot="activator"
+                        v-model="fab"
+                        color="primary"
+                        fab
+                >
+                    <v-icon>build</v-icon>
+                    <v-icon>close</v-icon>
+                </v-btn>
+                <v-tooltip right>
+                    <v-btn
+                            style="margin: 10px;"
+                            :loading="loading"
+                            slot="activator"
+                            color="warning"
+                            small
+                            fab
+                            @click="deleteExplore()"
+                    >
+                        <v-icon>delete</v-icon>
+                    </v-btn>
+                    <span>Delete</span>
+                </v-tooltip>
+                <v-tooltip right>
+                    <v-btn
+                            :loading="loading"
+                            slot="activator"
+                            color="accent"
+                            small
+                            fab
+                            @click="editExplore()"
+                    >
+                        <v-icon>edit</v-icon>
+                    </v-btn>
+                    <span>Edit</span>
+                </v-tooltip>
+            </v-speed-dial>
 
             <v-spacer v-if="myExplore && isExplore"></v-spacer>
 
@@ -149,6 +186,11 @@
 <script>
     export default {
         props: ['explore', 'isExplore', 'isOverview'],
+        data () {
+            return {
+                fab: false
+            }
+        },
         computed: {
             user () {
                 return this.$store.getters.user

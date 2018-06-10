@@ -1,14 +1,14 @@
 <template>
     <div>
         <div v-if="user">
-            <v-jumbotron dark style="height: 220px;">
+            <v-jumbotron dark style="height: 160px; padding-top: 20px;">
                 <v-container fill-height>
                     <v-layout align-center>
                         <v-flex text-xs-center>
                             <v-avatar size="90" class="grey lighten-4">
                                 <img :src="user.photoUrl" :alt="user.name">
                             </v-avatar>
-                            <h3 class="display-3 thinText">{{user.name}}</h3>
+                            <h3 class="thinText" style="font-size: 2em;">{{user.name}}</h3>
                         </v-flex>
                     </v-layout>
                 </v-container>
@@ -31,23 +31,6 @@
                         <v-layout row wrap>
                             <v-flex
                                     xs12 sm6 md4
-                                    v-if="experiences"
-                                    v-for="(experience, index) in experiences"
-                                    :key="index">
-                                <v-card class="light-card">
-                                    <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
-                                </v-card>
-                            </v-flex>
-                            <loader v-else></loader>
-                            <p v-if="experiences && experiences.length === 0">{{user.name}} has not driven any rides yet.</p>
-                        </v-layout>
-                    </v-container>
-                </v-tab-item>
-                <v-tab-item class="fillHeight">
-                    <v-container grid-list-xl>
-                        <v-layout row wrap>
-                            <v-flex
-                                    xs12 sm6 md4
                                     v-if="explores"
                                     v-for="(explore, index) in explores"
                                     :key="index">
@@ -57,6 +40,23 @@
                             </v-flex>
                             <loader v-else></loader>
                             <p v-if="explores && explores.length === 0">{{user.name}} has no planned rides yet.</p>
+                        </v-layout>
+                    </v-container>
+                </v-tab-item>
+                <v-tab-item class="fillHeight">
+                    <v-container grid-list-xl>
+                        <v-layout row wrap>
+                            <v-flex
+                                    xs12 sm6 md4
+                                    v-if="experiences"
+                                    v-for="(experience, index) in experiences"
+                                    :key="index">
+                                <v-card class="light-card">
+                                    <trip-details :explore="experience" :isExplore="false" :isOverview="true"></trip-details>
+                                </v-card>
+                            </v-flex>
+                            <loader v-else></loader>
+                            <p v-if="experiences && experiences.length === 0">{{user.name}} has not driven any rides yet.</p>
                         </v-layout>
                     </v-container>
                 </v-tab-item>
@@ -83,7 +83,7 @@
                 explores: null,
                 tab: null,
                 items: [
-                    'experiences', 'explores'
+                    'explores', 'experiences'
                 ],
             }
         },

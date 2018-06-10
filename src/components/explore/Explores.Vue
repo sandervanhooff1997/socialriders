@@ -82,7 +82,6 @@
                 let self = this
                 // select the highest distance of all explores to be the max slider value
                 if (!this.maxDistance){
-                    console.log('1 ')
                     this.$store.dispatch('getMaxDistance').then(distance => {
                         self.$refs.sidebar.setMaxDistance(distance)
                     }).catch(error => {
@@ -145,6 +144,7 @@
 
             if (this.$route.params.selectedExplore) {
                 this.setSelectedExplore(this.$route.params.selectedExplore)
+                this.showRoute(this.$route.params.selectedExplore)
             }
 
             this.getMaxDistanceFromStore()

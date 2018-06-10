@@ -9,7 +9,7 @@
     </v-card>
 
     <v-card v-else flat class="menu-item">
-        <v-container fluid class="pb-0 pt-0">
+        <v-container fluid class="pb-0 pt-0 text-xs-left">
             <v-text-field
                 prepend-icon="explore"
                 id="explores-input"
@@ -32,92 +32,88 @@
                     </v-list-tile-content>
                 </v-list-tile>
             </v-list>
-        </v-container>
 
-        <v-expansion-panel style="box-shadow: none;">
-            <v-expansion-panel-content value="true" style="background: none;">
-                <div slot="header" class="subheading">Filters</div>
-                <v-container fluid class="pt-1 pb-0">
-                    <span class="subheading">Max Distance - {{filters.distance.value}} km</span>
-                    <v-slider class="pa-0"
-                              :min="filters.distance.min"
-                              :max="filters.distance.max"
-                              hide-details
-                              v-model="filters.distance.value"
-                              @mouseup="filterExplores()"
-                              @keyup="filterExplores()"
-                    ></v-slider>
+            <v-divider></v-divider>
+            
+            <v-switch color="primary"
+                      label="Specific date"
+                      hide-details
+                      v-model="filters.date.on"
+                      class="mt-2 explore-switch">
+            </v-switch>
+            <v-menu
+                    lazy
+                    :close-on-content-click="true"
+                    transition="scale-transition"
+                    :disabled="!filters.date.on"
+            >
+                <v-text-field
+                        :disabled="!filters.date.on"
+                        slot="activator"
+                        label="Select date"
+                        v-model="filters.date.value"
+                        prepend-icon="event"
+                        readonly
+                ></v-text-field>
+                <v-date-picker
+                        :disabled="!filters.date.on"
+                        :min="today"
+                        class="explorePicker"
+                        color="primary"
+                        v-model="filters.date.value"
+                        no-title
+                        scrollable
+                >
+                </v-date-picker>
+            </v-menu>
+            <br>
+            <!--<span class="subheading">Max Distance - {{filters.distance.value}} km</span>-->
+            <!--<v-slider class="pa-0"-->
+                      <!--:min="filters.distance.min"-->
+                      <!--:max="filters.distance.max"-->
+                      <!--hide-details-->
+                      <!--v-model="filters.distance.value"-->
+                      <!--@mouseup="filterExplores()"-->
+                      <!--@keyup="filterExplores()"-->
+            <!--&gt;</v-slider>-->
 
-                    <span class="subheading">Max Duration - {{filters.duration.value}} hr</span>
-                    <v-slider class="pa-0"
-                              :min="filters.duration.min"
-                              :max="filters.duration.max"
-                              hide-details
-                              v-model="filters.duration.value"
-                              @mouseup="filterExplores()"
-                              @keyup="filterExplores()"
-                    ></v-slider>
+            <span class="subheading">Max Duration - {{filters.duration.value}} hr</span>
+            <v-slider class="pa-0"
+                      :min="filters.duration.min"
+                      :max="filters.duration.max"
+                      hide-details
+                      v-model="filters.duration.value"
+                      @mouseup="filterExplores()"
+                      @keyup="filterExplores()"
+            ></v-slider>
 
-                    <v-layout row wrap>
-                        <v-flex xs6 sm12 class="mt-1">
-                            <span class="subheading">Part of the day</span>
-                            <v-radio-group v-model="filters.selectedDayparts" hide-details class="pt-0">
-                                <v-checkbox
-                                        v-for="item in filters.dayparts"
-                                        :key="item.value"
-                                        :label="item.text"
-                                        v-model="item.on"
-                                        color="primary"
-                                ></v-checkbox>
-                            </v-radio-group>
-                        </v-flex>
-                        <v-flex xs6 sm12 class="mt-1">
-                            <span class="subheading">Vehicles</span>
-                            <v-radio-group v-model="filters.selectedVehicles" hide-details class="pt-0">
-                                <v-checkbox
-                                        v-for="item in filters.vehicles"
-                                        :key="item.value"
-                                        :label="item.text"
-                                        v-model="item.on"
-                                        color="primary"
-                                ></v-checkbox>
-                            </v-radio-group>
-                        </v-flex>
-                        <v-switch color="primary"
-                                  label="Specific date"
-                                  hide-details
-                                  v-model="filters.date.on"
-                                  class="mt-2 explore-switch">
-                        </v-switch>
-                    </v-layout>
-                    <v-menu
-                            lazy
-                            :close-on-content-click="true"
-                            transition="scale-transition"
-                            :disabled="!filters.date.on"
-                    >
-                        <v-text-field
-                                :disabled="!filters.date.on"
-                                slot="activator"
-                                label="Select date"
-                                v-model="filters.date.value"
-                                prepend-icon="event"
-                                readonly
-                        ></v-text-field>
-                        <v-date-picker
-                                :disabled="!filters.date.on"
-                                :min="today"
-                                class="explorePicker"
+            <v-layout row wrap>
+                <v-flex xs6 sm12 class="mt-1">
+                    <span class="subheading">Part of the day</span>
+                    <v-radio-group v-model="filters.selectedDayparts" hide-details class="pt-0">
+                        <v-checkbox
+                                v-for="item in filters.dayparts"
+                                :key="item.value"
+                                :label="item.text"
+                                v-model="item.on"
                                 color="primary"
-                                v-model="filters.date.value"
-                                no-title
-                                scrollable
-                        >
-                        </v-date-picker>
-                    </v-menu>
-                </v-container>
-            </v-expansion-panel-content>
-        </v-expansion-panel>
+                        ></v-checkbox>
+                    </v-radio-group>
+                </v-flex>
+                <v-flex xs6 sm12 class="mt-1">
+                    <span class="subheading">Vehicles</span>
+                    <v-radio-group v-model="filters.selectedVehicles" hide-details class="pt-0">
+                        <v-checkbox
+                                v-for="item in filters.vehicles"
+                                :key="item.value"
+                                :label="item.text"
+                                v-model="item.on"
+                                color="primary"
+                        ></v-checkbox>
+                    </v-radio-group>
+                </v-flex>
+            </v-layout>
+        </v-container>
     </v-card>
 </template>
 

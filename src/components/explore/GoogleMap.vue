@@ -36,7 +36,7 @@
                     style="margin: 0;"
                     fab
             >
-                <v-icon>menu</v-icon>
+                <v-icon>build</v-icon>
                 <v-icon>close</v-icon>
             </v-btn>
             <v-tooltip right>
@@ -209,7 +209,6 @@
         color: #888888;
         font-family: 'Poppins', sans-serif!important;
         width: 300px;
-        max-width: 300px;
         font-size: 15px;
         text-overflow: ellipsis;
         outline: none;
@@ -234,13 +233,13 @@
     @media screen and (max-width: 960px) {
         #search-input {
             width: 80%;
-            width: calc(100% - 152px);
+            width: calc(100% - 86px);
+        }
+        #fab-menu {
+            margin-top: 18px;
+        }
+        #search-input {
+            margin-top: 26px;
         }
     }
-
-    /*@media screen and (max-width: 600px) {*/
-        /*#search-input {*/
-            /*display: none;*/
-        /*}*/
-    /*}*/
 </style>
