@@ -30,7 +30,7 @@
                 <v-tab>
                     Media
                 </v-tab>
-                <v-tab v-if="iJoinedThisExplore">
+                <v-tab v-if="iJoinedThisExplore || owner">
                     Upload
                 </v-tab>
                 <v-tab>
@@ -43,12 +43,12 @@
                         <v-container>
                             <span class="headline mt-3">Media of all SocialRiders</span>
                             <p v-if="experience.mediaUploads && experience.mediaUploads.length > 0">See what other SocialRiders experienced during this trip.</p>
-                            <p v-else>No media uploads where found for this Experience.</p>
+                            <p v-else>No media uploads where found for this trip.</p>
                             <media-wall class="mt-3" :media="experience.mediaUploads"></media-wall>
                         </v-container>
                     </v-card>
                 </v-tab-item>
-                <v-tab-item v-if="iJoinedThisExplore">
+                <v-tab-item v-if="iJoinedThisExplore || owner">
                     <v-card flat style="height: 100%;" class="noBackground">
                         <v-container>
                             <span class="headline mt-3">Share your media with other SocialRiders!</span>
@@ -127,6 +127,11 @@
                 }
 
                 return false
+            },
+            owner () {
+                if (this.experience.owner.uid === this.user.uid) {
+                    return true
+                }
             },
             user () {
                 return this.$store.getters.user

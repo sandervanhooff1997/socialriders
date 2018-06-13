@@ -50,6 +50,6 @@ export const store = new Vuex.Store({
     modules: {
         experienceModule,
         exploreModule,
-        userModule
+        userModule,
     }
 })

@@ -36,8 +36,8 @@
                     style="margin: 0;"
                     fab
             >
-                <v-icon>build</v-icon>
-                <v-icon>close</v-icon>
+                <v-icon small>build</v-icon>
+                <v-icon small>close</v-icon>
             </v-btn>
             <v-tooltip right>
                 <v-btn
@@ -60,6 +60,7 @@
 <script>
     import * as mapFunctions from '@/assets/maps/map-functions'
     import mapStyles from '@/assets/maps/map-styles'
+    // import markerclusterer from '@/assets/maps/markerclusterer'
 
     export default {
         name: 'google-map',
@@ -123,6 +124,7 @@
                         const marker = self.addMarker(explore.origin.location)
                         self.addClickToShowRoute(marker, explore)
                     })
+                    // let markerCluster = new MarkerClusterer(this.map, this.markers)
                 }
             },
             clearMarkers () {

@@ -59,7 +59,7 @@
                 <v-container fluid>
                     <h3 class="display-3 mb-4">{{info.title}}</h3>
                     <p class="" v-html="info.content"></p>
-                    <v-btn round flat @click="info.state = false">Close</v-btn>
+                    <v-btn round color="primary" @click="info.state = false">Close</v-btn>
                 </v-container>
             </div>
         </div>
@@ -164,7 +164,7 @@
         flex-direction: column;
         justify-content: center;
         background: rgba(255,255,255,0.7);
-        color: #fff;
+        color: #424242;
         width: 100%;
         min-height: 100%;
         -webkit-border-top-left-radius: 30px;
@@ -210,11 +210,11 @@
 
     @media screen and (max-width: 600px) {
         .logo {
-            max-width: 100%;
+            max-width: 80%;
         }
         .signinBtn {
-            width: 100%;
-            font-size: 11px;
+            width: 80%;
+            font-size: 12px;
         }
         .signinBtn > div{
             padding-left: 10px !important;

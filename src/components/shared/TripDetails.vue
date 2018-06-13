@@ -125,11 +125,11 @@
             <p class="discription thinText text-xs-left">{{explore.description}}</p>
         </v-card-text>
         <v-divider v-if="!isOverview"></v-divider>
-        <br>
 
         <v-card-actions>
 
             <v-speed-dial
+                    v-if="myExplore"
                     v-model="fab"
                     direction="top"
                     transition="slide-y-reverse-transition"

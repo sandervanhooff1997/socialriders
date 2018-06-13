@@ -39,7 +39,7 @@
                                 </v-card>
                             </v-flex>
                             <loader v-else></loader>
-                            <p v-if="explores && explores.length === 0">{{user.name}} has no planned rides yet.</p>
+                            <p v-if="explores && explores.length === 0">{{user.name}} has not planned any trips.</p>
                         </v-layout>
                     </v-container>
                 </v-tab-item>
@@ -56,7 +56,7 @@
                                 </v-card>
                             </v-flex>
                             <loader v-else></loader>
-                            <p v-if="experiences && experiences.length === 0">{{user.name}} has not driven any rides yet.</p>
+                            <p v-if="experiences && experiences.length === 0">{{user.name}} has not participated any trips.</p>
                         </v-layout>
                     </v-container>
                 </v-tab-item>
